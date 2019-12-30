@@ -1,0 +1,28 @@
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: utf-8
+spring:
+  # 数据源配置
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/reservoir?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+    name: reservoir
+  profiles:
+    active: dev
+  application:
+    name: reservoir
+  freemarker:
+    cache: false
+    charset: UTF-8
+    # freemarker模板后缀 默认是 .ftl
+    suffix: .html
+    enabled: true
+    content-type: text/html
+    # #模板加载路径 按需配置 ,默认路径是 classpath:/templates/
+    template-loader-path: classpath:/templates/
+mybatis:
+  type-aliases-package: com.henu.reservoir.domain
+  mapper-locations: classpath:mapper/*.xml
