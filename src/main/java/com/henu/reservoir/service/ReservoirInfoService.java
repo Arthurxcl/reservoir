@@ -1,40 +1,31 @@
 package com.henu.reservoir.service;
 
-import org.apache.ibatis.annotations.Param;
+import com.henu.reservoir.dao.ReservoirInfoDaoMapper;
 import com.henu.reservoir.domain.ReservoirInfoDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public interface ReservoirInfoService {
-    /**
-     * 根据水库 ID,查询水库信息
-     *
-     * @param id
-     * @return
-     */
-    ReservoirInfoDao findReservoirInfoById(Integer id);
+@Service
+public class ReservoirInfoService {
 
-    /**
-     * 新增水库信息
-     *
-     * @param reservoirInfo
-     * @return
-     */
-    Integer saveReservoirInfo(ReservoirInfoDao reservoirInfo);
+    @Autowired
+    private ReservoirInfoDaoMapper reservoirInfoDaoMapper;
 
-    /**
-     * 更新水库信息
-     *
-     * @param reservoirInfo
-     * @return
-     */
-    Integer updateReservoirInfo(ReservoirInfoDao reservoirInfo);
+    public ReservoirInfoDao findReservoirInfoById(Integer id) {
+        return reservoirInfoDaoMapper.selectByPrimaryKey(id);
+    }
 
-    /**
-     * 根据水库 ID,删除水库信息
-     *
-     * @param id
-     * @return
-     */
-    Integer deleteReservoirInfo(Integer id);
+    public Integer saveReservoirInfo(ReservoirInfoDao reservoirInfoDao) {
+        return reservoirInfoDaoMapper.insert(reservoirInfoDao);
+    }
+
+    public Integer updateReservoirInfo(ReservoirInfoDao reservoirInfoDao) {
+        return reservoirInfoDaoMapper.updateByPrimaryKeySelective(reservoirInfoDao);
+    }
+
+    public Integer deleteReservoirInfo(Integer id) {
+        return reservoirInfoDaoMapper.deleteByPrimaryKey(id);
+    }
 }
