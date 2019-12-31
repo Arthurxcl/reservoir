@@ -5,6 +5,8 @@
     <title>Reservoir</title>
 </head>
 <body>
-${reservoirInfo.name}
+<#list allResult as result>
+水位：${result.waterLevel}
+</#list>
 </body>
 </html>

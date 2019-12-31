@@ -63,8 +63,7 @@ public class MeasuredResultDao {
      *
      * @mbg.generated Tue Dec 31 10:42:04 CST 2019
      */
-    public MeasuredResultDao(Integer id, String waterLevel, String measuredStorage, String siteName, Date date, Integer reservoirId) {
-        this.id = id;
+    public MeasuredResultDao(String waterLevel, String measuredStorage, String siteName, Date date, Integer reservoirId) {
         this.waterLevel = waterLevel;
         this.measuredStorage = measuredStorage;
         this.siteName = siteName;

@@ -23,6 +23,10 @@ spring:
     content-type: text/html
     # #模板加载路径 按需配置 ,默认路径是 classpath:/templates/
     template-loader-path: classpath:/templates/
+  servlet:
+    multipart:
+      max-file-size: "2048MB"
+      max-request-size: "2048MB"
 mybatis:
   type-aliases-package: com.henu.reservoir.domain
   mapper-locations: classpath:mapper/*.xml
