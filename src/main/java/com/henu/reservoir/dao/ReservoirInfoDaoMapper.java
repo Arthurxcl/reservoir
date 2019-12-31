@@ -50,4 +50,7 @@ public interface ReservoirInfoDaoMapper {
      * @mbg.generated Tue Dec 31 10:42:04 CST 2019
      */
     int updateByPrimaryKey(ReservoirInfoDao record);
+
+    //根据水库名称搜索
+    ReservoirInfoDao selectByName(String name);
 }

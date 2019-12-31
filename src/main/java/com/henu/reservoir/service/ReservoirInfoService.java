@@ -28,4 +28,9 @@ public class ReservoirInfoService {
     public Integer deleteReservoirInfo(Integer id) {
         return reservoirInfoDaoMapper.deleteByPrimaryKey(id);
     }
+
+    //根据水库名称搜索水库信息
+    public ReservoirInfoDao findReservoirInfoByName(String name) {
+        return reservoirInfoDaoMapper.selectByName(name);
+    }
 }
