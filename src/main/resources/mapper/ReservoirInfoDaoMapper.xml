@@ -157,7 +157,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <!-- 根据水库名称查找对应水库id -->
+  <!-- 根据水库名称查找对应水库 -->
   <select id="selectByName" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--
       WARNING - @mbg.generated
