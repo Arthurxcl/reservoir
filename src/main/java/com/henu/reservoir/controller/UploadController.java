@@ -6,13 +6,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 
 @RestController
-public class HelloController {
+public class UploadController {
     @PostMapping("/upload")
     public String upload(MultipartFile fileUpload){
         //获取文件名
         String fileName = fileUpload.getOriginalFilename();
         //获取文件后缀名
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));
+        //String suffixName = fileName.substring(fileName.lastIndexOf("."));
         //获取项目名称
         String path = System.getProperty("user.dir");
         //完整文件名
