@@ -3,11 +3,63 @@
 <head>
     <title>pictureUploading</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <script src="/js/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
-<form enctype="multipart/form-data" method="post" action="/upload">
-    文件：<input type="file" name="fileUpload"/>
-    <input type="submit" value="上传"/>
+<h1>SAR:</h1><br>
+<form enctype="multipart/form-data" method="post" id="upload_sar_form">
+    文件：<input type="file" id="fileUpload"/><br>
+    卫星名称：<input type="text" name="satellite_name"><br>
+    测量日期：<input type="date" name="date"><br>
+    所属周期：<input type="text" name="cycle"><br>
+    左上方经度：<input type="text" name="topL_longitude">
+    左上方纬度：<input type="text" name="topL_latitude"><br>
+    右下方经度：<input type="text" name="lowerR_longitude">
+    右下方纬度：<input type="text" name="lowerR_latitude"><br>
+    算法：<select>${algoList}</select><br>
 </form>
+<button id="upload_sar_submit">提交</button>
+<div id="bar">
+    <div></div>
+</div>
 </body>
 </html>
+
+<script>
+$("#upload_sar_submit").on("click", function () {
+    var fileUpload = $("#fileUpload")[0].files[0];
+    var formData = new FormData($("#upload_sar_form")[0]);
+    formData.append('sar_file', fileUpload);
+    formData.append('algo',$("#upload_sar_form>select  option:selected").val())
+    $.ajax({
+        url:"upload/sar",
+        type:"post",
+        dataType: 'json',
+        data: formData,
+        processData: false,
+        contentType: false,
+        xhr:function () {
+            let xmlHttpRequest = $.ajaxSettings.xhr();
+            xmlHttpRequest.upload.addEventListener('progress', function (e) {
+                let progressRate = (e.loaded / e.total) * 100 + '%';
+                $("#bar>div").width(progressRate);
+                $("#rate").text(progressRate);
+            })
+            return xmlHttpRequest;
+        }
+    })
+})
+</script>
+<style>
+    #bar{
+        height: 20px;
+        background: aliceblue;
+    }
+    #bar>div{
+        transition: width 0.8s;
+        height: 100%;
+        width: 0;
+        background: aquamarine;
+    }
+</style>
