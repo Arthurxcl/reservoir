@@ -35,17 +35,17 @@
                 <div class="span2" id="sidebar">
                     <ul class="nav nav-list bs-docs-sidenav nav-collapse collapse">
                         <li>
-                            <a href="index.html"><i class="icon-chevron-right"></i> 首页</a>
+                            <a href="/index"><i class="icon-chevron-right"></i> 首页</a>
                         </li>
                         
                         <li>
-                            <a href="result.html"><i class="icon-chevron-right"></i> 结果展示</a>
+                            <a href="/result"><i class="icon-chevron-right"></i> 结果展示</a>
                         </li>
                         <li class="active">
-                            <a href="form.html"><i class="icon-chevron-right"></i> 数据提交</a>
+                            <a href="/upload"><i class="icon-chevron-right"></i> 数据提交</a>
                         </li>
                         <li>
-                            <a href="tables.html"><i class="icon-chevron-right"></i> 数据管理</a>
+                            <a href="/tables"><i class="icon-chevron-right"></i> 数据管理</a>
                         </li>
                         
                     </ul>
@@ -62,21 +62,21 @@
                             </div>
                             <div class="block-content collapse in">
                                 <div class="span12">
-                                    <form class="form-horizontal">
+                                    <form class="form-horizontal" enctype="multipart/form-data" method="post" action="/upload/measured">
                                       <fieldset>
                                         <legend>实测水位</legend>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">水库名称 </label>
+                                          <label class="control-label" for="typeahead1">水库名称 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead1" name="reservoirName"  data-provide="typeahead" data-items="4" required>
                                             
                                           </div>
                                         </div>
                                         
                                         <div class="control-group">
-                                          <label class="control-label" for="fileInput">文件上传</label>
+                                          <label class="control-label" for="fileInput1">文件上传</label>
                                           <div class="controls">
-                                            <input class="input-file uniform_on" id="fileInput" type="file">
+                                            <input class="input-file uniform_on" name="measuredFile" id="fileInput1" type="file">
                                           </div>
                                         </div>
                                         
@@ -95,36 +95,36 @@
                                       <fieldset>
                                         <legend>雷达高度计数据</legend>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">水库名称 </label>
+                                          <label class="control-label" for="typeahead2">水库名称 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required> 
+                                            <input type="text" class="span6" id="typeahead2"  data-provide="typeahead2" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">卫星名称 </label>
+                                          <label class="control-label" for="typeahead3">卫星名称 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required> 
+                                            <input type="text" class="span6" id="typeahead3"  data-provide="typeahead3" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">周期 </label>
+                                          <label class="control-label" for="typeahead4">周期 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required> 
+                                            <input type="text" class="span6" id="typeahead4"  data-provide="typeahead4" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="date01">日期</label>
+                                          <label class="control-label" for="date02">日期</label>
                                           <div class="controls">
-                                            <input type="text" class="input-xlarge datepicker" id="date01" value="02/16/12">
+                                            <input type="text" class="input-xlarge datepicker" id="date02" value="02/16/12">
                                             
                                           </div>
                                         </div>
                                         
                                         
                                         <div class="control-group">
-                                          <label class="control-label" for="fileInput">文件上传</label>
+                                          <label class="control-label" for="fileInput2">文件上传</label>
                                           <div class="controls">
-                                            <input class="input-file uniform_on" id="fileInput" type="file">
+                                            <input class="input-file uniform_on" id="fileInput2" type="file">
                                           </div>
                                         </div>
                                         
@@ -143,47 +143,47 @@
                                       <fieldset>
                                         <legend>SAR影像</legend>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">水库名称 </label>
+                                          <label class="control-label" for="typeahead5">水库名称 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead5"  data-provide="typeahead5" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">卫星名称 </label>
+                                          <label class="control-label" for="typeahead6">卫星名称 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead6"  data-provide="typeahead6" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">周期 </label>
+                                          <label class="control-label" for="typeahead7">周期 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead7"  data-provide="typeahead7" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="date01">日期</label>
+                                          <label class="control-label" for="date03">日期</label>
                                           <div class="controls">
-                                            <input type="text" class="input-xlarge datepicker" id="date01" value="02/16/12">
+                                            <input type="text" class="input-xlarge datepicker" id="date03" value="02/16/12">
                                             
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">左上角经纬度 </label>
+                                          <label class="control-label" for="typeahead8">左上角经纬度 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead8"  data-provide="typeahead8" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">左下角经纬度 </label>
+                                          <label class="control-label" for="typeahead9">左下角经纬度 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead9"  data-provide="typeahead9" data-items="4" required>
                                           </div>
                                         </div>
                                         
                                         <div class="control-group">
-                                          <label class="control-label" for="fileInput">文件上传</label>
+                                          <label class="control-label" for="fileInput4">文件上传</label>
                                           <div class="controls">
-                                            <input class="input-file uniform_on" id="fileInput" type="file">
+                                            <input class="input-file uniform_on" id="fileInput4" type="file">
                                           </div>
                                         </div>
                                         
@@ -202,40 +202,40 @@
                                       <fieldset>
                                         <legend>光学影像</legend>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">水库名称 </label>
+                                          <label class="control-label" for="typeahead10">水库名称 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead10"  data-provide="typeahead10" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">卫星名称 </label>
+                                          <label class="control-label" for="typeahead11">卫星名称 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead11"  data-provide="typeahead11" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">周期 </label>
+                                          <label class="control-label" for="typeahead12">周期 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead12"  data-provide="typeahead12" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="date01">日期</label>
+                                          <label class="control-label" for="date05">日期</label>
                                           <div class="controls">
-                                            <input type="text" class="input-xlarge datepicker" id="date01" value="02/16/12">
+                                            <input type="text" class="input-xlarge datepicker" id="date05" value="02/16/12">
                                             
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">左上角经纬度 </label>
+                                          <label class="control-label" for="typeahead13">左上角经纬度 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead13"  data-provide="typeahead13" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
-                                          <label class="control-label" for="typeahead">左下角经纬度 </label>
+                                          <label class="control-label" for="typeahead14">左下角经纬度 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead"  data-provide="typeahead" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead14"  data-provide="typeahead14" data-items="4" required>
                                           </div>
                                         </div>
                                         

@@ -5,37 +5,19 @@ import com.henu.reservoir.service.CutAlgoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.List;
 
 @Controller
-public class UploadController {
+public class SARUploadController {
     @Autowired
     private CutAlgoService cutAlgoService;
-    //@PostMapping("/upload")
-    public String upload(MultipartFile fileUpload){
-        //获取文件名
-        String fileName = fileUpload.getOriginalFilename();
-        //获取文件后缀名
-        //String suffixName = fileName.substring(fileName.lastIndexOf("."));
-        //获取项目名称
-        String path = System.getProperty("user.dir");
-        //完整文件名
-        String filePath = path+"\\src\\main\\resources\\static\\img\\";
-        try {
-            //将图片保存到static文件夹里
-            fileUpload.transferTo(new File(filePath+fileName));
-            return path;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return path;
-        }
-    }
 
-    @GetMapping("/upload")
     public String uploadInit(Model model){
         //读取算法列表，填入表单算法选择位置
         StringBuilder builder = new StringBuilder();
@@ -50,7 +32,7 @@ public class UploadController {
 
     @PostMapping("/upload/sar")
     @ResponseBody
-    public void upload_SAR(@RequestParam("sar_file")MultipartFile sar_file, String satellite_name, String date, String cycle, String topL_longitude, String topL_latitude, String lowerR_longitude, String lowerR_latitude, String algo){
+    public void upload_SAR(@RequestParam("sar_file") MultipartFile sar_file, String satellite_name, String date, String cycle, String topL_longitude, String topL_latitude, String lowerR_longitude, String lowerR_latitude, String algo){
         //处理SAR图像，然后将相关数据存入数据库
         System.out.println("Filename: " + sar_file.getOriginalFilename());
         System.out.println("satellite_name: " + satellite_name);
@@ -84,3 +66,4 @@ public class UploadController {
         }
     }
 }
+
