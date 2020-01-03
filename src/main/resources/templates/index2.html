@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html class="no-js">    
+    <head>
+        <title>水库蓄水量计算系统</title>
+        <!-- Bootstrap -->
+        <link href="../static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="../static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+        <link href="../static/vendors/easypiechart/jquery.easy-pie-chart.css" rel="stylesheet" media="screen">
+        <link href="../static/assets/styles.css" rel="stylesheet" media="screen">
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=nH5MljbSZqw21joZydvfbW6jGXZBOu6c"></script>
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <script src="../static/vendors/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+        <style type="text/css">
+	    body, html{width: 100%;height: 100%;margin:0;font-family:"微软雅黑";}
+	    #allmap{height:500px;width:100%;}
+	    #r-result{width:100%; font-size:14px;}
+  		</style>
+    </head>
+    
+    <body>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="#">水库蓄水量计算系统</a>
+                    
+                        
+                    <!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span2" id="sidebar">
+                    <ul class="nav nav-list bs-docs-sidenav nav-collapse collapse">
+                        <li class="active">
+                            <a href="index2.html"><i class="icon-chevron-right"></i> 首页</a>
+                        </li>
+                        
+                        <li>
+                            <a href="stats.html"><i class="icon-chevron-right"></i> 结果展示</a>
+                        </li>
+                        <li>
+                            <a href="form.html"><i class="icon-chevron-right"></i> 数据提交</a>
+                        </li>
+                        <li>
+                            <a href="tables.html"><i class="icon-chevron-right"></i> 数据管理</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+                
+                <!--/span-->
+                <div class="span10" id="content">    
+                    <div class="row-fluid">
+                        <!-- block -->
+                        <div class="block">
+                            <div class="navbar navbar-inner block-header">
+                                <div class="muted pull-left">水库定位</div>
+                                
+
+                                </div>
+                            </div>
+                            <div class="block-content collapse in">
+								  <div id="allmap"></div>
+								  <div id="r-result">
+								    经度: <input id="longitude" type="text" style="width:100px; margin-right:10px;" />
+								    纬度: <input id="latitude" type="text" style="width:100px; margin-right:10px;" />
+								    <input type="button" value="查询" onclick="theLocation()" />
+								  </div>
+								  <div id="allmap1"></div>
+								  <div id="r-result1">
+								    水库名: <input id="cityName" type="text" style="width:100px; margin-right:10px;" />
+								    <input type="button" value="查询" onclick="theLocation1()" />
+								  </div>
+                            </div>
+                        </div>
+                        <!-- /block -->
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <footer>
+                <p align="middle">&copy; 河南大学计算机学院</p>
+            </footer>
+        </div>
+        <!--/.fluid-container-->
+        <script src="../static/vendors/jquery-1.9.1.min.js"></script>
+        <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+        <script src="../static/vendors/easypiechart/jquery.easy-pie-chart.js"></script>
+        <script src="../static/assets/scripts.js"></script>
+        <script>
+        $(function() {
+            // Easy pie charts
+            $('.chart').easyPieChart({animate: 1000});
+        });
+        </script>
+    </body>
+	<script type="text/javascript">
+	  // 百度地图API功能
+	  var map = new BMap.Map("allmap");
+	  map.centerAndZoom(new BMap.Point(116.331398,39.897445),11);
+	  map.enableScrollWheelZoom(true);
+	  
+	  // 用经纬度设置地图中心点
+	  function theLocation(){
+	    if(document.getElementById("longitude").value != "" && document.getElementById("latitude").value != ""){
+	      map.clearOverlays(); 
+	      var new_point = new BMap.Point(document.getElementById("longitude").value,document.getElementById("latitude").value);
+	      var marker = new BMap.Marker(new_point);  // 创建标注
+	      map.addOverlay(marker);              // 将标注添加到地图中
+	      map.panTo(new_point);      
+	    }
+	  }
+	  var map1 =  new BMap.Map("allmap1");
+	  var point1 = new BMap.Point(116.331398,39.897445);
+	  map1.centerAndZoom(point1,11);
+	  function theLocation1(){
+	    var city = document.getElementById("cityName").value;
+	    if(city != ""){
+	      var local = new BMap.LocalSearch(map, {
+	       renderOptions:{map: map}
+	    });
+	    local.search(city);    // 用城市名设置地图中心点
+	    }
+	  }
+	</script>
+</html>
