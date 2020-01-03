@@ -17,6 +17,10 @@ public class SarImgService {
         this.sarImgDaoMapper = sarImgDaoMapper;
     }
 
+    public SarImgDao findSarImgById(int id){
+        return sarImgDaoMapper.selectByPrimaryKey(id);
+    }
+
     public List<SarImgDao> findSarImgByReservoirAndDate(SarImgDao sarImgDao){
         return sarImgDaoMapper.selectByReservoirIdAtCertainDate(sarImgDao);
     }

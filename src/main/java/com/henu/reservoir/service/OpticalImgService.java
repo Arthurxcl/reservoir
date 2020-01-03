@@ -18,6 +18,10 @@ public class OpticalImgService {
         this.opticalImgDaoMapper = opticalImgDaoMapper;
     }
 
+    public OpticalImgDao findOpticalImgById(int id){
+        return opticalImgDaoMapper.selectByPrimaryKey(id);
+    }
+
     public List<OpticalImgDao> findOpticalImgByReservoirAndDate(OpticalImgDao opticalImgDao){
         return opticalImgDaoMapper.selectByReservoirIdAtCertainDate(opticalImgDao);
     }
