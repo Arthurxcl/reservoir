@@ -2,6 +2,7 @@ package com.henu.reservoir.service;
 
 import com.henu.reservoir.dao.OpticalImgDaoMapper;
 import com.henu.reservoir.domain.OpticalImgDao;
+import com.henu.reservoir.domain.SarImgDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,10 @@ public class OpticalImgService {
         this.opticalImgDaoMapper = opticalImgDaoMapper;
     }
 
+    public OpticalImgDao findOpticalImgById(int id){
+        return opticalImgDaoMapper.selectByPrimaryKey(id);
+    }
+
     public List<OpticalImgDao> findOpticalImgByReservoirAndDate(OpticalImgDao opticalImgDao){
         return opticalImgDaoMapper.selectByReservoirIdAtCertainDate(opticalImgDao);
     }
@@ -26,5 +31,17 @@ public class OpticalImgService {
         opticalImgDao.setreservoir_id(rid);
         opticalImgDao.setDate(date);
         return opticalImgDaoMapper.selectByReservoirIdAtCertainDate(opticalImgDao);
+    }
+
+    public List<OpticalImgDao> findAllOpticalImg(){
+        return opticalImgDaoMapper.selectAll();
+    }
+
+    public List<OpticalImgDao> findOpticalImgByKeyWord(String key){
+        StringBuilder builder = new StringBuilder();
+        builder.append('%');
+        builder.append(key);
+        builder.append('%');
+        return opticalImgDaoMapper.selectByKeyWord(builder.toString(), key);
     }
 }

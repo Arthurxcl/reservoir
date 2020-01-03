@@ -55,4 +55,12 @@ public interface SarImgDaoMapper {
     int updateByPrimaryKey(SarImgDao record);
 
     List<SarImgDao> selectByReservoirIdAtCertainDate(SarImgDao SarImgDao);
+
+    //查找SAR所有图像
+    List<SarImgDao> selectAll();
+
+    //根据关键字查找SAR图像
+    //likeWord = '%' + keyWord + '%'
+    List<SarImgDao> selectByKeyWord(String likeWord, String keyWord);
+
 }
