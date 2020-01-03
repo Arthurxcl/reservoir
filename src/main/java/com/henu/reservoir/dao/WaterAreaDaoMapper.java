@@ -1,6 +1,9 @@
 package com.henu.reservoir.dao;
 
+import com.henu.reservoir.domain.RadarResultDao;
 import com.henu.reservoir.domain.WaterAreaDao;
+
+import java.util.List;
 
 public interface WaterAreaDaoMapper {
     /**
@@ -50,4 +53,13 @@ public interface WaterAreaDaoMapper {
      * @mbg.generated Tue Dec 31 10:42:04 CST 2019
      */
     int updateByPrimaryKey(WaterAreaDao record);
+
+    //通过水库id查找所有WaterAreaDao
+    List<WaterAreaDao> selectByReservoirId(Integer id);
+
+    //通过水库id查找Sar的WaterAreaDao
+    List<WaterAreaDao> selectSarByReservoirId(Integer id);
+
+    //通过水库id查找光学的WaterAreaDao
+    List<WaterAreaDao> selectOpticalByReservoirId(Integer id);
 }

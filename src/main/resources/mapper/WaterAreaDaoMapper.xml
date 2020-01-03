@@ -156,4 +156,30 @@
       is_sar_area = #{isSarArea,jdbcType=TINYINT}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <!--使用reservoir_id获取*-->
+  <select id="selectByReservoirId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from water_area
+    where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
+  </select>
+
+  <!--使用reservoir_id获取SAR的*-->
+  <select id="selectSarByReservoirId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from water_area
+    where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
+    and is_sar_area = true
+  </select>
+
+  <!--使用reservoir_id获取光学的*-->
+  <select id="selectOpticalByReservoirId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from water_area
+    where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
+    and is_sar_area = false
+  </select>
 </mapper>

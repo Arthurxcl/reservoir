@@ -192,4 +192,13 @@
       lowerR_latitude = #{lowerrLatitude,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <!--使用ReservoirId和date选择某日某水库的光学图像-->
+  <select id="selectByReservoirIdAtCertainDate" parameterType="com.henu.reservoir.domain.OpticalImgDao" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from optical_img
+    where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
+    and date = #{date,jdbcType=DATE}
+  </select>
 </mapper>

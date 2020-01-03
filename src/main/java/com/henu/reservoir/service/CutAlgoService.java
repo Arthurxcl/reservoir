@@ -1,14 +1,18 @@
 package com.henu.reservoir.service;
 
+import com.henu.reservoir.dao.CutAlgoDaoMapper;
 import com.henu.reservoir.domain.CutAlgoDao;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.jdbc.SQL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Service
 public class CutAlgoService {
     public List<CutAlgoDao> getAll(){
         //返回所有分割算法

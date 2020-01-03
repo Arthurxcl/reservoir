@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+</head>
+<body>
+<form action="/api/reservoirInfo">
+    <input type="text" name="rname">
+    <button>查询</button>
+</form>
+<hr>
+<h2>光学图像查询测试</h2>
+<form action="/api/reservoirInfo/optical_img">
+    <input type="text" name="rid">
+    <input type="date" name="date">
+    <button>提交</button>
+</form>
+<hr>
+<h2>Sar图像查询测试</h2>
+<form action="/api/reservoirInfo/sar_img">
+    <input type="text" name="rid">
+    <input type="date" name="date">
+    <button>提交</button>
+</form>
+</body>
+</html>

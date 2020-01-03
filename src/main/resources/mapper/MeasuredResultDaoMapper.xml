@@ -145,4 +145,12 @@
       reservoir_id = #{reservoirId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <!--使用reservoir_id获取*-->
+  <select id="selectByReservoirId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from measured_result
+    where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
+  </select>
 </mapper>
