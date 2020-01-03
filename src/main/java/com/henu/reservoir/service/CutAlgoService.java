@@ -14,30 +14,38 @@ import java.util.List;
 
 @Service
 public class CutAlgoService {
+    private CutAlgoService cutAlgoService;
+
+    @Autowired
+    private void setCutAlgoService(CutAlgoService cutAlgoService){
+        this.cutAlgoService = cutAlgoService;
+    }
+
     public List<CutAlgoDao> getAll(){
         //返回所有分割算法
-        List<CutAlgoDao> list = new ArrayList<>();
+        List<CutAlgoDao> list = cutAlgoService.getAll();
         //修改这里，查询数据库
-        list.add(new CutAlgoDao(1, "算法1"));
-        list.add(new CutAlgoDao(2, "算法2"));
-        list.add(new CutAlgoDao(3, "算法3"));
-        list.add(new CutAlgoDao(4, "算法4"));
+
         return list;
     }
 
-    public void process(MultipartFile file, CutAlgoDao algo){
+    public boolean process(MultipartFile file, CutAlgoDao algo){
         //处理图像
+        return true;
     }
 
-    public void process(String path, CutAlgoDao algo){
+    public boolean process(String path, CutAlgoDao algo){
         //处理图像
+        return true;
     }
 
-    public void process(MultipartFile file, int algoId){
+    public boolean process(MultipartFile file, int algoId){
         //处理图像
+        return true;
     }
 
-    public void process(String path, int algoId){
+    public boolean process(String path, int algoId){
         //处理图像
+        return true;
     }
 }
