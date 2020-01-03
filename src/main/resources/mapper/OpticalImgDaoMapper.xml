@@ -201,4 +201,27 @@
     where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
     and date = #{date,jdbcType=DATE}
   </select>
+
+
+  <!--查找SAR所有图像-->
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from optical_img
+    order by date DESC
+  </select>
+
+  <!--根据关键字查找SAR图像-->
+  <select id="selectByKeyWord" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from optical_img
+    where satellite_name like #{likeWord,jdbcType=VARCHAR}
+    or cycle = #{keyWord,jdbcType=INTEGER}
+    or topL_longitude = #{keyWord,jdbcType=VARCHAR}
+    or lowerR_longitude = #{keyWord,jdbcType=VARCHAR}
+    or topL_latitude = #{keyWord,jdbcType=VARCHAR}
+    or lowerR_latitude = #{keyWord,jdbcType=VARCHAR}
+    order by date DESC
+  </select>
 </mapper>
