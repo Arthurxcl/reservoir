@@ -10,21 +10,32 @@ import java.util.List;
 
 @Service
 public class SarImgService {
-    private SarImgDaoMapper SarImgDaoMapper;
+    private SarImgDaoMapper sarImgDaoMapper;
 
     @Autowired
-    private void setSarImgDaoMapper(SarImgDaoMapper SarImgDaoMapper) {
-        this.SarImgDaoMapper = SarImgDaoMapper;
+    private void setSarImgDaoMapper(SarImgDaoMapper sarImgDaoMapper) {
+        this.sarImgDaoMapper = sarImgDaoMapper;
     }
 
-    public List<SarImgDao> findSarImgByReservoirAndDate(SarImgDao SarImgDao){
-        return SarImgDaoMapper.selectByReservoirIdAtCertainDate(SarImgDao);
+    public List<SarImgDao> findSarImgByReservoirAndDate(SarImgDao sarImgDao){
+        return sarImgDaoMapper.selectByReservoirIdAtCertainDate(sarImgDao);
     }
 
     public List<SarImgDao> findSarImgByReservoirAndDate(int rid, Date date){
-        SarImgDao SarImgDao = new SarImgDao();
-        SarImgDao.setreservoir_id(rid);
-        SarImgDao.setDate(date);
-        return SarImgDaoMapper.selectByReservoirIdAtCertainDate(SarImgDao);
+        SarImgDao sarImgDao = new SarImgDao();
+        sarImgDao.setreservoir_id(rid);
+        sarImgDao.setDate(date);
+        return sarImgDaoMapper.selectByReservoirIdAtCertainDate(sarImgDao);
+    }
+    public List<SarImgDao> findAllSarImg(){
+        return sarImgDaoMapper.selectAll();
+    }
+
+    public List<SarImgDao> findSarImgByKeyWord(String key){
+        StringBuilder builder = new StringBuilder();
+        builder.append('%');
+        builder.append(key);
+        builder.append('%');
+        return sarImgDaoMapper.selectByKeyWord(builder.toString(), key);
     }
 }

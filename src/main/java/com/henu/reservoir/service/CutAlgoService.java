@@ -14,16 +14,16 @@ import java.util.List;
 
 @Service
 public class CutAlgoService {
-    private CutAlgoService cutAlgoService;
+    private CutAlgoDaoMapper cutAlgoDaoMapper;
 
     @Autowired
-    private void setCutAlgoService(CutAlgoService cutAlgoService){
-        this.cutAlgoService = cutAlgoService;
+    private void setCutAlgoService(CutAlgoDaoMapper cutAlgoDaoMapper){
+        this.cutAlgoDaoMapper = cutAlgoDaoMapper;
     }
 
     public List<CutAlgoDao> getAll(){
         //返回所有分割算法
-        List<CutAlgoDao> list = cutAlgoService.getAll();
+        List<CutAlgoDao> list = cutAlgoDaoMapper.selectAll();
         //修改这里，查询数据库
 
         return list;
