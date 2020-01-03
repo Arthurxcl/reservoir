@@ -2,6 +2,7 @@ package com.henu.reservoir.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.henu.reservoir.domain.OpticalImgDao;
 import com.henu.reservoir.domain.SarImgDao;
 import com.henu.reservoir.service.OpticalImgService;
 import com.henu.reservoir.service.SarImgService;
@@ -39,6 +40,25 @@ public class DataManageController {
         }
         else {
             list = sarImgService.findSarImgByKeyWord(key);
+        }
+        try {
+            return mapper.writeValueAsString(list);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+
+    @GetMapping("api/data/optical")
+    @ResponseBody
+    public String getOpticalImageList(String key){
+        List<OpticalImgDao> list;
+        if (key==null) {
+            //无关键字
+            list = opticalImgService.findAllOpticalImg();
+        }
+        else {
+            list = opticalImgService.findOpticalImgByKeyWord(key);
         }
         try {
             return mapper.writeValueAsString(list);
