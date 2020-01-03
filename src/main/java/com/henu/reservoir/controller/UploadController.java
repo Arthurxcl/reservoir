@@ -62,7 +62,7 @@ public class UploadController {
         System.out.println("lowerR_latitude: " + lowerR_latitude);
         System.out.println("algo: " + algo);
 
-        /*
+
         String fileName = sar_file.getOriginalFilename();
         //获取文件后缀名
         //String suffixName = fileName.substring(fileName.lastIndexOf("."));
@@ -81,6 +81,6 @@ public class UploadController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
     }
 }
