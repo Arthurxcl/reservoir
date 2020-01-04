@@ -32,15 +32,6 @@ public class MeasuredLevelUploadController {
     @PostMapping(value = "/upload/measured")
     public String uploadMeasured(Model model, @RequestParam("measuredFile") MultipartFile fileUpload,
                                  @RequestParam("reservoirName") String reservoirName) throws IOException, ParseException {
-        //获取文件名
-        String fileName = fileUpload.getOriginalFilename();
-        //获取文件后缀名
-        //String suffixName = fileName.substring(fileName.lastIndexOf("."));
-        //获取项目名称
-        //String path = System.getProperty("user.dir");
-        //完整文件名
-        //String filePath = "\\src\\main\\resources\\static\\img\\" + fileName;
-
         InputStream inputStream = fileUpload.getInputStream();
         FileInputStream fileInputStream = (FileInputStream) inputStream;
 
@@ -53,12 +44,5 @@ public class MeasuredLevelUploadController {
             measuredResultService.saveMeasuredResult(measuredResult);
         }
         return "form";
-        //model.addAttribute("test", test);
-/*        try {
-            //将图片保存到static文件夹里
-            fileUpload.transferTo(new File(filePath+fileName));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
 }

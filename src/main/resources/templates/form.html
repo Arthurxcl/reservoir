@@ -139,51 +139,62 @@
                             </div>
                             <div class="block-content collapse in">
                                 <div class="span12">
-                                    <form class="form-horizontal">
+                                    <form class="form-horizontal" enctype="multipart/form-data" method="post" action="/upload/sar">
                                       <fieldset>
                                         <legend>SAR影像</legend>
                                         <div class="control-group">
                                           <label class="control-label" for="typeahead5">水库名称 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead5"  data-provide="typeahead5" data-items="4" required>
+                                            <input type="text" name="reservoirName" class="span6" id="typeahead5"  data-provide="typeahead5" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
                                           <label class="control-label" for="typeahead6">卫星名称 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead6"  data-provide="typeahead6" data-items="4" required>
+                                            <input type="text" name="satelliteName" class="span6" id="typeahead6"  data-provide="typeahead6" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
                                           <label class="control-label" for="typeahead7">周期 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead7"  data-provide="typeahead7" data-items="4" required>
+                                            <input type="text" class="span6" name="cycle" id="typeahead7"  data-provide="typeahead7" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
                                           <label class="control-label" for="date03">日期</label>
                                           <div class="controls">
-                                            <input type="text" class="input-xlarge datepicker" id="date03">
+                                            <input type="text" name="date" class="input-xlarge datepicker" id="date03">
                                             
                                           </div>
                                         </div>
+
+                                        <div class="control-group">
+                                          <label class="control-label" for="select02">分隔算法</label>
+                                          <div class="controls">
+                                              <select id="select02" name="cutAlgo">
+                                                  <option>FCM</option>
+                                                  <option>ACM</option>
+                                              </select>
+                                          </div>
+                                        </div>
+
                                         <div class="control-group">
                                           <label class="control-label" for="typeahead8">左上角经纬度 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" placeholder="以空格分隔经纬度" id="typeahead8"  data-provide="typeahead8" data-items="4" required>
+                                            <input type="text" class="span6" name="topLeft" placeholder="以空格分隔经纬度" id="typeahead8"  data-provide="typeahead8" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
                                           <label class="control-label" for="typeahead9">左下角经纬度 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" placeholder="以空格分隔经纬度" id="typeahead9"  data-provide="typeahead9" data-items="4" required>
+                                            <input type="text" class="span6" name="lowerRight" placeholder="以空格分隔经纬度" id="typeahead9"  data-provide="typeahead9" data-items="4" required>
                                           </div>
                                         </div>
                                         
                                         <div class="control-group">
                                           <label class="control-label" for="fileInput4">文件上传</label>
                                           <div class="controls">
-                                            <input class="input-file uniform_on" id="fileInput4" type="file">
+                                            <input class="input-file uniform_on" name="sarFile" id="fileInput4" type="file">
                                           </div>
                                         </div>
                                         
@@ -198,7 +209,7 @@
                             </div>
                             <div class="block-content collapse in">
                                 <div class="span12">
-                                    <form class="form-horizontal">
+                                    <form class="form-horizontal"  enctype="multipart/form-data" method="post" action="/upload/optical">
                                       <fieldset>
                                         <legend>光学影像</legend>
                                         <div class="control-group">
@@ -226,6 +237,17 @@
                                             
                                           </div>
                                         </div>
+
+                                        <div class="control-group">
+                                          <label class="control-label" for="select01">分隔算法</label>
+                                          <div class="controls">
+                                              <select id="select01" name="cutAlgo">
+                                                  <option>FCM</option>
+                                                  <option>ACM</option>
+                                              </select>
+                                          </div>
+                                        </div>
+
                                         <div class="control-group">
                                           <label class="control-label" for="typeahead13">左上角经纬度 </label>
                                           <div class="controls">
