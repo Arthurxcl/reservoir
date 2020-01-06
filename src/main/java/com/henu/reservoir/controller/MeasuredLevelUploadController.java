@@ -38,11 +38,15 @@ public class MeasuredLevelUploadController {
         //处理文件, 获得文件中所有数据
         ExtractMeasuredLevel extractMeasuredLevel = new ExtractMeasuredLevel(fileInputStream, 1);
         ArrayList<MeasuredResultDao> allResult = extractMeasuredLevel.ReadDataFromExcel();
-        //存入数据库
 
+        //存入数据库
         for (MeasuredResultDao measuredResult : allResult) {
             measuredResultService.saveMeasuredResult(measuredResult);
         }
-        return "form";
+
+        //显示上传的文件
+        model.addAttribute("allResult", allResult);
+
+        return "showUploadMeasured";
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.Date;
 
-@RestController
+@Controller
 public class SARUploadController {
     @PostMapping(value = "/upload/sar")
     public String upload_SAR(@RequestParam("sarFile") MultipartFile sarFile, @RequestParam("reservoirName") String reservoirName,
@@ -20,7 +20,8 @@ public class SARUploadController {
                              @RequestParam("lowerRight") String lowerLeft, @RequestParam("cutAlgo") String cutAlgo) {
         //处理SAR图像，调用算法
 
-        //然后将相关数据存入数据库
+        //然后将处理后的影像数据存入数据库
+
         //获取文件名
         String fileName = sarFile.getOriginalFilename();
         //获取文件后缀名
