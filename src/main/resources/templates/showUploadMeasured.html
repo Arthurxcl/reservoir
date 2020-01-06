@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Show</title>
@@ -18,14 +18,12 @@
         </thead>
         <tbody>
 
-        <#list allResult as level>
-        <tr>
-            <td>${level.siteName}</td>
-            <td>${level.waterLevel}</td>
-            <td>${level.measuredStorage}</td>
-            <td>${level.date?string('yyyy-MM-dd')}</td>
+        <tr th:each="level, iterStat: ${allResult}" >
+            <td th:text="${level.siteName}"></td>
+            <td th:text="${level.waterLevel}"></td>
+            <td th:text="${level.measuredStorage}"></td>
+            <td th:text="${#dates.format(level.date, 'yyyy-MM-dd')}"></td>
         </tr>
-        </#list>
 
         </tbody>
     </table>

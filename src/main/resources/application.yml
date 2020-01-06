@@ -14,21 +14,28 @@ spring:
     active: dev
   application:
     name: reservoir
-  freemarker:
+  thymeleaf:
     cache: false
-    charset: UTF-8
-    # freemarker模板后缀 默认是 .ftl
     suffix: .html
     enabled: true
-    content-type: text/html
-    # #模板加载路径 按需配置 ,默认路径是 classpath:/templates/
-    template-loader-path: classpath:/templates/
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    prefix: classpath:/templates/
+    mode: HTML
+
   servlet:
     multipart:
       max-file-size: "2048MB"
       max-request-size: "2048MB"
   mvc:
     static-path-pattern: /static/**
+  resources:
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /**
 mybatis:
   type-aliases-package: com.henu.reservoir.domain
   mapper-locations: classpath:mapper/*.xml
