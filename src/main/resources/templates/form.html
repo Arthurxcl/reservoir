@@ -91,40 +91,38 @@
                             </div>
                             <div class="block-content collapse in">
                                 <div class="span12">
-                                    <form class="form-horizontal">
+                                    <form class="form-horizontal" enctype="multipart/form-data" method="post" action="/upload/radar">
                                       <fieldset>
                                         <legend>雷达高度计数据</legend>
                                         <div class="control-group">
                                           <label class="control-label" for="typeahead2">水库名称 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead2"  data-provide="typeahead2" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead2" name="reservoirName"  data-provide="typeahead2" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
                                           <label class="control-label" for="typeahead3">卫星名称 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead3"  data-provide="typeahead3" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead3" name="satelliteName"  data-provide="typeahead3" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
                                           <label class="control-label" for="typeahead4">周期 </label>
                                           <div class="controls">
-                                            <input type="text" class="span6" id="typeahead4"  data-provide="typeahead4" data-items="4" required>
+                                            <input type="text" class="span6" id="typeahead4" name="cycle" data-provide="typeahead4" data-items="4" required>
                                           </div>
                                         </div>
                                         <div class="control-group">
                                           <label class="control-label" for="date02">日期</label>
                                           <div class="controls">
-                                            <input type="text" class="input-xlarge datepicker" id="date02">
+                                            <input type="text" class="input-xlarge datepicker" name="date" id="date02">
                                             
                                           </div>
                                         </div>
-                                        
-                                        
                                         <div class="control-group">
                                           <label class="control-label" for="fileInput2">文件上传</label>
                                           <div class="controls">
-                                            <input class="input-file uniform_on" id="fileInput2" type="file">
+                                            <input class="input-file uniform_on" name="radarFile" multiple webkitdirectory id="fileInput2" type="file">
                                           </div>
                                         </div>
                                         
