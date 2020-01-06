@@ -157,6 +157,13 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
+  <!-- 查找所有水库 -->
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from reservoir_info
+  </select>
+
   <!-- 根据水库名称查找对应水库 -->
   <select id="selectByName" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--
