@@ -36,6 +36,7 @@ spring:
         content:
           enabled: true
           paths: /**
+    static-locations: classpath:/static/, classpath:/upload/
 mybatis:
   type-aliases-package: com.henu.reservoir.domain
   mapper-locations: classpath:mapper/*.xml

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.Base64;
 import java.util.Date;
 
 @Controller
@@ -27,38 +26,22 @@ public class SARUploadController {
         //获取文件名
         String fileName = sarFile.getOriginalFilename();
         //获取文件后缀名
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));
+        //String suffixName = fileName.substring(fileName.lastIndexOf("."));
         //获取项目名称
         String projectPath = System.getProperty("user.dir");
         //完整文件名
         String filePath = "\\src\\main\\resources\\upload\\SARImg\\" + fileName;
-        // 用uuid作为文件名，防止生成的临时文件重复
-        final File sarImg = File.createTempFile(fileName, suffixName);
-        // MultipartFile to File
-        sarFile.transferTo(sarImg);
-        //File转base64
-        String base64 = null;
-        InputStream in = null;
+        model.addAttribute("img_name", "SARImg/" + fileName);
+        model.addAttribute("img_name_after", "SARAfterCut/" + fileName);
 
-        in = new FileInputStream(sarImg);
-        byte[] bytes = new byte[in.available()];
-        int length = in.read(bytes);
-        Base64.Encoder encoder = Base64.getEncoder();
-        base64 = encoder.encodeToString(bytes);
-        model.addAttribute("img", base64);
-        return "showUploadSAR";
-
-
-        //删除临时文件
-        //sarImg.delete();
-        /*try {
+        try {
             //将图片保存到static文件夹里
             sarFile.transferTo(new File(projectPath+filePath));
-            return "Success";
+            return "showUpload";
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "Fail";*/
+        return "showUpload";
     }
 }
 

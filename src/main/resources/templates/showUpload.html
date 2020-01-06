@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Show</title>
+    <link href="../static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+</head>
+<body>
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>处理前</th>
+            <th>处理后</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr>
+            <td><img th:src="'/static/' + ${img_name}"></td>
+            <td><img th:src="'/static/' + ${img_name_after}"></td>
+        </tr>
+
+        </tbody>
+    </table>
+
+</body>
+</html>
