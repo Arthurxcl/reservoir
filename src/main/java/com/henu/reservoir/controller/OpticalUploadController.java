@@ -34,10 +34,10 @@ public class OpticalUploadController {
         try {
             //将图片保存到static文件夹里
             sarFile.transferTo(new File(projectPath+filePath));
-            return "showUpload";
+            return "showUploadImg";
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "showUpload";
+        return "showUploadImg";
     }
 }

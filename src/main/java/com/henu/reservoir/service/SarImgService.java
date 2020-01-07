@@ -42,4 +42,8 @@ public class SarImgService {
         builder.append('%');
         return sarImgDaoMapper.selectByKeyWord(builder.toString(), key);
     }
+
+    public Integer insert(SarImgDao sarImgDao) {
+        return sarImgDaoMapper.insert(sarImgDao);
+    }
 }

@@ -23,7 +23,6 @@ spring:
       content-type: text/html
     prefix: classpath:/templates/
     mode: HTML
-
   servlet:
     multipart:
       max-file-size: "2048MB"
@@ -36,7 +35,8 @@ spring:
         content:
           enabled: true
           paths: /**
-    static-locations: classpath:/static/, classpath:/upload/
+    static-locations: classpath:/upload/
+
 mybatis:
   type-aliases-package: com.henu.reservoir.domain
   mapper-locations: classpath:mapper/*.xml
