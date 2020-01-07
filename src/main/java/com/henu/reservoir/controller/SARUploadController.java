@@ -36,7 +36,7 @@ public class SARUploadController {
         //获取项目名称
         String projectPath = System.getProperty("user.dir");
         //完整文件名
-        String filePath = projectPath + "\\src\\main\\resources\\upload\\SARImg\\" + fileName;
+        String filePath = projectPath + "\\src\\main\\resources\\static\\upload\\SARImg\\" + fileName;
         //将原图像存入服务器
         try {
             //将图片保存到static文件夹里
@@ -47,7 +47,7 @@ public class SARUploadController {
         String fileNameAfterCut = prefixName + ".png";
         //调用算法处理SAR图像
         String in = filePath;
-        String out = projectPath + "\\src\\main\\resources\\upload\\SARAfterCut\\" + fileNameAfterCut;
+        String out = projectPath + "\\src\\main\\resources\\static\\upload\\SARAfterCut\\" + fileNameAfterCut;
 
         FCM fcm = null;
         try {
@@ -56,7 +56,7 @@ public class SARUploadController {
         } catch (MWException e) {
             e.printStackTrace();
         }
-        Thread.sleep(15000);
+        //Thread.sleep(15000);
         /*//处理上传的数据
         //根据水库名称获取水库id
         //Integer reservoir_id = reservoirInfoService.findReservoirInfoByName(reservoirName).getId();
@@ -66,7 +66,7 @@ public class SARUploadController {
         String lowerLongitude = lowerLeft.substring(0, lowerLeft.indexOf(" "));
         String lowerLatitude = lowerLeft.substring(lowerLeft.indexOf(" "));
         SarImgDao sarImgDao = new SarImgDao(1, satelliteName, date, Integer.parseInt(cycle),
-                "\\src\\main\\resources\\upload\\SARAfterCut\\" + fileNameAfterCut, topLongitude,
+                "\\src\\main\\resources\static\\upload\\SARAfterCut\\" + fileNameAfterCut, topLongitude,
                 lowerLongitude, topLatitude, lowerLatitude);
         //将处理后的影像数据存入数据库
         sarImgService.insert(sarImgDao);*/
