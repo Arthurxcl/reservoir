@@ -14,11 +14,9 @@
             <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
         <script src="../static/vendors/modernizr-2.6.2-respond-1.1.0.min.js"></script>
-        <style type="text/css">
-	    body, html{width: 100%;height: 100%;margin:0;font-family:"微软雅黑";}
-	    #allmap{height:500px;width:100%;}
-	    #r-result{width:100%; font-size:14px;}
-  		</style>
+        <script src="../static/js/jquery.min.js"></script>
+        <script src="../static/js/html2canvas.min.js"></script>
+        <link href="../static/css/styles.css" rel="stylesheet">
     </head>
     
     <body>
@@ -64,35 +62,39 @@
                         <div class="block">
                             <div class="navbar navbar-inner block-header">
                                 <div class="muted pull-left">水库定位</div>
-                                
+
 
                                 </div>
                             </div>
-                            <div class="block-content collapse in">
-								  <div id="allmap"></div>
-								  <div id="r-result">
-								    经度: <input id="longitude" type="text" style="width:100px; margin-right:10px;" />
-								    纬度: <input id="latitude" type="text" style="width:100px; margin-right:10px;" />
-								    <input type="button" value="查询" onclick="theLocation()" />
-								  </div>
-								  <div id="allmap1"></div>
-								  <div id="r-result1">
-								    水库名: <input id="cityName" type="text" style="width:100px; margin-right:10px;" />
-								    <input type="button" value="查询" onclick="theLocation1()" />
-								  </div>
+                            <div class="block-content">
+                                <div class="container" id="mapInfo">
+                                    <div class="row">
+                                        <span class="span4">
+                                            水库名:
+                                            <input id="reservoirName" type="text" list="reservoirList">
+                                            <datalist id="reservoirList">
+                                            </datalist>
+                                            <input type="button" class="btn btn-info" value="查询" onclick="search()" />
+                                        </span>
+                                        <span class="span8">
+                                            经度: <input id="longitude" type="text"/>
+                                            纬度: <input id="latitude" type="text" />
+                                            <input type="button" class="btn" value="定位坐标" onclick="theLocation()" />
+                                            <input type="button" class="btn btn-success" value="确定" onclick="submitReservoirName()"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div id="allmap"></div>
                             </div>
-                        </div>
                         <!-- /block -->
                     </div>
                 </div>
             </div>
-            <hr>
             <footer>
                 <p align="middle">&copy; 河南大学计算机学院</p>
             </footer>
         </div>
         <!--/.fluid-container-->
-        <script src="../static/vendors/jquery-1.9.1.min.js"></script>
         <script src="../static/bootstrap/js/bootstrap.min.js"></script>
         <script src="../static/vendors/easypiechart/jquery.easy-pie-chart.js"></script>
         <script src="../static/assets/scripts.js"></script>
@@ -106,30 +108,121 @@
 	<script type="text/javascript">
 	  // 百度地图API功能
 	  var map = new BMap.Map("allmap");
-	  map.centerAndZoom(new BMap.Point(116.331398,39.897445),11);
+	  map.centerAndZoom(new BMap.Point(116.331398,39.897445),12);
 	  map.enableScrollWheelZoom(true);
-	  
+      map.setDefaultCursor("url('../static/images/point.png')");
+      map.setDraggingCursor("url('../static/images/point.png')");
+	  var marker_icon = new BMap.Icon("../static/images/marker.png", new BMap.Size(40, 40));
+      var geolocation = new BMap.Geolocation();
+
+      //地图初始化时，根据浏览器定位至当前位置
+      geolocation.getCurrentPosition(function(r){
+          if(this.getStatus() == BMAP_STATUS_SUCCESS){
+              var mk = new BMap.Marker(r.point,{icon:marker_icon});
+              map.addOverlay(mk);
+              map.panTo(r.point);
+              $("#longitude").val(r.point.lng);
+              $("#latitude").val(r.point.lat);
+              map.addOverlay(new BMap.Marker(BMap.Point(116.400244,39.92556)));
+          }
+          else {
+              alert('未获取到定位权限，获取当前位置失败。');
+          }
+      },{enableHighAccuracy: true})
+      map.addControl(new BMap.NavigationControl());
 	  // 用经纬度设置地图中心点
 	  function theLocation(){
 	    if(document.getElementById("longitude").value != "" && document.getElementById("latitude").value != ""){
 	      map.clearOverlays(); 
 	      var new_point = new BMap.Point(document.getElementById("longitude").value,document.getElementById("latitude").value);
-	      var marker = new BMap.Marker(new_point);  // 创建标注
+	      var marker = new BMap.Marker(new_point,{icon:marker_icon});  // 创建标注
 	      map.addOverlay(marker);              // 将标注添加到地图中
 	      map.panTo(new_point);      
 	    }
 	  }
-	  var map1 =  new BMap.Map("allmap1");
-	  var point1 = new BMap.Point(116.331398,39.897445);
-	  map1.centerAndZoom(point1,11);
-	  function theLocation1(){
-	    var city = document.getElementById("cityName").value;
-	    if(city != ""){
-	      var local = new BMap.LocalSearch(map, {
-	       renderOptions:{map: map}
-	    });
-	    local.search(city);    // 用城市名设置地图中心点
-	    }
-	  }
+
+	  function search(){
+          for(let i = 0; i < reservoirList.length; i++){
+              if ($("#reservoirName").val() === reservoirList[i].name){
+                  //百度定位至某水库中心点
+                  let center_pointLng = (Number(reservoirList[i].longitudeLeft) + Number(reservoirList[i].longitudeRight)) / 2;
+                  let center_pointLat = (Number(reservoirList[i].latitudeLeft) + Number(reservoirList[i].latitudeRight)) / 2;
+                  let new_point = new BMap.Point(center_pointLng,center_pointLat);
+                  $("#longitude").val(center_pointLng);
+                  $("#latitude").val(center_pointLat);
+                  map.panTo(new_point);
+                  map.setZoom(11);
+                  return;
+              }
+          }
+          alert("搜索暂无结果");
+      }
+
+      function submitReservoirName(){
+	      $.get("api/setReservoirId?rname=" + $("#reservoirName").val(), function (data) {
+	          if (data==="success"){
+	              //alert("成功");
+	              window.location.href = "result";
+              }
+          });
+      }
+
+      map.addEventListener("click",function(e){
+          //点击事件，在地图上添加标注点
+          map.clearOverlays();
+          let lng = e.point.lng;
+          let lat = e.point.lat;
+          $("#longitude").val(lng);
+          $("#latitude").val(lat);
+          let point = new BMap.Point(lng,lat);
+          let marker = new BMap.Marker(point,{icon:marker_icon});
+          let zoom = map.getZoom();
+          map.addOverlay(marker);
+
+          //判断点击的坐标是否在水库内
+          for(let i = 0; i < reservoirList.length; i++){
+            if (lng>=reservoirList[i].longitudeLeft&&
+                lng<=reservoirList[i].longitudeRight&&
+                lat>=reservoirList[i].latitudeRight&&
+                lat<=reservoirList[i].latitudeLeft){
+                isWaterArea(lng, lat, zoom, reservoirList[i].name)
+            }
+            else {
+                $("#reservoirName").val("");
+            }
+          }
+
+
+      });
+
+	  function isWaterArea(lng, lat, zoom, rname){
+          $.get("api/map/isWaterArea?lng="+lng+"&lat="+lat+"&zoom="+zoom, function (data) {
+              if (data==="true"){
+                  $("#reservoirName").val(rname);
+              }
+              else {
+                  $("#reservoirName").val("");
+              }
+          });
+      }
+
+      //向系统索要水库信息表并保存，以避免多次查询
+      let reservoirList = [];
+	  $.get("api/reservoirInfo/reservoir", function (data) {
+	      let json = JSON.parse(data);
+	      for (let i = 0; i < json.length; i++){
+              let reservoir = {
+                  name : json[i].name,
+                  longitudeLeft : json[i].longitudeLeft,
+                  latitudeLeft : json[i].latitudeLeft,
+                  longitudeRight : json[i].longitudeRight,
+                  latitudeRight : json[i].latitudeRight
+              };
+              reservoirList.push(reservoir);
+              let option=$("<option></option>").text(reservoir.name);
+	          $("#reservoirList").append(option);
+          }
+      });
+
 	</script>
 </html>

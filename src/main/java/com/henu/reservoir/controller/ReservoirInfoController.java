@@ -54,6 +54,18 @@ public class ReservoirInfoController {
         return reservoirInfoDao.getName();
     }
 
+    @GetMapping("api/reservoirInfo/reservoir")
+    @ResponseBody
+    public String getReservoir(){
+        List<ReservoirInfoDao> list = reservoirInfoService.findAllReservoirInfo();
+        try {
+            return mapper.writeValueAsString(list);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+
     @GetMapping("api/reservoirInfo/measuredResult")
     @ResponseBody
     public String getMeasuredResult(Integer rid) {
