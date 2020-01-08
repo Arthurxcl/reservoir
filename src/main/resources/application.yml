@@ -2,6 +2,9 @@ server:
   port: 8080
   tomcat:
     uri-encoding: utf-8
+    servlet:
+      session:
+        timeout: 300
 spring:
   # 数据源配置
   datasource:
@@ -35,8 +38,7 @@ spring:
         content:
           enabled: true
           paths: /**
-  session:
-    store-type: jdbc
+    static-locations: classpath:/static/
 
 mybatis:
   type-aliases-package: com.henu.reservoir.domain
