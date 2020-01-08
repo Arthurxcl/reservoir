@@ -90,10 +90,10 @@
                     </div>
                 </div>
             </div>
-            <footer>
-                <p align="middle">&copy; 河南大学计算机学院</p>
-            </footer>
         </div>
+        <footer>
+            <p align="middle">&copy; 河南大学计算机学院</p>
+        </footer>
         <!--/.fluid-container-->
         <script src="../static/bootstrap/js/bootstrap.min.js"></script>
         <script src="../static/vendors/easypiechart/jquery.easy-pie-chart.js"></script>
@@ -139,9 +139,21 @@
 	      map.addOverlay(marker);              // 将标注添加到地图中
 	      map.panTo(new_point);      
 	    }
+	    else if ($("#longitude").val() == ""){
+	        alert("请输入经度。");
+	        $("#longitude").focus();
+        }
+	    else {
+	        alert("请输入纬度。");
+	        $("#latitude").focus();
+        }
 	  }
 
 	  function search(){
+	      if ($("#reservoirName").val() == ""){
+	          $("#reservoirName").focus();
+	          return;
+          }
           for(let i = 0; i < reservoirList.length; i++){
               if ($("#reservoirName").val() === reservoirList[i].name){
                   //百度定位至某水库中心点
@@ -159,10 +171,18 @@
       }
 
       function submitReservoirName(){
+          if ($("#reservoirName").val() == ""){
+              $("#reservoirName").focus();
+              return;
+          }
 	      $.get("api/setReservoirId?rname=" + $("#reservoirName").val(), function (data) {
 	          if (data==="success"){
 	              //alert("成功");
 	              window.location.href = "result";
+              }
+	          else {
+	              alert("需要输入正确的水库名称");
+	              $("#reservoirName").focus();
               }
           });
       }
