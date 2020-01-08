@@ -3,11 +3,8 @@ package com.henu.reservoir.controller;
 import com.henu.reservoir.domain.ReservoirInfoDao;
 import com.henu.reservoir.service.ReservoirInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.imageio.ImageIO;
@@ -84,18 +81,13 @@ public class MapController {
         }
         return "false";
     }
-
-    @ModelAttribute
-    private void setGlobalReservoirId(Model model) {
-        model.addAttribute("globalReservoirId", 0);
-    }
-
+    //将水库名转成水库id保存到session中
     @GetMapping("api/setReservoirId")
     @ResponseBody
-    public String setReservoir(String rname, Model model){
+    public String setReservoir(String rname, HttpSession session){
         ReservoirInfoDao dao = reservoirInfoService.findReservoirInfoByName(rname);
         if(dao!=null){
-            model.addAttribute("globalReservoirId", dao.getId());
+            session.setAttribute("reservoirId", dao.getId());
             return "success";
         }
         return "error";

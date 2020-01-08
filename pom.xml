@@ -65,6 +65,7 @@
             <artifactId>poi-ooxml</artifactId>
             <version>3.9</version>
         </dependency>
+        <!-- Jackson用于处理Json相关 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
