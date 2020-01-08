@@ -18,6 +18,7 @@
       <arg column="lowerR_longitude" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="topL_latitude" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="lowerR_latitude" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="algo_name" javaType="java.lang.String" jdbcType="VARCHAR" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List">
@@ -27,7 +28,7 @@
       This element was generated on Tue Dec 31 10:42:04 CST 2019.
     -->
     id, reservoir_id, satellite_name, date, cycle, path, topL_longitude, lowerR_longitude, 
-    topL_latitude, lowerR_latitude
+    topL_latitude, lowerR_latitude, algo_name
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--
@@ -58,11 +59,11 @@
     insert into optical_img (id, reservoir_id, satellite_name, 
       date, cycle, path, 
       topL_longitude, lowerR_longitude, topL_latitude, 
-      lowerR_latitude)
+      lowerR_latitude, algo_name)
     values (#{id,jdbcType=INTEGER}, #{reservoirId,jdbcType=INTEGER}, #{satelliteName,jdbcType=VARCHAR}, 
       #{date,jdbcType=TIMESTAMP}, #{cycle,jdbcType=INTEGER}, #{path,jdbcType=VARCHAR}, 
       #{toplLongitude,jdbcType=VARCHAR}, #{lowerrLongitude,jdbcType=VARCHAR}, #{toplLatitude,jdbcType=VARCHAR}, 
-      #{lowerrLatitude,jdbcType=VARCHAR})
+      #{lowerrLatitude,jdbcType=VARCHAR}, #{algoName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.henu.reservoir.domain.OpticalImgDao">
     <!--

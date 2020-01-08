@@ -56,20 +56,20 @@ public class SARUploadController {
         } catch (MWException e) {
             e.printStackTrace();
         }
-        //Thread.sleep(15000);
-        /*//处理上传的数据
+        //处理上传的数据
         //根据水库名称获取水库id
-        //Integer reservoir_id = reservoirInfoService.findReservoirInfoByName(reservoirName).getId();
+        Integer reservoir_id = reservoirInfoService.findReservoirInfoByName(reservoirName).getId();
         //分解上传的经纬度
         String topLongitude = topLeft.substring(0, topLeft.indexOf(" "));
         String topLatitude = topLeft.substring(topLeft.indexOf(" "));
         String lowerLongitude = lowerLeft.substring(0, lowerLeft.indexOf(" "));
         String lowerLatitude = lowerLeft.substring(lowerLeft.indexOf(" "));
-        SarImgDao sarImgDao = new SarImgDao(1, satelliteName, date, Integer.parseInt(cycle),
-                "\\src\\main\\resources\static\\upload\\SARAfterCut\\" + fileNameAfterCut, topLongitude,
-                lowerLongitude, topLatitude, lowerLatitude);
+        SarImgDao sarImgDao = new SarImgDao(0, reservoir_id, satelliteName, date, Integer.parseInt(cycle),
+                "static\\upload\\SARAfterCut\\" + fileNameAfterCut, topLongitude,
+                lowerLongitude, topLatitude, lowerLatitude, cutAlgo);
         //将处理后的影像数据存入数据库
-        sarImgService.insert(sarImgDao);*/
+        sarImgService.insert(sarImgDao);
+
         //将处理前和处理后的影像传到前端显示
         model.addAttribute("img_name", "SARImg/" + fileName);
         model.addAttribute("img_name_after", "SARAfterCut/" + fileNameAfterCut);

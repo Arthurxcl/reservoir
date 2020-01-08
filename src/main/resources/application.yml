@@ -35,7 +35,7 @@ spring:
         content:
           enabled: true
           paths: /**
-
+    static-locations: file:///D:/Documents/JavaWeb/reservoir/src/main/resources/static/
 mybatis:
   type-aliases-package: com.henu.reservoir.domain
   mapper-locations: classpath:mapper/*.xml

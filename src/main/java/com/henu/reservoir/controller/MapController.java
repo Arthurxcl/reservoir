@@ -18,7 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Controller
-public class mapController {
+public class MapController {
     private ReservoirInfoService reservoirInfoService;
 
     @Autowired
