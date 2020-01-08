@@ -5,6 +5,7 @@ import com.henu.reservoir.domain.CutAlgoDao;
 import com.henu.reservoir.domain.MeasuredResultDao;
 import com.henu.reservoir.service.CutAlgoService;
 import com.henu.reservoir.service.MeasuredResultService;
+import com.henu.reservoir.service.ReservoirInfoService;
 import com.henu.reservoir.util.ExtractMeasuredLevel;
 import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,18 @@ import java.util.ArrayList;
 public class MeasuredLevelUploadController {
     @Autowired
     MeasuredResultService measuredResultService;
+    @Autowired
+    ReservoirInfoService reservoirInfoService;
 
     @PostMapping(value = "/upload/measured")
     public String uploadMeasured(Model model, @RequestParam("measuredFile") MultipartFile fileUpload,
                                  @RequestParam("reservoirName") String reservoirName) throws IOException, ParseException {
         InputStream inputStream = fileUpload.getInputStream();
         FileInputStream fileInputStream = (FileInputStream) inputStream;
-
+        //根据水库名称获取水库id
+        Integer reservoirId = reservoirInfoService.findReservoirInfoByName(reservoirName).getId();
         //处理文件, 获得文件中所有数据
-        ExtractMeasuredLevel extractMeasuredLevel = new ExtractMeasuredLevel(fileInputStream, 1);
+        ExtractMeasuredLevel extractMeasuredLevel = new ExtractMeasuredLevel(fileInputStream, reservoirId);
         ArrayList<MeasuredResultDao> allResult = extractMeasuredLevel.ReadDataFromExcel();
 
         //存入数据库
