@@ -2,6 +2,9 @@ server:
   port: 8080
   tomcat:
     uri-encoding: utf-8
+  servlet:
+    session:
+      timeout: 300
 spring:
   # 数据源配置
   datasource:
