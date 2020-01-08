@@ -60,9 +60,9 @@
       date, cycle, path, 
       topL_longitude, lowerR_longitude, topL_latitude, 
       lowerR_latitude, algo_name)
-    values (#{id,jdbcType=INTEGER}, #{reservoirId,jdbcType=INTEGER}, #{satelliteName,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{reservoir_id,jdbcType=INTEGER}, #{satelliteName,jdbcType=VARCHAR},
       #{date,jdbcType=TIMESTAMP}, #{cycle,jdbcType=INTEGER}, #{path,jdbcType=VARCHAR}, 
-      #{toplLongitude,jdbcType=VARCHAR}, #{lowerrLongitude,jdbcType=VARCHAR}, #{toplLatitude,jdbcType=VARCHAR}, 
+      #{topl_longitude,jdbcType=VARCHAR}, #{lowerr_longitude,jdbcType=VARCHAR}, #{topl_latitude,jdbcType=VARCHAR},
       #{lowerrLatitude,jdbcType=VARCHAR}, #{algoName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.henu.reservoir.domain.OpticalImgDao">

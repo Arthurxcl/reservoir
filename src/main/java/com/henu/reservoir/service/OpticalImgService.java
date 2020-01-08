@@ -2,7 +2,6 @@ package com.henu.reservoir.service;
 
 import com.henu.reservoir.dao.OpticalImgDaoMapper;
 import com.henu.reservoir.domain.OpticalImgDao;
-import com.henu.reservoir.domain.SarImgDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,5 +42,9 @@ public class OpticalImgService {
         builder.append(key);
         builder.append('%');
         return opticalImgDaoMapper.selectByKeyWord(builder.toString(), key);
+    }
+
+    public Integer insert(OpticalImgDao opticalImgDao) {
+        return opticalImgDaoMapper.insert(opticalImgDao);
     }
 }
