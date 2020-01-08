@@ -35,6 +35,8 @@ spring:
         content:
           enabled: true
           paths: /**
+  session:
+    store-type: jdbc
 
 mybatis:
   type-aliases-package: com.henu.reservoir.domain

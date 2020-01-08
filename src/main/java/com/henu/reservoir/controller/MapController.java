@@ -18,7 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Controller
-public class mapController {
+public class MapController {
     private ReservoirInfoService reservoirInfoService;
 
     @Autowired
@@ -90,12 +90,13 @@ public class mapController {
         model.addAttribute("globalReservoirId", 0);
     }
 
+    //将水库名转成水库id保存到session中
     @GetMapping("api/setReservoirId")
     @ResponseBody
-    public String setReservoir(String rname, Model model){
+    public String setReservoir(String rname, HttpSession session){
         ReservoirInfoDao dao = reservoirInfoService.findReservoirInfoByName(rname);
         if(dao!=null){
-            model.addAttribute("globalReservoirId", dao.getId());
+            session.setAttribute("globalReservoirId", dao.getId());
             return "success";
         }
         return "error";
