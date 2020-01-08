@@ -11,13 +11,31 @@ body>.container-fluid{
     right: 0;
 }
 
-body>.container-fluid>.row-fluid, .span10, .span10>.row-fluid{
+#sidebar{
+    margin: 20px 0 0;
+}
+
+body>.container-fluid>.row-fluid, #content>.row-fluid{
     position: relative;
     height: 100%;
     width: 100%;
 }
 
-.span10>.row-fluid>.block-content{
+#content{
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+#content>.row-fluid{
+    overflow: scroll;
+}
+
+#content>.row-fluid::-webkit-scrollbar{
+    display: none;
+}
+
+#content>.row-fluid>.block-content{
     position: absolute;
     top: 61px;
     bottom: 0;
