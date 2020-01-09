@@ -63,4 +63,7 @@ public interface SarImgDaoMapper {
     //likeWord = '%' + keyWord + '%'
     List<SarImgDao> selectByKeyWord(String likeWord, String keyWord);
 
+    //根据路径获取影像id
+    SarImgDao selectByPath(String path);
+
 }

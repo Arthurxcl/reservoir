@@ -225,4 +225,12 @@
     or lowerR_latitude = #{keyWord,jdbcType=VARCHAR}
     order by date DESC
   </select>
+
+  <!-- 根据路径获取光学影像id -->
+  <select id="selectByPath" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from optical_img
+    where path = #{path,jdbcType=VARCHAR}
+  </select>
 </mapper>

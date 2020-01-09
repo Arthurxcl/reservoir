@@ -224,4 +224,12 @@
         or lowerR_latitude = #{keyWord,jdbcType=VARCHAR}
         order by date DESC
     </select>
+
+    <!-- 根据路径获取SAR影像id -->
+    <select id="selectByPath" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from Sar_img
+        where path = #{path,jdbcType=VARCHAR}
+    </select>
 </mapper>

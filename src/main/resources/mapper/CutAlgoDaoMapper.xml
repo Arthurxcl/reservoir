@@ -104,4 +104,12 @@
     <include refid="Base_Column_List" />
     from cut_algo
   </select>
+
+  <!-- 根据分割算法名称获取id -->
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from cut_algo
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
 </mapper>

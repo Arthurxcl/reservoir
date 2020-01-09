@@ -46,4 +46,8 @@ public class SarImgService {
     public Integer insert(SarImgDao sarImgDao) {
         return sarImgDaoMapper.insert(sarImgDao);
     }
+
+    public SarImgDao selectByPath(String path) {
+        return sarImgDaoMapper.selectByPath(path);
+    }
 }

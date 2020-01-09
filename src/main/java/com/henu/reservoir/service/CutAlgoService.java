@@ -48,4 +48,8 @@ public class CutAlgoService {
         //处理图像
         return true;
     }
+
+    public CutAlgoDao selectByName(String name) {
+        return cutAlgoDaoMapper.selectByName(name);
+    }
 }

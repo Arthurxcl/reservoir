@@ -26,4 +26,8 @@ public class WaterAreaService {
                 return waterAreaDaoMapper.selectByReservoirId(id);
         }
     }
+
+    public Integer insert(WaterAreaDao waterAreaDao) {
+        return waterAreaDaoMapper.insert(waterAreaDao);
+    }
 }
