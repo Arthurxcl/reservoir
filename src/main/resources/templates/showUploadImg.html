@@ -12,6 +12,7 @@
         <tr>
             <th>处理前</th>
             <th>处理后</th>
+            <th>水域面积</th>
         </tr>
         </thead>
         <tbody>
@@ -19,10 +20,10 @@
         <tr>
             <td><img th:src="'/static/upload/' + ${img_name}" /></td>
             <td><img th:src="'/static/upload/' + ${img_name_after}" /></td>
+            <td th:text="${waterArea}"></td>
         </tr>
 
         </tbody>
     </table>
-
 </body>
 </html>

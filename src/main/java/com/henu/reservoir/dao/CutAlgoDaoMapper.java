@@ -55,4 +55,7 @@ public interface CutAlgoDaoMapper {
 
     //选择所有分割算法
     List<CutAlgoDao> selectAll();
+
+    //根据分割算法名称获取id
+    CutAlgoDao selectByName(String name);
 }

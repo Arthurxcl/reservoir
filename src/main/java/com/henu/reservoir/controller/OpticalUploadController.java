@@ -1,8 +1,12 @@
 package com.henu.reservoir.controller;
 
 import com.henu.reservoir.domain.OpticalImgDao;
+import com.henu.reservoir.domain.WaterAreaDao;
+import com.henu.reservoir.service.CutAlgoService;
 import com.henu.reservoir.service.OpticalImgService;
 import com.henu.reservoir.service.ReservoirInfoService;
+import com.henu.reservoir.service.WaterAreaService;
+import com.henu.reservoir.util.countWaterArea.Count;
 import fcm_java.ltycl.Sblty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +24,10 @@ public class OpticalUploadController {
     private OpticalImgService opticalImgService;
     @Autowired
     private ReservoirInfoService reservoirInfoService;
+    @Autowired
+    private CutAlgoService cutAlgoService;
+    @Autowired
+    private WaterAreaService waterAreaService;
 
     @PostMapping(value = "/upload/optical")
     public String upload_SAR(Model model, @RequestParam("opticalFile") MultipartFile opticalFile, @RequestParam("reservoirName") String reservoirName,
@@ -68,16 +76,25 @@ public class OpticalUploadController {
         String topLatitude = topLeft.substring(topLeft.indexOf(" "));
         String lowerLongitude = lowerLeft.substring(0, lowerLeft.indexOf(" "));
         String lowerLatitude = lowerLeft.substring(lowerLeft.indexOf(" "));
+        String path = "static\\upload\\opticalAfterCut\\" + fileNameAfterCut;
         OpticalImgDao opticalImgDao = new OpticalImgDao(0, reservoir_id, satelliteName, date, Integer.parseInt(cycle),
-                "static\\upload\\opticalAfterCut\\" + fileNameAfterCut, topLongitude,
-                lowerLongitude, topLatitude, lowerLatitude, cutAlgo);
+                path, topLongitude, lowerLongitude, topLatitude, lowerLatitude, cutAlgo);
         //将处理后的影像数据存入数据库
         opticalImgService.insert(opticalImgDao);
-
+        //计算水域面积
+        Count count = new Count();
+        String waterArea = count.getWaterArea(out);
+        //根据分割算法名称获取id
+        Integer cutId = cutAlgoService.selectByName(cutAlgo).getId();
+        //获取影像id
+        Integer imgId = opticalImgService.selectByPath(path).getId();
+        //将水域面积存入数据库
+        WaterAreaDao waterAreaDao = new WaterAreaDao(0, reservoir_id, waterArea, imgId, cutId, date, (byte) 0);
+        waterAreaService.insert(waterAreaDao);
         //将处理前和处理后的影像传到前端显示
+        model.addAttribute("waterArea", waterArea);
         model.addAttribute("img_name", "opticalImg/" + fileName);
         model.addAttribute("img_name_after", "opticalAfterCut/" + fileNameAfterCut);
-
         return "showUploadImg";
     }
 }

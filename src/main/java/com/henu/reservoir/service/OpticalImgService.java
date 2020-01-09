@@ -47,4 +47,8 @@ public class OpticalImgService {
     public Integer insert(OpticalImgDao opticalImgDao) {
         return opticalImgDaoMapper.insert(opticalImgDao);
     }
+
+    public OpticalImgDao selectByPath(String path) {
+        return opticalImgDaoMapper.selectByPath(path);
+    }
 }

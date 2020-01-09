@@ -1,7 +1,6 @@
 package com.henu.reservoir.dao;
 
 import com.henu.reservoir.domain.OpticalImgDao;
-import com.henu.reservoir.domain.SarImgDao;
 
 import java.util.Date;
 import java.util.List;
@@ -63,4 +62,7 @@ public interface OpticalImgDaoMapper {
     //根据关键字查找SAR图像
     //likeWord = '%' + keyWord + '%'
     List<OpticalImgDao> selectByKeyWord(String likeWord, String keyWord);
+
+    //根据路径获取影像id
+    OpticalImgDao selectByPath(String path);
 }

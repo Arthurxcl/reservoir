@@ -2,8 +2,12 @@ package com.henu.reservoir.controller;
 
 import com.henu.reservoir.domain.ReservoirInfoDao;
 import com.henu.reservoir.domain.SarImgDao;
+import com.henu.reservoir.domain.WaterAreaDao;
+import com.henu.reservoir.service.CutAlgoService;
 import com.henu.reservoir.service.ReservoirInfoService;
 import com.henu.reservoir.service.SarImgService;
+import com.henu.reservoir.service.WaterAreaService;
+import com.henu.reservoir.util.countWaterArea.Count;
 import fcm_java.sar_fcm.Fcm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +24,9 @@ public class SARUploadController {
     private SarImgService sarImgService;
     @Autowired
     private ReservoirInfoService reservoirInfoService;
+    @Autowired CutAlgoService cutAlgoService;
+    @Autowired
+    WaterAreaService waterAreaService;
 
     @PostMapping(value = "/upload/sar")
     public String upload_SAR(Model model, @RequestParam("sarFile") MultipartFile sarFile, @RequestParam("reservoirName") String reservoirName,
@@ -67,16 +74,25 @@ public class SARUploadController {
         String topLatitude = topLeft.substring(topLeft.indexOf(" "));
         String lowerLongitude = lowerLeft.substring(0, lowerLeft.indexOf(" "));
         String lowerLatitude = lowerLeft.substring(lowerLeft.indexOf(" "));
+        String path = "static\\upload\\SARAfterCut\\" + fileNameAfterCut;
         SarImgDao sarImgDao = new SarImgDao(0, reservoir_id, satelliteName, date, Integer.parseInt(cycle),
-                "static\\upload\\SARAfterCut\\" + fileNameAfterCut, topLongitude,
-                lowerLongitude, topLatitude, lowerLatitude, cutAlgo);
+                path, topLongitude, lowerLongitude, topLatitude, lowerLatitude, cutAlgo);
         //将处理后的影像数据存入数据库
         sarImgService.insert(sarImgDao);
-
+        //计算水域面积
+        Count count = new Count();
+        String waterArea = count.getWaterArea(out);
+        //根据分割算法名称获取id
+        Integer cutId = cutAlgoService.selectByName(cutAlgo).getId();
+        //获取影像id
+        Integer imgId = sarImgService.selectByPath(path).getId();
+        //将水域面积存入数据库
+        WaterAreaDao waterAreaDao = new WaterAreaDao(0, reservoir_id, waterArea, imgId, cutId, date, (byte) 1);
+        waterAreaService.insert(waterAreaDao);
         //将处理前和处理后的影像传到前端显示
+        model.addAttribute("waterArea", waterArea);
         model.addAttribute("img_name", "SARImg/" + fileName);
         model.addAttribute("img_name_after", "SARAfterCut/" + fileNameAfterCut);
-
         return "showUploadImg";
     }
 }
