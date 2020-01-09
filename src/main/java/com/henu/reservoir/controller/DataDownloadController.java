@@ -48,8 +48,9 @@ public class DataDownloadController {
     }
 
     private void downloadFile(HttpServletResponse response, String path){
-        File file = new File(path);
-        String filename = path.substring(path.lastIndexOf('/'));
+        String projectPath = System.getProperty("user.dir");
+        File file = new File(projectPath + "\\src\\main\\resources\\" + path);
+        String filename = path.substring(path.lastIndexOf(File.separator) + 1);
         if (file.exists()){
             try {
                 response.addHeader("Content-Disposition",  "attachment; filename=" +  java.net.URLEncoder.encode(filename, "utf-8"));
