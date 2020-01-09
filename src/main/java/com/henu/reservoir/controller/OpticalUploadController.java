@@ -5,6 +5,7 @@ import com.henu.reservoir.service.OpticalImgService;
 import com.henu.reservoir.service.ReservoirInfoService;
 import com.mathworks.toolbox.javabuilder.MWException;
 import fcm.FCM;
+import fcm_java.ltycl.Sblty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 @Controller
@@ -49,14 +51,19 @@ public class OpticalUploadController {
         //调用算法处理SAR图像
         String in = filePath;
         String out = projectPath + "\\src\\main\\resources\\static\\upload\\opticalAfterCut\\" + fileNameAfterCut;
-
-        FCM fcm = null;
+        try {
+            Sblty.ltycl(in, out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        /*FCM fcm = null;
         try {
             fcm = new FCM();
             fcm.fcm(in, out);
         } catch (MWException e) {
             e.printStackTrace();
-        }
+        }*/
+
         //处理上传的数据
         //根据水库名称获取水库id
         Integer reservoir_id = reservoirInfoService.findReservoirInfoByName(reservoirName).getId();

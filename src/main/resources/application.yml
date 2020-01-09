@@ -2,9 +2,9 @@ server:
   port: 8080
   tomcat:
     uri-encoding: utf-8
-  servlet:
-    session:
-      timeout: 300
+    servlet:
+      session:
+        timeout: 300
 spring:
   # 数据源配置
   datasource:
@@ -38,7 +38,8 @@ spring:
         content:
           enabled: true
           paths: /**
-    static-locations: file:///D:/Documents/JavaWeb/reservoir/src/main/resources/static/
+    static-locations: file:C:/Users/bzdbz/OneDrive/reservoir999999/reservoir/src/main/resources/static/
+
 mybatis:
   type-aliases-package: com.henu.reservoir.domain
   mapper-locations: classpath:mapper/*.xml

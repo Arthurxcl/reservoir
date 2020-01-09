@@ -6,6 +6,7 @@ import com.henu.reservoir.service.ReservoirInfoService;
 import com.henu.reservoir.service.SarImgService;
 import com.mathworks.toolbox.javabuilder.MWException;
 import fcm.FCM;
+import fcm_java.sar_fcm.Fcm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,11 +50,16 @@ public class SARUploadController {
         String in = filePath;
         String out = projectPath + "\\src\\main\\resources\\static\\upload\\SARAfterCut\\" + fileNameAfterCut;
 
-        FCM fcm = null;
+        /*FCM fcm = null;
         try {
             fcm = new FCM();
             fcm.fcm(in, out);
         } catch (MWException e) {
+            e.printStackTrace();
+        }*/
+        try {
+            Fcm.fcm3(in, out);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //处理上传的数据

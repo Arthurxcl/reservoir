@@ -85,3 +85,35 @@ body>footer{
 body>footer p{
     margin: 0;
 }
+
+#image_viewer {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1031;
+    overflow: auto;
+}
+
+#image_viewer #background{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: black;
+    opacity: 0.7;
+}
+
+#image_viewer img{
+    height: 90%;
+    max-height: 90%;
+    width: auto;
+    max-width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
