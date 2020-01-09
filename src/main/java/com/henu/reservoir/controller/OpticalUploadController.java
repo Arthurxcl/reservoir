@@ -3,8 +3,7 @@ package com.henu.reservoir.controller;
 import com.henu.reservoir.domain.OpticalImgDao;
 import com.henu.reservoir.service.OpticalImgService;
 import com.henu.reservoir.service.ReservoirInfoService;
-import com.mathworks.toolbox.javabuilder.MWException;
-import fcm.FCM;
+import fcm_java.ltycl.Sblty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,12 +48,16 @@ public class OpticalUploadController {
         //调用算法处理SAR图像
         String in = filePath;
         String out = projectPath + "\\src\\main\\resources\\static\\upload\\opticalAfterCut\\" + fileNameAfterCut;
-
-        FCM fcm = null;
+        /*FCM fcm = null;
         try {
             fcm = new FCM();
             fcm.fcm(in, out);
         } catch (MWException e) {
+            e.printStackTrace();
+        }*/
+        try {
+            Sblty.ltycl(in, out);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //处理上传的数据
