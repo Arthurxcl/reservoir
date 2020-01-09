@@ -49,7 +49,7 @@ public class DataManageController {
 
     @GetMapping("api/data/image")
     @ResponseBody
-    public String getSarImageList(){
+    public String getImageList(){
         buildReservoirInfoDaoHashMap();
         List<SarImgDao> list1 = sarImgService.findAllSarImg();
         List<OpticalImgDao> list2 = opticalImgService.findAllOpticalImg();
