@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 import Altitude_Sentinel3_A.Radar;
@@ -26,7 +26,8 @@ public class RadarLevelUploadController {
     @ResponseBody
     public String upload_SAR(Model model, @RequestParam("radarFile") MultipartFile[] radarFile,
                              @RequestParam("reservoirName") String reservoirName, @RequestParam("satelliteName")String satelliteName,
-                             @RequestParam("cycle") String cycle, @RequestParam("date") Date date) throws MWException {
+                             @RequestParam("cycle") String cycle, @RequestParam("date") Date date, @RequestParam("topLeft") String topLeft,
+                             @RequestParam("lowerRight") String lowerLeft) throws MWException, IOException {
         // 获得当前时间
         DateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         // 转换为字符串
@@ -55,14 +56,37 @@ public class RadarLevelUploadController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //分解上传的经纬度
+        String topLatitude = topLeft.substring(topLeft.indexOf(" "));
+        String lowerLatitude = lowerLeft.substring(lowerLeft.indexOf(" "));
+
         //处理上传的雷达高度计数据, 生成文本文件
         String str_in = uploadDirPath + "\\enhanced_measurement.nc";
         String out01 = uploadDirPath + "\\01.txt";
         String out20 = uploadDirPath + "\\20.txt";
         Radar radar = new Radar();
-        radar.Altitude_Sentinel3_A(str_in, out01, out20, 32.93, 32.97);
+        //32.93, 32.97
+        radar.Altitude_Sentinel3_A(str_in, out01, out20, Double.parseDouble(lowerLatitude), Double.parseDouble(topLatitude));
         //处理文本文件
-
+        File file01 = new File(out01);
+        File file20 = new File(out20);
+        FileInputStream[] fin = new FileInputStream[]{new FileInputStream(file01), new FileInputStream(file20)};
+        //处理 01.txt, 将每行数据存入 list01
+        ArrayList<String> list01 = new ArrayList<>();
+        InputStreamReader reader = new InputStreamReader(fin[0]);
+        BufferedReader buffReader = new BufferedReader(reader);
+        String strTmp = "";
+        while((strTmp = buffReader.readLine())!=null){
+            list01.add(strTmp);
+        }
+        //处理 20.txt, 将每行数据存入 list20
+        ArrayList<String> list20 = new ArrayList<>();
+        reader = new InputStreamReader(fin[1]);
+        buffReader = new BufferedReader(reader);
+        while((strTmp = buffReader.readLine())!=null){
+            list20.add(strTmp);
+        }
+        buffReader.close();
 
         return "test";
     }
