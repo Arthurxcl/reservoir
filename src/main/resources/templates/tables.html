@@ -96,8 +96,7 @@
         <!--script src="../static/vendors/jquery-1.9.1.js"></script-->
         <script src="../static/bootstrap/js/bootstrap.min.js"></script>
         <script src="../static/vendors/datatables/js/jquery.dataTables.js"></script>
-
-
+        <script src="../static/js/Image_viewer.js"></script>
         <script src="../static/assets/scripts.js"></script>
         <script src="../static/assets/DT_bootstrap.js"></script>
         <script>
@@ -108,7 +107,7 @@
                         "url": "api/data/image",
                         "dataSrc": function (json) {
                             for ( let i=0, ien=json.length ; i<ien ; i++ ) {
-                                json[i]["img"] = "<img src=\"" + json[i]["path"] + "\"/>";
+                                json[i]["img"] = "<img src=\"" + json[i]["path"] + "\" onclick='view_image(this)'/>";
                                 json[i]["download_link"] = "<a href=\"api/download/image?type=" + json[i]["type"] + "&id=" + json[i]["id"] + "\">下载</a>";
                                 if (json[i]["type"] === "sar"){
                                     json[i]["type"] = "SAR图像";
