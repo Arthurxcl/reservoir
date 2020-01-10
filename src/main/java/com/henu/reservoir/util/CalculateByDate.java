@@ -1,0 +1,143 @@
+package com.henu.reservoir.util;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 根据两个日期计算出每天的水位，水域面积，蓄水量
+ */
+public class CalculateByDate {
+    private Date startDate;
+    private Date endDate;
+    private Integer startDay;
+    private Integer endDay;
+
+    public CalculateByDate() {
+    }
+
+    public CalculateByDate(Date startDate, Date endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startDay = this.getDayByDate(startDate);
+        this.endDay = this.getDayByDate(endDate);
+    }
+
+    /**
+     * 根据日期计算是一年中的第几天
+     */
+    public Integer getDayByDate(Date current) {
+        String str = String.format("%tj", current);
+        return Integer.parseInt(str);
+    }
+
+    /**
+     * 计算实测水位
+     */
+    public Double calMeasuredLevel(Integer day) {
+        double p1 = -1.416 * 0.00000001;
+        double p2 = 8.078 * 0.000001;
+        double p3 = -0.0009421;
+        double p4 = -0.03026;
+        double p5 = 156.9;
+        double result = p1 *Math.pow(day, 4) + p2*Math.pow(day, 3) + p3*Math.pow(day, 2) + p4*day + p5;
+        return result;
+    }
+
+    /**
+     * 计算起始日期到结束日期的实测水位
+     * @return result
+     */
+    public ArrayList<Double> calPeriodMeasuredLevel() {
+        ArrayList<Double> result = new ArrayList<>();
+        for (int i = this.startDay; i < this.endDay; i++) {
+            result.add(calMeasuredLevel(i));
+        }
+        return result;
+    }
+
+    /**
+     * 计算遥测水位
+     */
+    public Double calRadarLevel(Integer day) {
+        Double p1 = -1.266 * 0.00000001;
+        Double p2 = 6.889 * 0.000001;
+        Double p3 = -0.0006524;
+        Double p4 = -0.05273;
+        Double p5 = 155.8;
+        Double result = p1 *Math.pow(day, 4) + p2*Math.pow(day, 3) + p3*Math.pow(day, 2) + p4*day + p5;
+        return result;
+    }
+
+    /**
+     * 计算起始日期到结束日期的遥测水位
+     * @return result
+     */
+    public ArrayList<Double> calPeriodRadarLevel() {
+        ArrayList<Double> result = new ArrayList<>();
+        for (int i = this.startDay; i < this.endDay; i++) {
+            result.add(calRadarLevel(i));
+        }
+        return result;
+    }
+
+    /**
+     * 根据遥测水位和SAR水域面积计算蓄水量
+     */
+    public Double calStorageByRadarAndSAR(Integer day) {
+        Double result = Math.pow(day, 3) + Math.pow(day, 2) + day + 16;
+        return result;
+    }
+    public ArrayList<Double> calPeriodStorageByRadarAndSAR() {
+        ArrayList<Double> result = new ArrayList<>();
+        for (int i = this.startDay; i < this.endDay; i++) {
+            result.add(calStorageByRadarAndSAR(i));
+        }
+        return result;
+    }
+
+    /**
+     * 根据遥测水位和光学水域面积计算蓄水量
+     */
+    public Double calStorageByRadarAndOptical(Integer day) {
+        Double result = Math.pow(day, 3) + Math.pow(day, 2) + day + 16;
+        return result;
+    }
+    public ArrayList<Double> calPeriodStorageByRadarAndOptical() {
+        ArrayList<Double> result = new ArrayList<>();
+        for (int i = this.startDay; i < this.endDay; i++) {
+            result.add(calStorageByRadarAndOptical(i));
+        }
+        return result;
+    }
+
+    /**
+     * 根据遥测水位和SAR水域面积和光学水域面积计算蓄水量
+     */
+    public Double calStorageByRadarSAROptical(Integer day) {
+        Double result = Math.pow(day, 3) + Math.pow(day, 2) + day + 16;
+        return result;
+    }
+    public ArrayList<Double> calPeriodStorageByRadarSAROptical() {
+        ArrayList<Double> result = new ArrayList<>();
+        for (int i = this.startDay; i < this.endDay; i++) {
+            result.add(calStorageByRadarSAROptical(i));
+        }
+        return result;
+    }
+
+    /**
+     * 根据实测水位和SAR水域面积和光学水域面积计算蓄水量
+     */
+    public Double calStorageByMeasuredSAROptical(Integer day) {
+        Double result = Math.pow(day, 3) + Math.pow(day, 2) + day + 16;
+        return result;
+    }
+    public ArrayList<Double> calPeriodStorageByMeasuredSAROptical() {
+        ArrayList<Double> result = new ArrayList<>();
+        for (int i = this.startDay; i < this.endDay; i++) {
+            result.add(calStorageByMeasuredSAROptical(i));
+        }
+        return result;
+    }
+}
