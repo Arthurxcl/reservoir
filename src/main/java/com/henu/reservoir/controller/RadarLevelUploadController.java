@@ -1,8 +1,15 @@
 package com.henu.reservoir.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.henu.reservoir.domain.RadarResultDao;
+import com.henu.reservoir.service.RadarResultService;
+import com.henu.reservoir.service.ReservoirInfoService;
 import com.mathworks.toolbox.javabuilder.MWException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,6 +20,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import Altitude_Sentinel3_A.Radar;
 
@@ -22,12 +30,35 @@ import Altitude_Sentinel3_A.Radar;
 
 @Controller
 public class RadarLevelUploadController {
+
+    private ReservoirInfoService reservoirInfoService;
+    private RadarResultService radarResultService;
+
+    @Autowired
+    private void setServices(
+            ReservoirInfoService reservoirInfoService,
+            RadarResultService radarResultService
+    ){
+        this.reservoirInfoService = reservoirInfoService;
+        this.radarResultService = radarResultService;
+    }
+
+    private ObjectMapper mapper = new ObjectMapper();
+    private List<RadarResultDao> radarResultDaoList = new ArrayList<>();
+
+
     @PostMapping(value = "/upload/radar")
     @ResponseBody
     public String upload_SAR(Model model, @RequestParam("radarFile") MultipartFile[] radarFile,
                              @RequestParam("reservoirName") String reservoirName, @RequestParam("satelliteName")String satelliteName,
                              @RequestParam("cycle") String cycle, @RequestParam("date") Date date, @RequestParam("topLeft") String topLeft,
                              @RequestParam("lowerRight") String lowerLeft) throws MWException, IOException {
+        //由水库名获得水库id
+        int reservoirId = reservoirInfoService.findReservoirInfoByName(reservoirName).getId();
+
+        //清空上一次的结果
+        radarResultDaoList.clear();
+
         // 获得当前时间
         DateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         // 转换为字符串
@@ -67,6 +98,10 @@ public class RadarLevelUploadController {
         Radar radar = new Radar();
         //32.93, 32.97
         radar.Altitude_Sentinel3_A(str_in, out01, out20, Double.parseDouble(lowerLatitude), Double.parseDouble(topLatitude));
+
+        //删除.nc文件
+        deleteFilesBySuffix(uploadDirPath, ".txt", true);
+
         //处理文本文件
         File file01 = new File(out01);
         File file20 = new File(out20);
@@ -88,6 +123,122 @@ public class RadarLevelUploadController {
         }
         buffReader.close();
 
-        return "test";
+        //从list01中任取一个减数
+        double[] dlist = new double[list01.size()];
+        for (int i = 0; i<list01.size();i++){
+            String sitem = list01.get(i);
+            String[] strings = sitem.split(",");
+            dlist[i] = Double.parseDouble(strings[9]);
+        }
+        double d = dlist[new Random().nextInt(dlist.length)];
+
+        //将list20中的结果存入radarResultDaoList, 同时装入radarItemList20，以转成json发向前端
+        List<RadarItem> radarItemList20 = new ArrayList<>();
+        for (int i = 0; i<list20.size(); i++) {
+            String sitem = list20.get(i);
+            String[] strings = sitem.split(",");
+            double level = Double.parseDouble(strings[7]) - d + 1.46;
+            radarItemList20.add(new RadarItem(i,Double.parseDouble(strings[2]),Double.parseDouble(strings[3]), level));
+            //-----------------改
+            radarResultDaoList.add(new RadarResultDao(0, date, level + "", 1, "siteLongitude", "siteLatitude", reservoirId));
+        }
+
+        //转换成json返回
+        try {
+            return mapper.writeValueAsString(radarItemList20);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+
+    @GetMapping("upload/radar/choose")
+    @ResponseBody
+    public String chooseRadarData(int index){
+        try {
+            radarResultService.addRadarResult(radarResultDaoList.get(index));
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "error";
+
+    }
+
+    //转Json用的数据项
+    private class RadarItem{
+        private int index;
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public double getLng() {
+            return lng;
+        }
+
+        public void setLng(double lng) {
+            this.lng = lng;
+        }
+
+        public double getLat() {
+            return lat;
+        }
+
+        public void setLat(double lat) {
+            this.lat = lat;
+        }
+
+        private double lng;
+        private double lat;
+        private double level;
+
+        public double getLevel() {
+            return level;
+        }
+
+        public void setLevel(double level) {
+            this.level = level;
+        }
+
+        public RadarItem(int index, double lng, double lat, double level){
+            this.index = index;
+            this.lng = lng;
+            this.lat = lat;
+            this.level = level;
+        }
+    }
+
+    //批量删除相同后缀的文件
+    private boolean deleteFilesBySuffix(String path, String suffix, boolean reverse){
+        //        路径->path;
+        //        后缀->suffix;
+        //    是否反选->reverse;
+        if ("".equals(path) || "".equals(suffix)){
+            return false;
+        }
+        FileFilter fileFilter = pathname -> {
+            if (pathname.isDirectory()){
+                return false;
+            }
+            else {
+                if (pathname.getName().endsWith(suffix)){
+                    return !reverse;
+                }
+            }
+            return reverse;
+        };
+        File[] files = new File(path).listFiles(fileFilter);
+        if (files != null){
+            for (File file : files) {
+                file.delete();
+            }
+        }
+        return false;
     }
 }
+

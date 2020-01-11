@@ -61,245 +61,264 @@
                             <div class="navbar navbar-inner block-header">
                                 <div class="muted pull-left">数据上传</div>
                             </div>
+                            <div class="tabbable tabs-left">
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a href="#upload_measured" data-toggle="tab">实<br>测<br>水<br>位</a></li>
+                                    <li><a href="#upload_radar" data-toggle="tab">雷<br>达<br>高<br>度<br>计</a></li>
+                                    <li><a href="#upload_sar" data-toggle="tab">S<br>A<br>R<br>影<br>像</a></li>
+                                    <li><a href="#upload_optical" data-toggle="tab">光<br>学<br>影<br>像</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="upload_measured">
 
-                            <ul class="nav nav-tabs">
-                                <li class="active"><a href="#upload_measured" data-toggle="tab">实测水位</a></li>
-                                <li><a href="#upload_radar" data-toggle="tab">雷达高度计</a></li>
-                                <li><a href="#upload_sar" data-toggle="tab">SAR影像</a></li>
-                                <li><a href="#upload_optical" data-toggle="tab">光学影像</a></li>
-                            </ul>
-                            <div class="tab-content">
-                                <div class="tab-pane active" id="upload_measured">
+                                        <div class="block-content collapse in">
+                                            <div class="span12">
+                                                <legend class="title" id="form-measured-title">上传实测水位</legend>
+                                                <div class="row-fluid">
+                                                    <form class="form-horizontal span12" enctype="multipart/form-data" method="post" action="/upload/measured">
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead1">水库名称 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" id="typeahead1" name="reservoirName"  data-provide="typeahead" data-items="4" required>
 
-                                    <div class="block-content collapse in">
-                                        <div class="span2">
-                                            <div class="title">实测水位</div>
-                                            <div>list</div>
-                                        </div>
-                                        <div class="span10">
-                                            <form class="form-horizontal" enctype="multipart/form-data" method="post" action="/upload/measured">
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead1">水库名称 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" id="typeahead1" name="reservoirName"  data-provide="typeahead" data-items="4" required>
+                                                            </div>
+                                                        </div>
 
-                                                    </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="fileInput1">文件上传</label>
+                                                            <div class="controls">
+                                                                <input class="input-file uniform_on" name="measuredFile" id="fileInput1" type="file">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-actions">
+                                                            <button type="submit" class="btn btn-primary">提交</button>
+                                                            <button type="reset" class="btn">取消</button>
+                                                        </div>
+                                                    </form>
                                                 </div>
 
-                                                <div class="control-group">
-                                                    <label class="control-label" for="fileInput1">文件上传</label>
-                                                    <div class="controls">
-                                                        <input class="input-file uniform_on" name="measuredFile" id="fileInput1" type="file">
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-actions">
-                                                    <button type="submit" class="btn btn-primary">提交</button>
-                                                    <button type="reset" class="btn">取消</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="tab-pane" id="upload_radar">
-                                    <div class="block-content collapse in">
-                                        <div class="span2">
-                                            <div class="title">雷达高度计数据</div>
-                                            <div>list</div>
-                                        </div>
-                                        <div class="span10">
-                                            <form class="form-horizontal" enctype="multipart/form-data" method="post" action="/upload/radar">
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead2">水库名称 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" id="typeahead2" name="reservoirName"  data-provide="typeahead2" data-items="4" required>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead3">卫星名称 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" id="typeahead3" name="satelliteName"  data-provide="typeahead3" data-items="4" required>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead4">周期 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" id="typeahead4" name="cycle" data-provide="typeahead4" data-items="4" required>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="date02">日期</label>
-                                                    <div class="controls">
-                                                        <input type="text" class="input-xlarge datepicker" name="date" id="date02">
-
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="fileInput2">文件上传</label>
-                                                    <div class="controls">
-                                                        <input class="input-file uniform_on" name="radarFile" multiple webkitdirectory id="fileInput2" type="file">
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-actions">
-                                                    <button type="submit" class="btn btn-primary">提交</button>
-                                                    <button type="reset" class="btn">取消</button>
-                                                </div>
-                                            </form>
-
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="tab-pane" id="upload_sar">
-                                    <div class="block-content collapse in">
-                                        <div class="span2">
-                                            <div class="title">SAR影像</div>
-                                            <div>list</div>
-                                        </div>
-                                        <div class="span10">
-                                            <form class="form-horizontal" enctype="multipart/form-data" method="post" action="/upload/sar">
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead5">水库名称 </label>
-                                                    <div class="controls">
-                                                        <input type="text" name="reservoirName" class="span6" id="typeahead5"  data-provide="typeahead5" data-items="4" required>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead6">卫星名称 </label>
-                                                    <div class="controls">
-                                                        <input type="text" name="satelliteName" class="span6" id="typeahead6"  data-provide="typeahead6" data-items="4" required>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead7">周期 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" name="cycle" id="typeahead7"  data-provide="typeahead7" data-items="4" required>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="date03">日期</label>
-                                                    <div class="controls">
-                                                        <input type="text" name="date" class="input-xlarge datepicker" id="date03">
+                                    <div class="tab-pane" id="upload_radar">
+                                        <div class="block-content collapse in">
+                                            <div class="span12">
+                                                <legend class="title" id="form-radar-title">上传雷达高度计数据</legend>
+                                                <div class="row-fluid">
+                                                    <form class="form-horizontal span12" id="form_radar_1" enctype="multipart/form-data">
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead2">水库名称 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" id="typeahead2" name="reservoirName"  data-provide="typeahead2" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead3">卫星名称 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" id="typeahead3" name="satelliteName"  data-provide="typeahead3" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead4">周期 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" id="typeahead4" name="cycle" data-provide="typeahead4" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="date02">日期</label>
+                                                            <div class="controls">
+                                                                <input type="text" class="input-xlarge datepicker" name="date" id="date02">
 
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead15">左上角经纬度 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" name="topLeft" placeholder="以空格分隔经纬度" id="typeahead15"  data-provide="typeahead13" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead16">右下角经纬度 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" name="lowerRight" placeholder="以空格分隔经纬度" id="typeahead16"  data-provide="typeahead14" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="fileInput2">文件上传</label>
+                                                            <div class="controls">
+                                                                <input class="input-file uniform_on" name="radarFile" multiple webkitdirectory id="fileInput2" type="file">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-actions">
+                                                            <button type="button" class="btn btn-primary" id="form_radar_1_submit" onclick="submit_radar()">提交</button>
+                                                            <button type="reset" class="btn">取消</button>
+                                                        </div>
+                                                    </form>
+                                                    <div id="form_radar_2" class="span10" style="display: none">
+                                                        选择合适的数据项：
+                                                        <select id="form_radar_2_select">
+
+                                                        </select><br>
+                                                        经度：<p id="form_radar_2_p_lng"></p><br>
+                                                        纬度：<p id="form_radar_2_p_lat"></p><br>
+                                                        水位：<p id="form_radar_2_p_level"></p><br>
+                                                        <button class="btn btn-primary" onclick="form_radar_2_submit_click()">确认</button>
+                                                        <button class="btn" onclick="form_radar_2_return_click()">返回</button>
                                                     </div>
                                                 </div>
-
-                                                <div class="control-group">
-                                                    <label class="control-label" for="select02">分割算法</label>
-                                                    <div class="controls">
-                                                        <select id="select02" name="cutAlgo">
-                                                            <option>FCM</option>
-                                                            <option>ACM</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead8">左上角经纬度 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" name="topLeft" placeholder="以空格分隔经纬度" id="typeahead8"  data-provide="typeahead8" data-items="4" required>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead9">右下角经纬度 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" name="lowerRight" placeholder="以空格分隔经纬度" id="typeahead9"  data-provide="typeahead9" data-items="4" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="control-group">
-                                                    <label class="control-label" for="fileInput4">文件上传</label>
-                                                    <div class="controls">
-                                                        <input class="input-file uniform_on" name="sarFile" id="fileInput4" type="file">
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-actions">
-                                                    <button type="submit" class="btn btn-primary">提交</button>
-                                                    <button type="reset" class="btn">取消</button>
-                                                </div>
-                                            </form>
-
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="tab-pane" id="upload_optical">
-                                    <div class="block-content collapse in">
-                                        <div class="span2">
-                                            <div class="title">光学影像</div>
-                                            <div>list</div>
+                                    <div class="tab-pane" id="upload_sar">
+                                        <div class="block-content collapse in">
+                                            <div class="span12">
+                                                <legend class="title" id="form-sar-title">上传SAR影像</legend>
+                                                <div class="row-fluid">
+                                                    <form class="form-horizontal span12" enctype="multipart/form-data" method="post" action="/upload/sar">
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead5">水库名称 </label>
+                                                            <div class="controls">
+                                                                <input type="text" name="reservoirName" class="span6" id="typeahead5"  data-provide="typeahead5" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead6">卫星名称 </label>
+                                                            <div class="controls">
+                                                                <input type="text" name="satelliteName" class="span6" id="typeahead6"  data-provide="typeahead6" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead7">周期 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" name="cycle" id="typeahead7"  data-provide="typeahead7" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="date03">日期</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="date" class="input-xlarge datepicker" id="date03">
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="select02">分割算法</label>
+                                                            <div class="controls">
+                                                                <select id="select02" name="cutAlgo">
+                                                                    <option>FCM</option>
+                                                                    <option>ACM</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead8">左上角经纬度 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" name="topLeft" placeholder="以空格分隔经纬度" id="typeahead8"  data-provide="typeahead8" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead9">右下角经纬度 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" name="lowerRight" placeholder="以空格分隔经纬度" id="typeahead9"  data-provide="typeahead9" data-items="4" required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="fileInput4">文件上传</label>
+                                                            <div class="controls">
+                                                                <input class="input-file uniform_on" name="sarFile" id="fileInput4" type="file">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-actions">
+                                                            <button type="submit" class="btn btn-primary">提交</button>
+                                                            <button type="reset" class="btn">取消</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="span10">
-                                            <form class="form-horizontal"  enctype="multipart/form-data" method="post" action="/upload/optical">
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead10">水库名称 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" id="typeahead10" name="reservoirName" data-provide="typeahead10" data-items="4" required>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead11">卫星名称 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" id="typeahead11" name="satelliteName" data-provide="typeahead11" data-items="4" required>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead12">周期 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" id="typeahead12" name="cycle" data-provide="typeahead12" data-items="4" required>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="date05">日期</label>
-                                                    <div class="controls">
-                                                        <input type="text" class="input-xlarge datepicker" name="date" id="date05" />
+                                    </div>
 
-                                                    </div>
-                                                </div>
+                                    <div class="tab-pane" id="upload_optical">
+                                        <div class="block-content collapse in">
+                                            <div class="span12">
+                                                <legend class="title" id="form-optical-title">上传光学影像</legend>
+                                                <div class="row-fluid">
+                                                    <form class="form-horizontal span12"  enctype="multipart/form-data" method="post" action="/upload/optical">
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead10">水库名称 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" id="typeahead10" name="reservoirName" data-provide="typeahead10" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead11">卫星名称 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" id="typeahead11" name="satelliteName" data-provide="typeahead11" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead12">周期 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" id="typeahead12" name="cycle" data-provide="typeahead12" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="date05">日期</label>
+                                                            <div class="controls">
+                                                                <input type="text" class="input-xlarge datepicker" name="date" id="date05" />
 
-                                                <div class="control-group">
-                                                    <label class="control-label" for="select01">分割算法</label>
-                                                    <div class="controls">
-                                                        <select id="select01" name="cutAlgo">
-                                                            <option>FCM</option>
-                                                            <option>ACM</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                                            </div>
+                                                        </div>
 
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead13">左上角经纬度 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" name="topLeft" placeholder="以空格分隔经纬度" id="typeahead13"  data-provide="typeahead13" data-items="4" required>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label" for="typeahead14">右下角经纬度 </label>
-                                                    <div class="controls">
-                                                        <input type="text" class="span6" name="lowerRight" placeholder="以空格分隔经纬度" id="typeahead14"  data-provide="typeahead14" data-items="4" required>
-                                                    </div>
-                                                </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="select01">分割算法</label>
+                                                            <div class="controls">
+                                                                <select id="select01" name="cutAlgo">
+                                                                    <option>FCM</option>
+                                                                    <option>ACM</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
 
-                                                <div class="control-group">
-                                                    <label class="control-label" for="fileInput">文件上传</label>
-                                                    <div class="controls">
-                                                        <input class="input-file uniform_on" id="fileInput" name="opticalFile" type="file">
-                                                    </div>
-                                                </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead13">左上角经纬度 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" name="topLeft" placeholder="以空格分隔经纬度" id="typeahead13"  data-provide="typeahead13" data-items="4" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="typeahead14">右下角经纬度 </label>
+                                                            <div class="controls">
+                                                                <input type="text" class="span6" name="lowerRight" placeholder="以空格分隔经纬度" id="typeahead14"  data-provide="typeahead14" data-items="4" required>
+                                                            </div>
+                                                        </div>
 
-                                                <div class="form-actions">
-                                                    <button type="submit" class="btn btn-primary">提交</button>
-                                                    <button type="reset" class="btn">取消</button>
-                                                </div>
-                                            </form>
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="fileInput">文件上传</label>
+                                                            <div class="controls">
+                                                                <input class="input-file uniform_on" id="fileInput" name="opticalFile" type="file">
+                                                            </div>
+                                                        </div>
 
+                                                        <div class="form-actions">
+                                                            <button type="submit" class="btn btn-primary">提交</button>
+                                                            <button type="reset" class="btn">取消</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
 
                         </div>
                         <!-- /block -->
@@ -357,6 +376,89 @@
                 $('#rootwizard').find("a[href*='tab1']").trigger('click');
             });
         });
+
+        let radarList = [];
+
+        function submit_radar() {
+            let submit_button = $("#form_radar_1_submit");
+            submit_button.text("正在上传0%").addClass("disabled");
+            let form = $("#form_radar_1")[0];
+            let formData = new FormData(form);
+            formData.append('file', $("#fileInput2")[0].files[0]);
+            $.ajax({
+                type:"POST",
+                processData:false,
+                contentType:false,
+                data:formData,
+                url:"/upload/radar",
+                xhr:function(){
+                    myXhr = $.ajaxSettings.xhr();
+                    if(myXhr.upload){ // check if upload property exists
+                        myXhr.upload.addEventListener('progress',function(e){
+                            var loaded = e.loaded;                  //已经上传大小情况
+                            var total = e.total;                      //附件总大小
+                            var percent = Math.floor(100*loaded/total)+"%";     //已经上传的百分比
+                            submit_button.text("正在上传："+percent);
+                            if (loaded === total){
+                                submit_button.text("正在处理数据");
+                            }
+                        }, false); // for handling the progress of the upload
+                    }
+                    return myXhr;
+                },
+                success:function (data) {
+                    let json = JSON.parse(data);
+                    for (let i =0; i<json.length;i++){
+                        let radarItem = {
+                            index: json[i].index,
+                            lng: json[i].lng,
+                            lat: json[i].lat,
+                            level: json[i].level
+                        };
+                        radarList.push(radarItem);
+                        let option = $("<option></option>").text(json[i].index).attr("index", json[i].index);
+                        if (i === 0){
+                            $("#form_radar_2_p_lng").text(radarItem.lng);
+                            $("#form_radar_2_p_lat").text(radarItem.lat);
+                            $("#form_radar_2_p_level").text(radarItem.level);
+                        }
+                        $("#form_radar_2_select").append(option);
+                    }
+                    $("#form_radar_1").hide();
+                    $("#form_radar_2").show();
+                    $("#form-radar-title").text("确认水位数据");
+                    submit_button.text("提交").removeClass("disabled");
+                }
+            });
+            return false;
+        }
+
+
+        let select = $("#form_radar_2_select");
+        select.change(function(){
+            let option = $("#form_radar_2_select option:selected");
+            let index = option.attr("index");
+            let radarItem = radarList[index];
+            $("#form_radar_2_p_lng").text(radarItem.lng);
+            $("#form_radar_2_p_lat").text(radarItem.lat);
+            $("#form_radar_2_p_level").text(radarItem.level);
+        });
+
+        function form_radar_2_submit_click(){
+            let option = $("#form_radar_2_select option:selected");
+            let index = option.attr("index");
+            $.get("upload/radar/choose?index=" + index, function(){
+                alert("完成");
+            });
+            return false;
+        }
+
+        function form_radar_2_return_click(){
+            $("#form_radar_2").hide();
+            $("#form_radar_1").show();
+            $("#form-radar-title").text("上传雷达高度计数据");
+            return false;
+        }
         </script>
     </body>
 

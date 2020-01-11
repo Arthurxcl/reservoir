@@ -19,4 +19,9 @@ public class RadarResultService {
     public List<RadarResultDao> findRadarResultByReservoirId(Integer id){
         return radarResultDaoMapper.selectByReservoirId(id);
     }
+
+    //添加RadarResult
+    public void addRadarResult(RadarResultDao dao){
+        radarResultDaoMapper.insert(dao);
+    }
 }
