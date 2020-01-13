@@ -176,3 +176,56 @@ body>footer p{
     background: none;
     border: none;
 }
+
+#form_radar_2{
+    position: absolute;
+    top: 2em;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    height: auto;
+}
+
+.pull-right-bottom{
+    position: absolute;
+    right: 0;
+    bottom: 20px;
+}
+
+.form-row-absolute{
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.form-row-absolute>form{
+    margin: 2em 0 0 0;
+}
+
+#form_radar_2_map{
+    position: absolute;
+    top: -1em;
+    bottom: 65px;
+    left: 0;
+    right: 0;
+}
+
+#form_radar_2_info{
+    position: absolute;
+    left: 0;
+    bottom: 20px;
+}
+
+#form_radar_2_info>div{
+    display: flex;
+    align-items: center;
+}
+
+#form_radar_2_info select{
+    margin: 0;
+    width: 100px;
+}
+

@@ -2,7 +2,10 @@ package com.henu.reservoir.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.henu.reservoir.domain.RadarLevelDao;
 import com.henu.reservoir.domain.RadarResultDao;
+import com.henu.reservoir.domain.ReservoirInfoDao;
+import com.henu.reservoir.service.RadarLevelService;
 import com.henu.reservoir.service.RadarResultService;
 import com.henu.reservoir.service.ReservoirInfoService;
 import com.mathworks.toolbox.javabuilder.MWException;
@@ -33,28 +36,43 @@ public class RadarLevelUploadController {
 
     private ReservoirInfoService reservoirInfoService;
     private RadarResultService radarResultService;
+    private RadarLevelService radarLevelService;
 
     @Autowired
     private void setServices(
             ReservoirInfoService reservoirInfoService,
-            RadarResultService radarResultService
+            RadarResultService radarResultService,
+            RadarLevelService radarLevelService
     ){
         this.reservoirInfoService = reservoirInfoService;
         this.radarResultService = radarResultService;
+        this.radarLevelService = radarLevelService;
     }
 
     private ObjectMapper mapper = new ObjectMapper();
     private List<RadarResultDao> radarResultDaoList = new ArrayList<>();
+    private RadarLevelDao radarLevelDao = new RadarLevelDao();
 
 
     @PostMapping(value = "/upload/radar")
     @ResponseBody
     public String upload_SAR(Model model, @RequestParam("radarFile") MultipartFile[] radarFile,
                              @RequestParam("reservoirName") String reservoirName, @RequestParam("satelliteName")String satelliteName,
-                             @RequestParam("cycle") String cycle, @RequestParam("date") Date date, @RequestParam("topLeft") String topLeft,
+                             @RequestParam("cycle") Integer cycle, @RequestParam("date") Date date, @RequestParam("topLeft") String topLeft,
                              @RequestParam("lowerRight") String lowerLeft) throws MWException, IOException {
         //由水库名获得水库id
-        int reservoirId = reservoirInfoService.findReservoirInfoByName(reservoirName).getId();
+        ReservoirInfoDao reservoirInfoDao = reservoirInfoService.findReservoirInfoByName(reservoirName);
+        if (reservoirInfoDao == null){
+            return "reservoir name error";
+        }
+        int reservoirId = reservoirInfoDao.getId();
+
+        //将信息填入radarLevelDao，后面要用
+        radarLevelDao.setId(0);
+        radarLevelDao.setDate(date);
+        radarLevelDao.setCycle(cycle);
+        radarLevelDao.setSatelliteName(satelliteName);
+        radarLevelDao.setReservoirId(reservoirId);
 
         //清空上一次的结果
         radarResultDaoList.clear();
@@ -132,15 +150,19 @@ public class RadarLevelUploadController {
         }
         double d = dlist[new Random().nextInt(dlist.length)];
 
+
+
         //将list20中的结果存入radarResultDaoList, 同时装入radarItemList20，以转成json发向前端
         List<RadarItem> radarItemList20 = new ArrayList<>();
         for (int i = 0; i<list20.size(); i++) {
             String sitem = list20.get(i);
             String[] strings = sitem.split(",");
             double level = Double.parseDouble(strings[7]) - d + 1.46;
-            radarItemList20.add(new RadarItem(i,Double.parseDouble(strings[2]),Double.parseDouble(strings[3]), level));
+            double lng = Double.parseDouble(strings[2]);
+            double lat = Double.parseDouble(strings[3]);
+            radarItemList20.add(new RadarItem(i,lng,lat, level));
             //-----------------改
-            radarResultDaoList.add(new RadarResultDao(0, date, level + "", 1, "siteLongitude", "siteLatitude", reservoirId));
+            radarResultDaoList.add(new RadarResultDao(0, date, level + "", radarLevelDao.getId(), lng + "", lat+"", reservoirId));
         }
 
         //转换成json返回
@@ -155,8 +177,21 @@ public class RadarLevelUploadController {
     @GetMapping("upload/radar/choose")
     @ResponseBody
     public String chooseRadarData(int index){
+        //使用date和satelliteName查找radarLevelId，如没有则新建一条radarLevel
+        Date date = radarLevelDao.getDate();
+        String satelliteName = radarLevelDao.getSatelliteName();
+        int reservoirId = radarLevelDao.getReservoirId();
+        RadarLevelDao dao = radarLevelService.findRadarLevelByDateAndNameAndReservoirId(date, satelliteName, reservoirId);
+        if (dao == null){
+            radarLevelService.addRadarLevel(radarLevelDao);
+            dao = radarLevelService.findRadarLevelByDateAndNameAndReservoirId(date, satelliteName, reservoirId);
+        }
+
+        //替换掉RadarLevelId
+        RadarResultDao radarResultDao = radarResultDaoList.get(index);
+        radarResultDao.setRadarLevelId(dao.getId());
         try {
-            radarResultService.addRadarResult(radarResultDaoList.get(index));
+            radarResultService.addRadarResult(radarResultDao);
             return "success";
         } catch (Exception e) {
             e.printStackTrace();

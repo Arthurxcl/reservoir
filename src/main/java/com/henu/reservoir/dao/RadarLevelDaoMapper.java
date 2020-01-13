@@ -1,6 +1,9 @@
 package com.henu.reservoir.dao;
 
 import com.henu.reservoir.domain.RadarLevelDao;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
 
 public interface RadarLevelDaoMapper {
     /**
@@ -50,4 +53,11 @@ public interface RadarLevelDaoMapper {
      * @mbg.generated Tue Dec 31 10:42:04 CST 2019
      */
     int updateByPrimaryKey(RadarLevelDao record);
+
+    //根据日期和卫星名查找雷达高度计
+    RadarLevelDao selectByDateAndSatelliteNameAndReservoirId(
+            @Param("date") Date date,
+            @Param("satelliteName") String satelliteName,
+            @Param("reservoirId") Integer reservoirId
+    );
 }

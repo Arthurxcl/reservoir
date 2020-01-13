@@ -132,4 +132,14 @@
       reservoir_id = #{reservoirId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <!--根据日期和卫星名查找雷达高度计-->
+  <select id="selectByDateAndSatelliteNameAndReservoirId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from radar_level
+    where date = #{date,jdbcType=TIMESTAMP}
+    and satellite_name = #{satelliteName,jdbcType=VARCHAR}
+    and reservoir_id = #{reservoirId,jdbcType=INTEGER}
+  </select>
 </mapper>
