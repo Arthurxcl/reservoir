@@ -99,12 +99,13 @@ body>footer p{
 
 #image_viewer #background{
     position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
+    height: 100%;
+    width: 100%;
     background: black;
     opacity: 0.7;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #image_viewer img{
@@ -116,4 +117,62 @@ body>footer p{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.hover-border{
+    border: 1.5px dashed transparent;
+    transition: 0.2s;
+}
+
+.hover-border:hover{
+    border: 1.5px dashed #ff884e;
+}
+
+.nav-tabs{
+    position: absolute;
+    top: 42px;
+    left: 0;
+    bottom: 0;
+    margin-bottom: 0;
+}
+
+.tabs-left>.nav-tabs>li>a{
+    min-width: 0;
+}
+
+.upload-block{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.upload-block .block-content{
+    position: absolute;
+    top: 42px;
+    left: 40px;
+    right: 0;
+    bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+}
+
+.upload-block .span12{
+    overflow: scroll;
+    height: 100%;
+}
+
+
+.upload-block .span12::-webkit-scrollbar{
+    display: none;
+}
+
+.form-actions{
+    float: right;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
 }

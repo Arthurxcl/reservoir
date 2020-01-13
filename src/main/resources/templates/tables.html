@@ -107,7 +107,7 @@
                         "url": "api/data/image",
                         "dataSrc": function (json) {
                             for ( let i=0, ien=json.length ; i<ien ; i++ ) {
-                                json[i]["img"] = "<img src=\"" + json[i]["path"] + "\" onclick='view_image(this)'/>";
+                                json[i]["img"] = "<img src=\"" + json[i]["path"] + "\" class='hover-border' onclick='view_image(this)'/>";
                                 json[i]["download_link"] = "<a href=\"api/download/image?type=" + json[i]["type"] + "&id=" + json[i]["id"] + "\">下载</a>";
                                 if (json[i]["type"] === "sar"){
                                     json[i]["type"] = "SAR图像";
