@@ -80,7 +80,7 @@ public class SARUploadController {
         //将处理后的影像数据存入数据库
         sarImgService.insert(sarImgDao);
         //计算水域面积
-        Count count = new Count();
+        Count count = new Count(Double.parseDouble(topLatitude), Double.parseDouble(lowerLatitude), Double.parseDouble(topLongitude), Double.parseDouble(lowerLongitude));
         String waterArea = count.getWaterArea(out);
         //根据分割算法名称获取id
         Integer cutId = cutAlgoService.selectByName(cutAlgo).getId();
