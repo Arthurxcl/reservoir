@@ -36,17 +36,17 @@
                 <div class="span2" id="sidebar">
                     <ul class="nav nav-list bs-docs-sidenav nav-collapse collapse">
                         <li>
-                            <a href="/index"><i class="icon-chevron-right"></i> 首页</a>
+                            <a href="index"><i class="icon-chevron-right"></i> 首页</a>
                         </li>
                         
                         <li>
-                            <a href="/result"><i class="icon-chevron-right"></i> 结果展示</a>
+                            <a href="result"><i class="icon-chevron-right"></i> 结果展示</a>
                         </li>
                         <li class="active">
-                            <a href="/upload"><i class="icon-chevron-right"></i> 数据提交</a>
+                            <a href="upload"><i class="icon-chevron-right"></i> 数据提交</a>
                         </li>
                         <li>
-                            <a href="/tables"><i class="icon-chevron-right"></i> 数据管理</a>
+                            <a href="tables"><i class="icon-chevron-right"></i> 数据管理</a>
                         </li>
                         
                     </ul>
@@ -75,7 +75,7 @@
                                             <div class="span12">
                                                 <legend class="title" id="form-measured-title">上传实测水位</legend>
                                                 <div class="row-fluid form-row-absolute">
-                                                    <form class="form-horizontal span12" enctype="multipart/form-data" method="post" action="/upload/measured">
+                                                    <form class="form-horizontal span12" enctype="multipart/form-data" method="post" action="upload/measured">
                                                         <div class="control-group">
                                                             <label class="control-label" for="typeahead1">水库名称 </label>
                                                             <div class="controls">
@@ -184,7 +184,7 @@
                                             <div class="span12">
                                                 <legend class="title" id="form-sar-title">上传SAR影像</legend>
                                                 <div class="row-fluid form-row-absolute">
-                                                    <form class="form-horizontal span12" enctype="multipart/form-data" method="post" action="/upload/sar">
+                                                    <form class="form-horizontal span12" enctype="multipart/form-data" method="post" action="upload/sar">
                                                         <div class="control-group">
                                                             <label class="control-label" for="typeahead5">水库名称 </label>
                                                             <div class="controls">
@@ -256,7 +256,7 @@
                                             <div class="span12">
                                                 <legend class="title" id="form-optical-title">上传光学影像</legend>
                                                 <div class="row-fluid form-row-absolute">
-                                                    <form class="form-horizontal span12"  enctype="multipart/form-data" method="post" action="/upload/optical">
+                                                    <form class="form-horizontal span12"  enctype="multipart/form-data" method="post" action="upload/optical">
                                                         <div class="control-group">
                                                             <label class="control-label" for="typeahead10">水库名称 </label>
                                                             <div class="controls">
@@ -402,7 +402,7 @@
                 processData:false,
                 contentType:false,
                 data:formData,
-                url:"/upload/radar",
+                url:"upload/radar",
                 xhr:function(){
                     myXhr = $.ajaxSettings.xhr();
                     if(myXhr.upload){ // check if upload property exists
