@@ -229,3 +229,61 @@ body>footer p{
     width: 100px;
 }
 
+.result-block{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#result-content {
+    position: absolute;
+    top: 42px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+}
+
+#result-content .nav-tabs {
+    top: 0;
+}
+
+#charts{
+    height: 100%;
+    margin-left: 40px;
+    overflow-y: auto;
+}
+
+#select_date{
+    margin: 0;
+    padding-top: 5px;
+}
+
+#select_date input{
+    margin-bottom: 0;
+    margin-right: 1em;
+}
+
+#select_date button{
+    margin: 0;
+}
+
+#chart_level, #chart_area, #chart_storage{
+    position: relative;
+    width: 100%;
+    min-height: 450px;
+}
+
+#result-content .nav a{
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#result-content>h4{
+    text-align: center;
+    color: #a6a6a6;
+}
