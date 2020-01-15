@@ -10,6 +10,8 @@ import com.henu.reservoir.service.RadarResultService;
 import com.henu.reservoir.service.ReservoirInfoService;
 import com.mathworks.toolbox.javabuilder.MWException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,11 +34,15 @@ import Altitude_Sentinel3_A.Radar;
  */
 
 @Controller
+@EnableAutoConfiguration
 public class RadarLevelUploadController {
 
     private ReservoirInfoService reservoirInfoService;
     private RadarResultService radarResultService;
     private RadarLevelService radarLevelService;
+
+    @Value("${path.resource-path}")
+    private String resourcePath;
 
     @Autowired
     private void setServices(
@@ -86,7 +92,7 @@ public class RadarLevelUploadController {
         //生成不重复的文件夹名称
         String uploadDirName = formatDate + Integer.toString(random);
         //判断文件夹是否存在
-        String radarFilePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload\\radarData\\";
+        String radarFilePath = System.getProperty("user.dir") + resourcePath + "static\\upload\\radarData\\";
         File radarDataDir = new File(radarFilePath);
         if (!radarDataDir.exists()) {
             radarDataDir.mkdir();

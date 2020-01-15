@@ -9,6 +9,8 @@ import com.henu.reservoir.service.WaterAreaService;
 import com.henu.reservoir.util.countWaterArea.Count;
 import fcm_java.ltycl.Sblty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.Date;
 
+@EnableAutoConfiguration
 @Controller
 public class OpticalUploadController {
     @Autowired
@@ -28,6 +31,9 @@ public class OpticalUploadController {
     private CutAlgoService cutAlgoService;
     @Autowired
     private WaterAreaService waterAreaService;
+
+    @Value("${path.resource-path}")
+    private String resourcePath;
 
     @PostMapping(value = "/upload/optical")
     public String upload_SAR(Model model, @RequestParam("opticalFile") MultipartFile opticalFile, @RequestParam("reservoirName") String reservoirName,
@@ -44,7 +50,7 @@ public class OpticalUploadController {
         //获取项目名称
         String projectPath = System.getProperty("user.dir");
         //完整文件名
-        String filePath = projectPath + "\\src\\main\\resources\\static\\upload\\opticalImg\\" + fileName;
+        String filePath = projectPath + resourcePath + "static\\upload\\opticalImg\\" + fileName;
         //将原图像存入服务器
         try {
             //将图片保存到static文件夹里
@@ -55,7 +61,7 @@ public class OpticalUploadController {
         String fileNameAfterCut = prefixName + ".png";
         //调用算法处理SAR图像
         String in = filePath;
-        String out = projectPath + "\\src\\main\\resources\\static\\upload\\opticalAfterCut\\" + fileNameAfterCut;
+        String out = projectPath + resourcePath + "static\\upload\\opticalAfterCut\\" + fileNameAfterCut;
         /*FCM fcm = null;
         try {
             fcm = new FCM();

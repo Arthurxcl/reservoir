@@ -5,6 +5,8 @@ import com.henu.reservoir.domain.SarImgDao;
 import com.henu.reservoir.service.OpticalImgService;
 import com.henu.reservoir.service.SarImgService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,9 +17,13 @@ import java.io.FileInputStream;
 import java.io.OutputStream;
 
 @Controller
+@EnableAutoConfiguration
 public class DataDownloadController {
     private SarImgService sarImgService;
     private OpticalImgService opticalImgService;
+
+    @Value("${path.resource-path}")
+    private String resourcePath;
 
     @Autowired
     private void setService(
@@ -49,7 +55,7 @@ public class DataDownloadController {
 
     private void downloadFile(HttpServletResponse response, String path){
         String projectPath = System.getProperty("user.dir");
-        File file = new File(projectPath + "\\src\\main\\resources\\" + path);
+        File file = new File(projectPath + this.resourcePath + path);
         String filename = path.substring(path.lastIndexOf(File.separator) + 1);
         if (file.exists()){
             try {
