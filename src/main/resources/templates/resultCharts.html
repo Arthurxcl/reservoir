@@ -1,7 +1,7 @@
 <div id="charts">
-    <div id="chart_level">11111111111111111</div>
-    <div id="chart_area">2222222222222222222222222</div>
-    <div id="chart_storage">333333333333333333333333333</div>
+    <div id="chart_level"></div>
+    <div id="chart_area"></div>
+    <div id="chart_storage"></div>
 </div>
 <div class="tabbable tabs-left">
     <ul class="nav nav-tabs">
@@ -102,10 +102,10 @@
             }
         },
         legend: {
-            data:['SAR影像数据', '光学影像数据']
+            data:['SAR影像数据', 'SAR影像数据拟合曲线','光学影像数据','光学影像数据拟合曲线']
         },
         xAxis: {
-            type: 'value',
+            type:"time"
         },
         yAxis: {
             type: 'value',
@@ -238,19 +238,29 @@ function reload_chart(){
         reload_chart();
         $.get("getWaterArea", function (data) {
             let json = JSON.parse(data);
-            let sarRegression = ecStat.regression('polynomial', json[0], 4);
-            let opticalRegression = ecStat.regression('polynomial', json[1], 4);
+            let d1 = [];
+            for (let i = 0; i<json[0].length;i++){
+                d1.push([new Date(json[0][i].date), json[0][i].area]);
+            }
+            let d2 = [];
+            for (let i = 0; i<json[1].length;i++){
+                d2.push([new Date(json[1][i].date), json[1][i].area]);
+            }
+            let sarRegression = ecStat.regression('polynomial', d1, 4);
+            let opticalRegression = ecStat.regression('polynomial', d2, 4);
             chartArea.setOption({
                 series: [{
                     name: 'SAR影像数据',
+                    symbolSize: 10,
                     type: 'scatter',
-                    data: json[0]
+                    data: d1
                 },{
                     name: '光学影像数据',
+                    symbolSize: 10,
                     type: 'scatter',
-                    data: json[1]
+                    data: d2
                 },{
-                    name: 'SAR影像数据曲线',
+                    name: 'SAR影像数据拟合曲线',
                     type: 'line',
                     smooth: true,
                     showSymbol: false,
@@ -264,7 +274,7 @@ function reload_chart(){
                         }]
                     }
                 }, {
-                    name: '光学影像数据曲线',
+                    name: '光学影像数据拟合曲线',
                     type: 'line',
                     smooth: true,
                     showSymbol: false,

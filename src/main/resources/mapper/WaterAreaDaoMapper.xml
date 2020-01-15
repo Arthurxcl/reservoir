@@ -163,6 +163,7 @@
     <include refid="Base_Column_List" />
     from water_area
     where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
+    order by date DESC
   </select>
 
   <!--使用reservoir_id获取SAR的*-->
@@ -172,6 +173,7 @@
     from water_area
     where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
     and is_sar_area = true
+    order by date DESC
   </select>
 
   <!--使用reservoir_id获取光学的*-->
@@ -181,5 +183,6 @@
     from water_area
     where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
     and is_sar_area = false
+    order by date DESC
   </select>
 </mapper>
