@@ -1,6 +1,7 @@
 package com.henu.reservoir.util;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +23,21 @@ public class CalculateByDate {
         this.startDay = this.getDayByDate(startDate);
         this.endDay = this.getDayByDate(endDate);
     }
+
+    public ArrayList<String> getAllDate(){
+        ArrayList<String> dateList = new ArrayList<>();
+        Calendar calendarStart = Calendar.getInstance();
+        calendarStart.setTime(startDate);
+        Calendar calendarEnd = Calendar.getInstance();
+        calendarEnd.setTime(endDate);
+        while (!calendarStart.equals(calendarEnd)){
+            dateList.add(calendarStart.get(Calendar.YEAR) + "-" + (calendarStart.get(Calendar.MONTH) + 1) + "-" + calendarStart.get(Calendar.DATE));
+            calendarStart.add(Calendar.DATE, 1);
+        }
+        return dateList;
+    }
+
+
 
     /**
      * 根据日期计算是一年中的第几天
