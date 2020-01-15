@@ -10,6 +10,8 @@ import com.henu.reservoir.service.WaterAreaService;
 import com.henu.reservoir.util.countWaterArea.Count;
 import fcm_java.sar_fcm.Fcm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import java.io.*;
 import java.util.Date;
 
 @Controller
+@EnableAutoConfiguration
 public class SARUploadController {
     @Autowired
     private SarImgService sarImgService;
@@ -27,6 +30,9 @@ public class SARUploadController {
     @Autowired CutAlgoService cutAlgoService;
     @Autowired
     WaterAreaService waterAreaService;
+
+    @Value("${path.resource-path}")
+    private String resourcePath;
 
     @PostMapping(value = "/upload/sar")
     public String upload_SAR(Model model, @RequestParam("sarFile") MultipartFile sarFile, @RequestParam("reservoirName") String reservoirName,
@@ -42,7 +48,7 @@ public class SARUploadController {
         //获取项目名称
         String projectPath = System.getProperty("user.dir");
         //完整文件名
-        String filePath = projectPath + "\\src\\main\\resources\\static\\upload\\SARImg\\" + fileName;
+        String filePath = projectPath + resourcePath + "static\\upload\\SARImg\\" + fileName;
         //将原图像存入服务器
         try {
             //将图片保存到static文件夹里
@@ -53,7 +59,7 @@ public class SARUploadController {
         String fileNameAfterCut = prefixName + ".png";
         //调用算法处理SAR图像
         String in = filePath;
-        String out = projectPath + "\\src\\main\\resources\\static\\upload\\SARAfterCut\\" + fileNameAfterCut;
+        String out = projectPath + resourcePath + "static\\upload\\SARAfterCut\\" + fileNameAfterCut;
         /*FCM fcm = null;
         try {
             fcm = new FCM();
@@ -80,7 +86,7 @@ public class SARUploadController {
         //将处理后的影像数据存入数据库
         sarImgService.insert(sarImgDao);
         //计算水域面积
-        Count count = new Count();
+        Count count = new Count(Double.parseDouble(topLatitude), Double.parseDouble(lowerLatitude), Double.parseDouble(topLongitude), Double.parseDouble(lowerLongitude));
         String waterArea = count.getWaterArea(out);
         //根据分割算法名称获取id
         Integer cutId = cutAlgoService.selectByName(cutAlgo).getId();

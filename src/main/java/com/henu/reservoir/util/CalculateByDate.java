@@ -101,7 +101,10 @@ public class CalculateByDate {
      * 根据遥测水位和SAR水域面积计算蓄水量
      */
     public Double calStorageByRadarAndSAR(Integer day) {
-        Double result = Math.pow(day, 3) + Math.pow(day, 2) + day + 16;
+        //y=(0.07019/3)*x^3+(-7.68/2)*x^2+115.7*x+15, x 是水位高度
+        //根据日期获得遥测水位，根据遥测水位和拟合公式获得蓄水量
+        Double waterLevel = calRadarLevel(day);
+        Double result = (0.07019/3) * Math.pow(waterLevel, 3) + (-7.68/2) * Math.pow(waterLevel, 2) + 115.7 * waterLevel + 15;
         return result;
     }
     public ArrayList<Double> calPeriodStorageByRadarAndSAR() {
@@ -116,7 +119,9 @@ public class CalculateByDate {
      * 根据遥测水位和光学水域面积计算蓄水量
      */
     public Double calStorageByRadarAndOptical(Integer day) {
-        Double result = Math.pow(day, 3) + Math.pow(day, 2) + day + 16;
+        //根据日期获得遥测水位，根据遥测水位和拟合公式获得蓄水量
+        Double waterLevel = calRadarLevel(day);
+        Double result = (0.07019/3) * Math.pow(waterLevel, 3) + (-7.68/2) * Math.pow(waterLevel, 2) + 115.7 * waterLevel + 15;
         return result;
     }
     public ArrayList<Double> calPeriodStorageByRadarAndOptical() {
@@ -131,7 +136,9 @@ public class CalculateByDate {
      * 根据遥测水位和SAR水域面积和光学水域面积计算蓄水量
      */
     public Double calStorageByRadarSAROptical(Integer day) {
-        Double result = Math.pow(day, 3) + Math.pow(day, 2) + day + 16;
+        //根据日期获得遥测水位，根据遥测水位和拟合公式获得蓄水量
+        Double waterLevel = calRadarLevel(day);
+        Double result = (0.07019/3) * Math.pow(waterLevel, 3) + (-7.68/2) * Math.pow(waterLevel, 2) + 115.7 * waterLevel + 15;
         return result;
     }
     public ArrayList<Double> calPeriodStorageByRadarSAROptical() {
@@ -146,7 +153,9 @@ public class CalculateByDate {
      * 根据实测水位和SAR水域面积和光学水域面积计算蓄水量
      */
     public Double calStorageByMeasuredSAROptical(Integer day) {
-        Double result = Math.pow(day, 3) + Math.pow(day, 2) + day + 16;
+        //根据日期获得遥测水位，根据遥测水位和拟合公式获得蓄水量
+        Double waterLevel = calMeasuredLevel(day);
+        Double result = (0.07019/3) * Math.pow(waterLevel, 3) + (-7.68/2) * Math.pow(waterLevel, 2) + 115.7 * waterLevel + 15;
         return result;
     }
     public ArrayList<Double> calPeriodStorageByMeasuredSAROptical() {
