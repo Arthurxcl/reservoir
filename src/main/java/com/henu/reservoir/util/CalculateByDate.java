@@ -86,6 +86,15 @@ public class CalculateByDate {
     }
 
     /**
+     * 根据遥测水位计算水域面积
+     */
+    public Double calWaterAreaByRadar(Integer day) {
+        Double waterLevel = calRadarLevel(day);
+        Double result = 0.04 * Math.pow(waterLevel, 2) + 1.4 * waterLevel - 595.5;
+        return result;
+    }
+
+    /**
      * 计算起始日期到结束日期的遥测水位
      * @return result
      */
