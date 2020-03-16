@@ -4,7 +4,7 @@ server:
     uri-encoding: utf-8
   servlet:
     session:
-      timeout: 300
+      timeout: 1800
 spring:
   # 数据源配置
   datasource:
@@ -31,7 +31,7 @@ spring:
       max-file-size: "2048MB"
       max-request-size: "2048MB"
   mvc:
-    static-path-pattern: /static/**
+    static-path-pattern: /**
   resources:
     chain:
       strategy:

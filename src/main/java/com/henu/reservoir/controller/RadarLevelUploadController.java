@@ -91,6 +91,12 @@ public class RadarLevelUploadController {
         int random = new Random().nextInt(10000);
         //生成不重复的文件夹名称
         String uploadDirName = formatDate + Integer.toString(random);
+        String filePathUpload = System.getProperty("user.dir") + resourcePath + "static\\upload\\";
+        //判断Upload文件夹是否存在，不存在则创建
+        File fileDirUpload = new File(filePathUpload);
+        if (!fileDirUpload.exists()) {
+            fileDirUpload.mkdir();
+        }
         //判断文件夹是否存在
         String radarFilePath = System.getProperty("user.dir") + resourcePath + "static\\upload\\radarData\\";
         File radarDataDir = new File(radarFilePath);

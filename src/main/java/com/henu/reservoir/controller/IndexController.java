@@ -7,23 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class IndexController {
-    @GetMapping("/index")
-    public String index(Model model) {
+    @GetMapping("/")
+    public String index() {
         return "index";
-    }
-
-    @GetMapping("/result")
-    public String result(Model model) {
-        return "result";
-    }
-
-    @GetMapping("/upload")
-    public String form(Model model) {
-        return "form";
-    }
-
-    @GetMapping("/tables")
-    public String tables(Model model) {
-        return "tables";
     }
 }

@@ -1,5 +1,6 @@
 package com.henu.reservoir.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.henu.reservoir.dao.MeasuredResultDaoMapper;
 import com.henu.reservoir.domain.CutAlgoDao;
 import com.henu.reservoir.domain.MeasuredResultDao;
@@ -32,7 +33,11 @@ public class MeasuredLevelUploadController {
     @Autowired
     ReservoirInfoService reservoirInfoService;
 
+    private ObjectMapper mapper = new ObjectMapper();
+    private ArrayList<MeasuredResultDao> allResult = new ArrayList<>();
+
     @PostMapping(value = "/upload/measured")
+    @ResponseBody
     public String uploadMeasured(Model model, @RequestParam("measuredFile") MultipartFile fileUpload,
                                  @RequestParam("reservoirName") String reservoirName) throws IOException, ParseException {
         InputStream inputStream = fileUpload.getInputStream();
@@ -41,16 +46,26 @@ public class MeasuredLevelUploadController {
         Integer reservoirId = reservoirInfoService.findReservoirInfoByName(reservoirName).getId();
         //处理文件, 获得文件中所有数据
         ExtractMeasuredLevel extractMeasuredLevel = new ExtractMeasuredLevel(fileInputStream, reservoirId);
-        ArrayList<MeasuredResultDao> allResult = extractMeasuredLevel.ReadDataFromExcel();
+        allResult = extractMeasuredLevel.ReadDataFromExcel();
 
-        //存入数据库
+        //先不存入数据库
+        /*
         for (MeasuredResultDao measuredResult : allResult) {
             measuredResultService.saveMeasuredResult(measuredResult);
         }
 
-        //显示上传的文件
-        model.addAttribute("allResult", allResult);
+         */
 
-        return "showUploadMeasured";
+        //返回Json结果
+        return mapper.writeValueAsString(allResult);
+    }
+
+    @GetMapping("/upload/measured/save")
+    @ResponseBody
+    public void saveMeasured(){
+        //用户确认数据后再存入数据库
+        for (MeasuredResultDao measuredResult : allResult) {
+            measuredResultService.saveMeasuredResult(measuredResult);
+        }
     }
 }
