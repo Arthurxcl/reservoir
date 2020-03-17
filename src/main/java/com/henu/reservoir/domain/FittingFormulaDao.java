@@ -11,8 +11,9 @@ public class FittingFormulaDao {
     private Double oneOrder;
     private Double zeroOrder;
     private Date date;
+    private String type;
 
-    public FittingFormulaDao(Double fiveOrder, Double fourOrder, Double threeOrder, Double twoOrder, Double oneOrder, Double zeroOrder, Date date) {
+    public FittingFormulaDao(Double fiveOrder, Double fourOrder, Double threeOrder, Double twoOrder, Double oneOrder, Double zeroOrder, Date date, String type) {
         this.fiveOrder = fiveOrder;
         this.fourOrder = fourOrder;
         this.threeOrder = threeOrder;
@@ -20,6 +21,7 @@ public class FittingFormulaDao {
         this.oneOrder = oneOrder;
         this.zeroOrder = zeroOrder;
         this.date = date;
+        this.type = type;
     }
 
     public Integer getId() {
@@ -84,5 +86,13 @@ public class FittingFormulaDao {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

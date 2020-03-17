@@ -1,5 +1,8 @@
 package com.henu.reservoir.controller;
 
+import com.henu.reservoir.dao.FittingFormulaDaoMapper;
+import com.henu.reservoir.dao.WaterAreaDaoMapper;
+import com.henu.reservoir.domain.FittingFormulaDao;
 import com.henu.reservoir.domain.SarImgDao;
 import com.henu.reservoir.domain.WaterAreaDao;
 import com.henu.reservoir.service.CutAlgoService;
@@ -20,7 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 @Controller
@@ -34,6 +39,10 @@ public class SARUploadController {
     CutAlgoService cutAlgoService;
     @Autowired
     WaterAreaService waterAreaService;
+    @Autowired
+    WaterAreaDaoMapper waterAreaDaoMapper;
+    @Autowired
+    FittingFormulaDaoMapper fittingFormulaDaoMapper;
 
     @Value("${path.resource-path}")
     private String resourcePath;
@@ -171,9 +180,20 @@ public class SARUploadController {
         Integer cutId = cutAlgoService.selectByName(cutAlgo).getId();
         //获取影像id
         Integer imgId = sarImgService.selectByPath(newFilePathRelative).getId();
+        //判断当前年份是否有面积数据，如果有，则可以拟合
+        //新建sql语句，从数据库中选出当前年份的数据
+        List<WaterAreaDao> currentYear = waterAreaDaoMapper.selectCurrentYear(1);
         //将水域面积存入数据库
         WaterAreaDao waterAreaDao = new WaterAreaDao(0, reservoir_id, waterArea, imgId, cutId, date, (byte) 1);
         waterAreaService.insert(waterAreaDao);
+        //如果当前年份面积数据个数大于0，则根据取出的数据进行拟合
+        if(currentYear.size() > 0) {
+            //获取水位最近一次拟合参数 ? 无法判断是否有关于 水位的拟合参数
+            FittingFormulaDao recentMeasuredParameter = fittingFormulaDaoMapper.selectRecentlyByType("measured");
+
+        } else{
+
+        }
         return "success";
     }
 }
