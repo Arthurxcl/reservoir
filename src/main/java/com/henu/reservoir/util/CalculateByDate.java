@@ -20,8 +20,8 @@ public class CalculateByDate {
     public CalculateByDate(Date startDate, Date endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.startDay = this.getDayByDate(startDate);
-        this.endDay = this.getDayByDate(endDate);
+        this.startDay = getDayByDate(startDate);
+        this.endDay = getDayByDate(endDate);
     }
 
     public ArrayList<String> getAllDate(){
@@ -42,7 +42,7 @@ public class CalculateByDate {
     /**
      * 根据日期计算是一年中的第几天
      */
-    public Integer getDayByDate(Date current) {
+    public static Integer getDayByDate(Date current) {
         String str = String.format("%tj", current);
         return Integer.parseInt(str);
     }
