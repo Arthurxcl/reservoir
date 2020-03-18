@@ -201,20 +201,16 @@ public class OpticalUploadController {
         //如果当前年份面积数据个数大于0，则根据取出的数据进行拟合
         Integer num = currentYearArea.size();
         if(num > 0) {
+            CalculateByDate calculateByDate = new CalculateByDate();
             //可以根据实测水位和遥测水位对面积进行拟合
-            //获取水位最近一次拟合参数 ? 无法判断是否有关于 水位的拟合参数
-            FittingFormulaDao recentMeasuredParameter = fittingFormulaDaoMapper.selectRecentlyByType("measured");
-            //FittingFormulaDao recentRadarParameter = fittingFormulaDaoMapper.selectRecentlyByType("radar");
             //获得每个水域面积对应的水位高度（日期）
             double[] x = new double[num];
             double[] y = new double[num];
             for (int i = 0; i < num; i++) {
                 //获得当前一条数据的日期
                 Integer currentDay = CalculateByDate.getDayByDate(currentYearArea.get(i).getDate());
-                //根据拟合公式获得当前水位，并存入数组中
-                Double currentLevel = recentMeasuredParameter.getFiveOrder() * Math.pow(currentDay, 5) + recentMeasuredParameter.getFourOrder() * Math.pow(currentDay, 4) +
-                        recentMeasuredParameter.getThreeOrder()*Math.pow(currentDay, 3) + recentMeasuredParameter.getTwoOrder()*Math.pow(currentDay, 2) +
-                        recentMeasuredParameter.getOneOrder() * currentDay + recentMeasuredParameter.getZeroOrder();
+                //获取最近一条拟合参数，并根据拟合参数获得当前水位，并存入数组中
+                Double currentLevel = calculateByDate.calMeasuredLevel(currentDay);
                 x[i] = currentLevel;
                 y[i] = Double.parseDouble(currentYearArea.get(i).getArea());
             }
@@ -222,7 +218,7 @@ public class OpticalUploadController {
             double[] fittingResult = FittingFormula.waterlevelfit(x, y);
             //将拟合结果存入拟合结果表
             FittingFormulaDao fittingFormulaDao = new FittingFormulaDao(0, fittingResult[0], fittingResult[1], fittingResult[2],
-                    fittingResult[3], fittingResult[4], fittingResult[5], new Date(), "optical");
+                    fittingResult[3], fittingResult[4], fittingResult[5], new Date(), "optical_measured");
             fittingFormulaDaoMapper.insert(fittingFormulaDao);
         }
         return "success";

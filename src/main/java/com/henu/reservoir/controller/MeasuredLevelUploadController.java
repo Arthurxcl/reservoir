@@ -2,30 +2,23 @@ package com.henu.reservoir.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.henu.reservoir.dao.FittingFormulaDaoMapper;
-import com.henu.reservoir.dao.MeasuredResultDaoMapper;
-import com.henu.reservoir.domain.CutAlgoDao;
 import com.henu.reservoir.domain.FittingFormulaDao;
 import com.henu.reservoir.domain.MeasuredResultDao;
-import com.henu.reservoir.service.CutAlgoService;
 import com.henu.reservoir.service.MeasuredResultService;
 import com.henu.reservoir.service.ReservoirInfoService;
 import com.henu.reservoir.util.CalculateByDate;
 import com.henu.reservoir.util.ExtractMeasuredLevel;
 import com.henu.reservoir.util.FittingFormula;
-import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 

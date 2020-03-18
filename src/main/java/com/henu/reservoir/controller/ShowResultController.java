@@ -2,7 +2,8 @@ package com.henu.reservoir.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.henu.reservoir.domain.WaterAreaDao;
+import com.henu.reservoir.dao.*;
+import com.henu.reservoir.domain.*;
 import com.henu.reservoir.service.WaterAreaService;
 import com.henu.reservoir.util.CalculateByDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,6 +28,14 @@ public class ShowResultController {
 
     @Autowired
     WaterAreaService waterAreaService;
+    @Autowired
+    MeasuredResultDaoMapper measuredResultDaoMapper;
+    @Autowired
+    RadarResultDaoMapper radarResultDaoMapper;
+    @Autowired
+    FittingFormulaDaoMapper fittingFormulaDaoMapper;
+    @Autowired
+    WaterAreaDaoMapper waterAreaDaoMapper;
 
     @GetMapping("/getResult")
     @ResponseBody
@@ -255,5 +263,64 @@ public class ShowResultController {
         c.setTime(dao.getDate());
         String s = c.get(Calendar.YEAR) + "-" + (c.get(Calendar.MONTH) + 1) + "-" + c.get(Calendar.DATE);
         return new AreaDataItem(s, dao.getArea());
+    }
+
+    /*
+   获得当前年份所有的实测水位数据
+    */
+    @GetMapping(value = "/getAllMeasuredLevel")
+    @ResponseBody
+    public String getAllMeasuredLevel(HttpSession session) {
+        //获取最近一次拟合的实测水位参数
+        FittingFormulaDao fittingFormulaDao = fittingFormulaDaoMapper.selectRecentlyByType("measured");
+        //选出今年的实测水位数据
+        List<MeasuredResultDao> allMeasured = measuredResultDaoMapper.selectCurrentYear();
+
+        return "error";
+    }
+
+    /*
+    获得当前年份所有的遥测水位数据
+    */
+    @GetMapping(value = "/getAllRadarLevel")
+    @ResponseBody
+    public String getAllRadarLevel(HttpSession session) {
+        //获取最近一次拟合的遥测水位参数
+        FittingFormulaDao fittingFormulaDao = fittingFormulaDaoMapper.selectRecentlyByType("radar");
+        //选出今年的遥测水位数据
+        List<RadarResultDao> allRadar = radarResultDaoMapper.selectCurrentYear();
+
+        return "error";
+    }
+
+    /**
+     * 获得当前年份所有的sar水域面积数据
+     * @param session
+     * @return String
+     */
+    @GetMapping(value = "/getAllSARArea")
+    @ResponseBody
+    public String getAllSARArea(HttpSession session) {
+        //获取最近一次拟合的sar水域面积参数
+        FittingFormulaDao fittingFormulaDao = fittingFormulaDaoMapper.selectRecentlyByType("sar");
+        //选出今年的sar水域面积数据
+        List<WaterAreaDao> allSarArea = waterAreaDaoMapper.selectCurrentYear(1);
+
+        return "error";
+    }
+
+    /**
+     * 获得当前年份所有的光学水域面积
+     * @return String
+     */
+    @GetMapping(value = "/getAllOpticalArea")
+    @ResponseBody
+    public String getAllOpticalArea(HttpSession session) {
+        //获取最近一次拟合的光学水域面积参数
+        FittingFormulaDao fittingFormulaDao = fittingFormulaDaoMapper.selectRecentlyByType("optical");
+        //选出今年的光学水域面积数据
+        List<WaterAreaDao> allOpticalArea = waterAreaDaoMapper.selectCurrentYear(0);
+
+        return "error";
     }
 }

@@ -1,5 +1,14 @@
 package com.henu.reservoir.util;
 
+import com.henu.reservoir.dao.FittingFormulaDaoMapper;
+import com.henu.reservoir.dao.RadarLevelDaoMapper;
+import com.henu.reservoir.domain.FittingFormulaDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -8,13 +17,30 @@ import java.util.List;
 /**
  * 根据两个日期计算出每天的水位，水域面积，蓄水量
  */
+@Component
 public class CalculateByDate {
+    @Autowired
+    private FittingFormulaDaoMapper fittingFormulaDaoMapper;
+
     private Date startDate;
     private Date endDate;
     private Integer startDay;
     private Integer endDay;
 
+    private FittingFormulaDao recentMeasured;
+    private FittingFormulaDao recentRadar;
+    private FittingFormulaDao recentSarMeasured;
+    private FittingFormulaDao recentSarRadar;
+    private FittingFormulaDao recentOpticalMeasured;
+    private FittingFormulaDao recentOpticalRadar;
+
     public CalculateByDate() {
+        recentMeasured = fittingFormulaDaoMapper.selectRecentlyByType("measured");
+        recentRadar = fittingFormulaDaoMapper.selectRecentlyByType("radar");
+        recentSarMeasured = fittingFormulaDaoMapper.selectRecentlyByType("sar_measured");
+        recentSarRadar = fittingFormulaDaoMapper.selectRecentlyByType("sar_radar");
+        recentOpticalMeasured = fittingFormulaDaoMapper.selectRecentlyByType("optical_measured");
+        recentOpticalRadar = fittingFormulaDaoMapper.selectRecentlyByType("optical_radar");
     }
 
     public CalculateByDate(Date startDate, Date endDate) {
@@ -37,8 +63,6 @@ public class CalculateByDate {
         return dateList;
     }
 
-
-
     /**
      * 根据日期计算是一年中的第几天
      */
@@ -51,12 +75,9 @@ public class CalculateByDate {
      * 计算实测水位
      */
     public Double calMeasuredLevel(Integer day) {
-        double p1 = -1.416 * 0.00000001;
-        double p2 = 8.078 * 0.000001;
-        double p3 = -0.0009421;
-        double p4 = -0.03026;
-        double p5 = 156.9;
-        double result = p1 *Math.pow(day, 4) + p2*Math.pow(day, 3) + p3*Math.pow(day, 2) + p4*day + p5;
+        double result = recentMeasured.getFiveOrder()*Math.pow(day, 5) + recentMeasured.getFourOrder()*Math.pow(day, 4)
+                + recentMeasured.getThreeOrder()*Math.pow(day, 3) + recentMeasured.getTwoOrder()*Math.pow(day, 2)
+                + recentMeasured.getOneOrder()*day + recentMeasured.getZeroOrder();
         return result;
     }
 
@@ -76,14 +97,56 @@ public class CalculateByDate {
      * 计算遥测水位
      */
     public Double calRadarLevel(Integer day) {
-        Double p1 = -1.266 * 0.00000001;
-        Double p2 = 6.889 * 0.000001;
-        Double p3 = -0.0006524;
-        Double p4 = -0.05273;
-        Double p5 = 155.8;
-        Double result = p1 *Math.pow(day, 4) + p2*Math.pow(day, 3) + p3*Math.pow(day, 2) + p4*day + p5;
+        double result = recentRadar.getFiveOrder()*Math.pow(day, 5) + recentRadar.getFourOrder()*Math.pow(day, 4)
+                + recentRadar.getThreeOrder()*Math.pow(day, 3) + recentRadar.getTwoOrder()*Math.pow(day, 2)
+                + recentRadar.getOneOrder()*day + recentRadar.getZeroOrder();
         return result;
     }
+
+    /**
+     * 根据日期和实测水位计算sar水域面积
+     */
+    public Double calSarAreaByMeasured(Integer day) {
+        Double MeasuredLevel = calRadarLevel(day);
+        Double SarArea = recentSarMeasured.getFiveOrder()*Math.pow(MeasuredLevel, 5) + recentSarMeasured.getFourOrder()*Math.pow(MeasuredLevel, 4)
+                + recentSarMeasured.getThreeOrder()*Math.pow(MeasuredLevel, 3) + recentSarMeasured.getTwoOrder()*Math.pow(MeasuredLevel, 2)
+                + recentSarMeasured.getOneOrder()*MeasuredLevel + recentSarMeasured.getZeroOrder();
+        return SarArea;
+    }
+
+    /**
+     * 根据日期和遥测水位计算sar水域面积
+     */
+    public Double calSarAreaByRadar(Integer day) {
+        Double RadarLevel = calRadarLevel(day);
+        Double SarArea = recentSarRadar.getFiveOrder()*Math.pow(RadarLevel, 5) + recentSarRadar.getFourOrder()*Math.pow(RadarLevel, 4)
+                + recentSarRadar.getThreeOrder()*Math.pow(RadarLevel, 3) + recentSarRadar.getTwoOrder()*Math.pow(RadarLevel, 2)
+                + recentSarRadar.getOneOrder()*RadarLevel + recentSarRadar.getZeroOrder();
+        return SarArea;
+    }
+
+    /**
+     * 根据日期和实测水位计算光学水域面积
+     */
+    public Double calOpticalByMeasured(Integer day) {
+        Double MeasuredLevel = calMeasuredLevel(day);
+        Double SarArea = recentOpticalMeasured.getFiveOrder()*Math.pow(MeasuredLevel, 5) + recentOpticalMeasured.getFourOrder()*Math.pow(MeasuredLevel, 4)
+                + recentOpticalMeasured.getThreeOrder()*Math.pow(MeasuredLevel, 3) + recentOpticalMeasured.getTwoOrder()*Math.pow(MeasuredLevel, 2)
+                + recentOpticalMeasured.getOneOrder()*MeasuredLevel + recentOpticalMeasured.getZeroOrder();
+        return SarArea;
+    }
+
+    /**
+     * 根据日期和遥测水位计算光学水域面积
+     */
+    public Double calOpticalByRadar(Integer day) {
+        Double RadarLevel = calRadarLevel(day);
+        Double SarArea = recentOpticalRadar.getFiveOrder()*Math.pow(RadarLevel, 5) + recentOpticalRadar.getFourOrder()*Math.pow(RadarLevel, 4)
+                + recentOpticalRadar.getThreeOrder()*Math.pow(RadarLevel, 3) + recentOpticalRadar.getTwoOrder()*Math.pow(RadarLevel, 2)
+                + recentOpticalRadar.getOneOrder()*RadarLevel + recentOpticalRadar.getZeroOrder();
+        return SarArea;
+    }
+
 
     /**
      * 根据遥测水位计算水域面积
@@ -108,8 +171,12 @@ public class CalculateByDate {
 
     /**
      * 根据遥测水位和SAR水域面积计算蓄水量
+     * 先根据日期和水位的拟合参数获得面积，再根据水位和面积之间的拟合关系获得面积
      */
     public Double calStorageByRadarAndSAR(Integer day) {
+        Double sarMeasured = calSarAreaByMeasured(day);
+        Double sarRadar = calSarAreaByRadar(day);
+        Double sarArea = (sarMeasured + sarRadar) / 2;
         //y=(0.07019/3)*x^3+(-7.68/2)*x^2+115.7*x+15, x 是水位高度
         //根据日期获得遥测水位，根据遥测水位和拟合公式获得蓄水量
         Double waterLevel = calRadarLevel(day);
