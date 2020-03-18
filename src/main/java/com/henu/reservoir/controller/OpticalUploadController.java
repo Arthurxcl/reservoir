@@ -1,11 +1,16 @@
 package com.henu.reservoir.controller;
 
+import com.henu.reservoir.dao.FittingFormulaDaoMapper;
+import com.henu.reservoir.dao.WaterAreaDaoMapper;
+import com.henu.reservoir.domain.FittingFormulaDao;
 import com.henu.reservoir.domain.OpticalImgDao;
 import com.henu.reservoir.domain.WaterAreaDao;
 import com.henu.reservoir.service.CutAlgoService;
 import com.henu.reservoir.service.OpticalImgService;
 import com.henu.reservoir.service.ReservoirInfoService;
 import com.henu.reservoir.service.WaterAreaService;
+import com.henu.reservoir.util.CalculateByDate;
+import com.henu.reservoir.util.FittingFormula;
 import com.henu.reservoir.util.countWaterArea.Count;
 import fcm_java.ltycl.Sblty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +31,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 @Controller
@@ -39,6 +45,10 @@ public class OpticalUploadController {
     private CutAlgoService cutAlgoService;
     @Autowired
     private WaterAreaService waterAreaService;
+    @Autowired
+    private WaterAreaDaoMapper waterAreaDaoMapper;
+    @Autowired
+    private FittingFormulaDaoMapper fittingFormulaDaoMapper;
 
     @Value("${path.resource-path}")
     private String resourcePath;
@@ -179,9 +189,42 @@ public class OpticalUploadController {
         Integer cutId = cutAlgoService.selectByName(cutAlgo).getId();
         //获取影像id
         Integer imgId = opticalImgService.selectByPath(newFilePathRelative).getId();
+
+        //判断当前年份是否有面积数据，如果有，则可以拟合
+        //新建sql语句，从数据库中选出当前年份的数据
+        List<WaterAreaDao> currentYearArea = waterAreaDaoMapper.selectCurrentYear(0);
+
         //将水域面积存入数据库
         WaterAreaDao waterAreaDao = new WaterAreaDao(0, reservoir_id, waterArea, imgId, cutId, date, (byte) 0);
         waterAreaService.insert(waterAreaDao);
+
+        //如果当前年份面积数据个数大于0，则根据取出的数据进行拟合
+        Integer num = currentYearArea.size();
+        if(num > 0) {
+            //可以根据实测水位和遥测水位对面积进行拟合
+            //获取水位最近一次拟合参数 ? 无法判断是否有关于 水位的拟合参数
+            FittingFormulaDao recentMeasuredParameter = fittingFormulaDaoMapper.selectRecentlyByType("measured");
+            //FittingFormulaDao recentRadarParameter = fittingFormulaDaoMapper.selectRecentlyByType("radar");
+            //获得每个水域面积对应的水位高度（日期）
+            double[] x = new double[num];
+            double[] y = new double[num];
+            for (int i = 0; i < num; i++) {
+                //获得当前一条数据的日期
+                Integer currentDay = CalculateByDate.getDayByDate(currentYearArea.get(i).getDate());
+                //根据拟合公式获得当前水位，并存入数组中
+                Double currentLevel = recentMeasuredParameter.getFiveOrder() * Math.pow(currentDay, 5) + recentMeasuredParameter.getFourOrder() * Math.pow(currentDay, 4) +
+                        recentMeasuredParameter.getThreeOrder()*Math.pow(currentDay, 3) + recentMeasuredParameter.getTwoOrder()*Math.pow(currentDay, 2) +
+                        recentMeasuredParameter.getOneOrder() * currentDay + recentMeasuredParameter.getZeroOrder();
+                x[i] = currentLevel;
+                y[i] = Double.parseDouble(currentYearArea.get(i).getArea());
+            }
+            //对sar水域面积和实测水位进行拟合
+            double[] fittingResult = FittingFormula.waterlevelfit(x, y);
+            //将拟合结果存入拟合结果表
+            FittingFormulaDao fittingFormulaDao = new FittingFormulaDao(0, fittingResult[0], fittingResult[1], fittingResult[2],
+                    fittingResult[3], fittingResult[4], fittingResult[5], new Date(), "optical");
+            fittingFormulaDaoMapper.insert(fittingFormulaDao);
+        }
         return "success";
     }
 }

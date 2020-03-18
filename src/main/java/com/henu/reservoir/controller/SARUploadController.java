@@ -9,6 +9,8 @@ import com.henu.reservoir.service.CutAlgoService;
 import com.henu.reservoir.service.ReservoirInfoService;
 import com.henu.reservoir.service.SarImgService;
 import com.henu.reservoir.service.WaterAreaService;
+import com.henu.reservoir.util.CalculateByDate;
+import com.henu.reservoir.util.FittingFormula;
 import com.henu.reservoir.util.countWaterArea.Count;
 import fcm_java.sar_fcm.Fcm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -182,17 +185,36 @@ public class SARUploadController {
         Integer imgId = sarImgService.selectByPath(newFilePathRelative).getId();
         //判断当前年份是否有面积数据，如果有，则可以拟合
         //新建sql语句，从数据库中选出当前年份的数据
-        List<WaterAreaDao> currentYear = waterAreaDaoMapper.selectCurrentYear(1);
+        List<WaterAreaDao> currentYearArea = waterAreaDaoMapper.selectCurrentYear(1);
         //将水域面积存入数据库
         WaterAreaDao waterAreaDao = new WaterAreaDao(0, reservoir_id, waterArea, imgId, cutId, date, (byte) 1);
         waterAreaService.insert(waterAreaDao);
         //如果当前年份面积数据个数大于0，则根据取出的数据进行拟合
-        if(currentYear.size() > 0) {
+        Integer num = currentYearArea.size();
+        if(num > 0) {
+            //可以根据实测水位和遥测水位对面积进行拟合
             //获取水位最近一次拟合参数 ? 无法判断是否有关于 水位的拟合参数
             FittingFormulaDao recentMeasuredParameter = fittingFormulaDaoMapper.selectRecentlyByType("measured");
-
-        } else{
-
+            //FittingFormulaDao recentRadarParameter = fittingFormulaDaoMapper.selectRecentlyByType("radar");
+            //获得每个水域面积对应的水位高度（日期）
+            double[] x = new double[num];
+            double[] y = new double[num];
+            for (int i = 0; i < num; i++) {
+                //获得当前一条数据的日期
+                Integer currentDay = CalculateByDate.getDayByDate(currentYearArea.get(i).getDate());
+                //根据拟合公式获得当前水位，并存入数组中
+                Double currentLevel = recentMeasuredParameter.getFiveOrder() * Math.pow(currentDay, 5) + recentMeasuredParameter.getFourOrder() * Math.pow(currentDay, 4) +
+                        recentMeasuredParameter.getThreeOrder()*Math.pow(currentDay, 3) + recentMeasuredParameter.getTwoOrder()*Math.pow(currentDay, 2) +
+                        recentMeasuredParameter.getOneOrder() * currentDay + recentMeasuredParameter.getZeroOrder();
+                x[i] = currentLevel;
+                y[i] = Double.parseDouble(currentYearArea.get(i).getArea());
+            }
+            //对sar水域面积和实测水位进行拟合
+            double[] fittingResult = FittingFormula.waterlevelfit(x, y);
+            //将拟合结果存入拟合结果表
+            FittingFormulaDao fittingFormulaDao = new FittingFormulaDao(0, fittingResult[0], fittingResult[1], fittingResult[2],
+                    fittingResult[3], fittingResult[4], fittingResult[5], new Date(), "sar");
+            fittingFormulaDaoMapper.insert(fittingFormulaDao);
         }
         return "success";
     }

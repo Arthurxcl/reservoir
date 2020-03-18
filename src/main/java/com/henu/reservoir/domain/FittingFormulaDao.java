@@ -13,7 +13,8 @@ public class FittingFormulaDao {
     private Date date;
     private String type;
 
-    public FittingFormulaDao(Double fiveOrder, Double fourOrder, Double threeOrder, Double twoOrder, Double oneOrder, Double zeroOrder, Date date, String type) {
+    public FittingFormulaDao(Integer id, Double fiveOrder, Double fourOrder, Double threeOrder, Double twoOrder, Double oneOrder, Double zeroOrder, Date date, String type) {
+        this.id = id;
         this.fiveOrder = fiveOrder;
         this.fourOrder = fourOrder;
         this.threeOrder = threeOrder;

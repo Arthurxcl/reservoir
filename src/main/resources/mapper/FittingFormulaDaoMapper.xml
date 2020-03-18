@@ -14,7 +14,7 @@
       <arg column="three_order" javaType="java.lang.Double" jdbcType="DOUBLE" />
       <arg column="two_order" javaType="java.lang.Double" jdbcType="DOUBLE" />
       <arg column="one_order" javaType="java.lang.Double" jdbcType="DOUBLE" />
-      <arg column="zero_order" javaType="java.lang.Integer" jdbcType="DOUBLE" />
+      <arg column="zero_order" javaType="java.lang.Double" jdbcType="DOUBLE" />
       <arg column="date" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="type" javaType="java.lang.String" jdbcType="VARCHAR" />
     </constructor>
@@ -56,7 +56,7 @@
     insert into fitting_formula (five_order, four_order, three_order, two_order, one_order, zero_order, date, type)
     values (#{fiveOrder,jdbcType=DOUBLE}, #{fourOrder,jdbcType=DOUBLE},
     #{threeOrder,jdbcType=DOUBLE}, #{twoOrder,jdbcType=DOUBLE}, #{oneOrder,jdbcType=DOUBLE},
-    #{zeroOrder,jdbcType=DOUBLE}, #{date,jdbcType=TIMESTAMP}, #{type, jdbcTypep=VARCHAR})
+    #{zeroOrder,jdbcType=DOUBLE}, #{date,jdbcType=TIMESTAMP}, #{type, jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.henu.reservoir.domain.FittingFormulaDao">
     <!--
@@ -78,9 +78,10 @@
 
   <!--选择离当前时间最近的一条拟合参数-->
   <select id="selectRecentlyByType" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
     <include refid="Base_Column_List" />
     from fitting_formula
-    where type = #{type,jdbc=VARCHAR}
+    where type = #{type,jdbcType=VARCHAR}
     ORDER BY ABS(date-NOW()) ASC
     LIMIT 0, 1
   </select>

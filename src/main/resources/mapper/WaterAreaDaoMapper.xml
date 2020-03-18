@@ -191,7 +191,7 @@
     select
     <include refid="Base_Column_List" />
     from water_area
-    where is_sar_area = #{is_sar_area, jdbc=INTEGER}
+    where is_sar_area = #{is_sar_area, jdbcType=INTEGER}
     and YEAR(date)=YEAR(NOW())
   </select>
 </mapper>

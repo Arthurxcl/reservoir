@@ -86,7 +86,7 @@ public class MeasuredLevelUploadController {
         double[] result = FittingFormula.waterlevelfit(x, y);
         //将拟合结果存储在数据库中
         Date date = new Date();
-        FittingFormulaDao fittingFormulaDao = new FittingFormulaDao(result[0], result[1], result[2], result[3], result[4], result[5], date, "measured");
+        FittingFormulaDao fittingFormulaDao = new FittingFormulaDao(0, result[0], result[1], result[2], result[3], result[4], result[5], date, "measured");
         fittingFormulaDaoMapper.insert(fittingFormulaDao);
     }
 }
