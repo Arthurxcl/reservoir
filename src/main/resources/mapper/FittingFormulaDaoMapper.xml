@@ -76,12 +76,13 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <!--选择离当前时间最近的一条拟合参数-->
+  <!--选择当前年份离当前时间最近的一条拟合参数-->
   <select id="selectRecentlyByType" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from fitting_formula
     where type = #{type,jdbcType=VARCHAR}
+    and YEAR(date)=YEAR(NOW())
     ORDER BY ABS(date-NOW()) ASC
     LIMIT 0, 1
   </select>

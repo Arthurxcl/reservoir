@@ -75,6 +75,14 @@ public class MeasuredLevelUploadController {
         }
         //获取今年的所有实测水位数据
         List<MeasuredResultDao> allMeasured = measuredResultDaoMapper.selectCurrentYear();
+        //拟合
+        getDateAndMeasuredFittingResult(allMeasured);
+    }
+
+    /**
+     * 获得日期和实测水位的拟合关系
+     */
+    public void getDateAndMeasuredFittingResult(List<MeasuredResultDao> allMeasured) {
         //设置拟合所需数组
         double[] x = new double[allMeasured.size()];
         double[] y = new double[allMeasured.size()];
@@ -93,4 +101,51 @@ public class MeasuredLevelUploadController {
             fittingFormulaDaoMapper.insert(fittingFormulaDao);
         }
     }
+
+    /**
+     * 获得日期和实测蓄水量拟合关系
+     */
+    public void getDateAndMeasuredStorageFittingResult(List<MeasuredResultDao> allMeasured) {
+        //设置拟合所需数组
+        double[] x = new double[allMeasured.size()];
+        double[] y = new double[allMeasured.size()];
+        //如果数据个数大于1，则进行拟合
+        if(allMeasured.size() > 1) {
+            for (int i = 0; i < allMeasured.size(); i++) {
+                //提取日期和水位
+                x[i] = CalculateByDate.getDayByDate(allMeasured.get(i).getDate());
+                y[i] = Double.parseDouble(allMeasured.get(i).getMeasuredStorage());
+            }
+            //开始拟合
+            double[] result = FittingFormula.waterlevelfit(x, y);
+            //将拟合结果存储在数据库中
+            Date date = new Date();
+            FittingFormulaDao fittingFormulaDao = new FittingFormulaDao(0, result[0], result[1], result[2], result[3], result[4], result[5], date, "measuredStorage");
+            fittingFormulaDaoMapper.insert(fittingFormulaDao);
+        }
+    }
+
+    /**
+     * 获得实测水位和实测蓄水量拟合关系
+     */
+    public void getMeasuredLevelAndMeasuredStorageFitting(List<MeasuredResultDao> allMeasured) {
+        //设置拟合所需数组
+        double[] x = new double[allMeasured.size()];
+        double[] y = new double[allMeasured.size()];
+        //如果数据个数大于1，则进行拟合
+        if(allMeasured.size() > 1) {
+            for (int i = 0; i < allMeasured.size(); i++) {
+                //提取水位和蓄水量
+                x[i] = Double.parseDouble(allMeasured.get(i).getWaterLevel());
+                y[i] = Double.parseDouble(allMeasured.get(i).getMeasuredStorage());
+            }
+            //开始拟合
+            double[] result = FittingFormula.waterlevelfit(x, y);
+            //将拟合结果存储在数据库中
+            Date date = new Date();
+            FittingFormulaDao fittingFormulaDao = new FittingFormulaDao(0, result[0], result[1], result[2], result[3], result[4], result[5], date, "measuredStorage_measuredLevel");
+            fittingFormulaDaoMapper.insert(fittingFormulaDao);
+        }
+    }
+
 }

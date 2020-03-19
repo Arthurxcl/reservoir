@@ -43,6 +43,72 @@ public class CalculateByDate {
         this.endDay = getDayByDate(endDate);
     }
 
+    /**
+     * 判断实测水位是否和日期进行过拟合
+     */
+    public Boolean judgeMeasured() {
+        if(recentMeasured == null) {
+            return false;
+        } else{
+            return true;
+        }
+    }
+
+    /**
+     * 判断遥测水位是否和日期进行过拟合
+     */
+    public Boolean judgeRadar() {
+        if(recentRadar == null) {
+            return false;
+        } else{
+            return true;
+        }
+    }
+
+    /**
+     * 判断实测水位是否和sar面积进行过拟合
+     */
+    public Boolean judgeSarAndMeasured() {
+        if(recentSarMeasured == null) {
+            return false;
+        } else{
+            return true;
+        }
+    }
+
+    /**
+     * 判断遥测水位是否和sar面积进行过拟合
+     */
+    public Boolean judgeSarAndRadar() {
+        if(recentSarRadar == null) {
+            return false;
+        } else{
+            return true;
+        }
+    }
+
+    /**
+     * 判断实测水位是否和光学面积进行过拟合
+     */
+    public Boolean judgeOpticalAndMeasured() {
+        if(recentOpticalMeasured == null) {
+            return false;
+        } else{
+            return true;
+        }
+    }
+
+    /**
+     * 判断遥测水位是否和光学面积进行过拟合
+     */
+    public Boolean judgeOpticalAndRadar() {
+        if(recentOpticalRadar == null) {
+            return false;
+        } else{
+            return true;
+        }
+    }
+
     public ArrayList<String> getAllDate(){
         ArrayList<String> dateList = new ArrayList<>();
         Calendar calendarStart = Calendar.getInstance();
@@ -97,7 +163,7 @@ public class CalculateByDate {
     }
 
     /**
-     * 根据日期和实测水位计算sar水域面积
+     * 根据日期和实测水位的关系计算实测水位，再根据实测水位和sar面积之间的关系计算sar面积
      */
     public Double calSarAreaByMeasured(Integer day) {
         Double MeasuredLevel = calRadarLevel(day);
@@ -108,7 +174,7 @@ public class CalculateByDate {
     }
 
     /**
-     * 根据日期和遥测水位计算sar水域面积
+     * 根据日期和遥测水位的关系计算实测水位，再根据遥测水位和sar面积之间的关系计算sar面积
      */
     public Double calSarAreaByRadar(Integer day) {
         Double RadarLevel = calRadarLevel(day);
@@ -119,7 +185,7 @@ public class CalculateByDate {
     }
 
     /**
-     * 根据日期和实测水位计算光学水域面积
+     * 根据日期和实测水位的关系计算实测水位，再根据实测水位和光学面积的关系计算光学水域面积
      */
     public Double calOpticalByMeasured(Integer day) {
         Double MeasuredLevel = calMeasuredLevel(day);
@@ -130,7 +196,7 @@ public class CalculateByDate {
     }
 
     /**
-     * 根据日期和遥测水位计算光学水域面积
+     * 根据日期和遥测水位的关系计算遥测水位，再根据遥测水位和光学面积的关系计算光学水域面积
      */
     public Double calOpticalByRadar(Integer day) {
         Double RadarLevel = calRadarLevel(day);
@@ -143,12 +209,12 @@ public class CalculateByDate {
 
     /**
      * 根据遥测水位计算水域面积
-     */
+     *//*
     public Double calWaterAreaByRadar(Integer day) {
         Double waterLevel = calRadarLevel(day);
         Double result = 0.04 * Math.pow(waterLevel, 2) + 1.4 * waterLevel - 595.5;
         return result;
-    }
+    }*/
 
     /**
      * 计算起始日期到结束日期的遥测水位
@@ -164,12 +230,12 @@ public class CalculateByDate {
 
     /**
      * 根据遥测水位和SAR水域面积计算蓄水量
-     * 先根据日期和水位的拟合参数获得面积，再根据水位和面积之间的拟合关系获得面积
+     * 先根据日期和水位的拟合参数获得水位，再根据水位和面积之间的拟合关系获得面积
      */
     public Double calStorageByRadarAndSAR(Integer day) {
-        Double sarMeasured = calSarAreaByMeasured(day);
+        /*Double sarMeasured = calSarAreaByMeasured(day);
         Double sarRadar = calSarAreaByRadar(day);
-        Double sarArea = (sarMeasured + sarRadar) / 2;
+        Double sarArea = (sarMeasured + sarRadar) / 2;*/
         //y=(0.07019/3)*x^3+(-7.68/2)*x^2+115.7*x+15, x 是水位高度
         //根据日期获得遥测水位，根据遥测水位和拟合公式获得蓄水量
         Double waterLevel = calRadarLevel(day);

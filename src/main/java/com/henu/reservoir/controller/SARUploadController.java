@@ -184,6 +184,23 @@ public class SARUploadController {
         //将水域面积存入数据库
         WaterAreaDao waterAreaDao = new WaterAreaDao(0, reservoir_id, waterArea, imgId, cutId, date, (byte) 1);
         waterAreaService.insert(waterAreaDao);
+        //拟合
+        CalculateByDate calculateByDate = new CalculateByDate(fittingFormulaDaoMapper);
+        if(calculateByDate.judgeMeasured()) {
+            getMeasuredFittingResult();
+        }
+        if(calculateByDate.judgeRadar()) {
+            getRadarFittingResult();
+        }
+        return "success";
+    }
+
+    /**
+     * sar影像面积分别和实测水位，遥测水位拟合
+     * 每次保存sar面积时调用
+     * 但是此方法默认实测水位和遥测水位已经拟合完成，没有判空
+     */
+    public void getMeasuredFittingResult() {
         //从数据库中选出当前年份的数据
         List<WaterAreaDao> currentYearArea = waterAreaDaoMapper.selectCurrentYear(1);
         //如果当前年份面积数据个数大于1，则根据取出的数据进行拟合
@@ -192,24 +209,62 @@ public class SARUploadController {
             CalculateByDate calculateByDate = new CalculateByDate(fittingFormulaDaoMapper);
             //可以根据实测水位和遥测水位对面积进行拟合
             //获得每个水域面积对应的水位高度（日期）
-            double[] x = new double[num];
+            double[] measuredX = new double[num];
+            double[] radarX = new double[num];
             double[] y = new double[num];
+            Double currentMeasuredLevel;
             for (int i = 0; i < num; i++) {
                 //获得当前一条数据的日期
                 Integer currentDay = CalculateByDate.getDayByDate(currentYearArea.get(i).getDate());
                 //获取最近一条拟合参数，并根据拟合参数获得当前水位，并存入数组中
-                Double currentLevel = calculateByDate.calMeasuredLevel(currentDay);
-                x[i] = currentLevel;
+                //实测水位和遥测水位
+                currentMeasuredLevel = calculateByDate.calMeasuredLevel(currentDay);
+                measuredX[i] = currentMeasuredLevel;
                 y[i] = Double.parseDouble(currentYearArea.get(i).getArea());
             }
-            //对sar水域面积和实测水位进行拟合
-            double[] fittingResult = FittingFormula.waterlevelfit(x, y);
+            //sar水域面积和实测水位进行拟合
+            double[] fittingResult = FittingFormula.waterlevelfit(measuredX, y);
+
             //将拟合结果存入拟合结果表
             FittingFormulaDao fittingFormulaDao = new FittingFormulaDao(0, fittingResult[0], fittingResult[1], fittingResult[2],
                     fittingResult[3], fittingResult[4], fittingResult[5], new Date(), "sar_measured");
             fittingFormulaDaoMapper.insert(fittingFormulaDao);
         }
-        return "success";
+    }
+
+    /**
+     * sar影像面积分别和实测水位，遥测水位拟合
+     * 每次保存sar面积时调用
+     * 但是此方法默认实测水位和遥测水位已经拟合完成，没有判空
+     */
+    public void getRadarFittingResult() {
+        //从数据库中选出当前年份的数据
+        List<WaterAreaDao> currentYearArea = waterAreaDaoMapper.selectCurrentYear(1);
+        //如果当前年份面积数据个数大于1，则根据取出的数据进行拟合
+        Integer num = currentYearArea.size();
+        if(num > 1) {
+            CalculateByDate calculateByDate = new CalculateByDate(fittingFormulaDaoMapper);
+            //可以根据实测水位和遥测水位对面积进行拟合
+            //获得每个水域面积对应的水位高度（日期）
+            double[] measuredX = new double[num];
+            double[] radarX = new double[num];
+            double[] y = new double[num];
+            Double currentRadarLevel;
+            for (int i = 0; i < num; i++) {
+                //获得当前一条数据的日期
+                Integer currentDay = CalculateByDate.getDayByDate(currentYearArea.get(i).getDate());
+                //获取最近一条拟合参数，并根据拟合参数获得当前水位，并存入数组中
+                currentRadarLevel = calculateByDate.calRadarLevel(currentDay);
+                radarX[i] = currentRadarLevel;
+                y[i] = Double.parseDouble(currentYearArea.get(i).getArea());
+            }
+            //sar水域面积和遥测水位进行拟合
+            double[] fittingResult1 = FittingFormula.waterlevelfit(radarX, y);
+            //将拟合结果存入拟合结果表
+            FittingFormulaDao fittingFormulaDao1 = new FittingFormulaDao(0, fittingResult1[0], fittingResult1[1], fittingResult1[2],
+                    fittingResult1[3], fittingResult1[4], fittingResult1[5], new Date(), "sar_radar");
+            fittingFormulaDaoMapper.insert(fittingFormulaDao1);
+        }
     }
 }
 
