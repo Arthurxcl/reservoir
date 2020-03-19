@@ -1,27 +1,16 @@
 package com.henu.reservoir.util;
 
 import com.henu.reservoir.dao.FittingFormulaDaoMapper;
-import com.henu.reservoir.dao.RadarLevelDaoMapper;
 import com.henu.reservoir.domain.FittingFormulaDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 根据两个日期计算出每天的水位，水域面积，蓄水量
  */
-@Component
 public class CalculateByDate {
-    @Autowired
-    private FittingFormulaDaoMapper fittingFormulaDaoMapper;
-
     private Date startDate;
     private Date endDate;
     private Integer startDay;
@@ -35,6 +24,10 @@ public class CalculateByDate {
     private FittingFormulaDao recentOpticalRadar;
 
     public CalculateByDate() {
+
+    }
+
+    public CalculateByDate(FittingFormulaDaoMapper fittingFormulaDaoMapper) {
         recentMeasured = fittingFormulaDaoMapper.selectRecentlyByType("measured");
         recentRadar = fittingFormulaDaoMapper.selectRecentlyByType("radar");
         recentSarMeasured = fittingFormulaDaoMapper.selectRecentlyByType("sar_measured");

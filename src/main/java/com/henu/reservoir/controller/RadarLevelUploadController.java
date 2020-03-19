@@ -2,12 +2,17 @@ package com.henu.reservoir.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.henu.reservoir.dao.FittingFormulaDaoMapper;
+import com.henu.reservoir.dao.RadarResultDaoMapper;
+import com.henu.reservoir.domain.FittingFormulaDao;
 import com.henu.reservoir.domain.RadarLevelDao;
 import com.henu.reservoir.domain.RadarResultDao;
 import com.henu.reservoir.domain.ReservoirInfoDao;
 import com.henu.reservoir.service.RadarLevelService;
 import com.henu.reservoir.service.RadarResultService;
 import com.henu.reservoir.service.ReservoirInfoService;
+import com.henu.reservoir.util.CalculateByDate;
+import com.henu.reservoir.util.FittingFormula;
 import com.mathworks.toolbox.javabuilder.MWException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +45,8 @@ public class RadarLevelUploadController {
     private ReservoirInfoService reservoirInfoService;
     private RadarResultService radarResultService;
     private RadarLevelService radarLevelService;
+    private RadarResultDaoMapper radarResultDaoMapper;
+    private FittingFormulaDaoMapper fittingFormulaDaoMapper;
 
     @Value("${path.resource-path}")
     private String resourcePath;
@@ -48,11 +55,15 @@ public class RadarLevelUploadController {
     private void setServices(
             ReservoirInfoService reservoirInfoService,
             RadarResultService radarResultService,
-            RadarLevelService radarLevelService
+            RadarLevelService radarLevelService,
+            RadarResultDaoMapper radarResultDaoMapper,
+            FittingFormulaDaoMapper fittingFormulaDaoMapper
     ){
         this.reservoirInfoService = reservoirInfoService;
         this.radarResultService = radarResultService;
         this.radarLevelService = radarLevelService;
+        this.radarResultDaoMapper = radarResultDaoMapper;
+        this.fittingFormulaDaoMapper = fittingFormulaDaoMapper;
     }
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -203,7 +214,29 @@ public class RadarLevelUploadController {
         RadarResultDao radarResultDao = radarResultDaoList.get(index);
         radarResultDao.setRadarLevelId(dao.getId());
         try {
+            //将用户选择的数据插入数据库
             radarResultService.addRadarResult(radarResultDao);
+
+            //获得当前年份的数据
+            List<RadarResultDao> allCurrentRadar =  radarResultDaoMapper.selectCurrentYear();
+            //设置拟合所需数组
+            double[] x = new double[allCurrentRadar.size()];
+            double[] y = new double[allCurrentRadar.size()];
+            //如果数据个数大于1，则进行拟合
+            if(allCurrentRadar.size() > 1) {
+                for (int i = 0; i < allCurrentRadar.size(); i++) {
+                    //提取日期和水位
+                    x[i] = CalculateByDate.getDayByDate(allCurrentRadar.get(i).getDate());
+                    y[i] = Double.parseDouble(allCurrentRadar.get(i).getWaterLevel());
+                }
+                //开始拟合
+                double[] result = FittingFormula.waterlevelfit(x, y);
+                //将拟合结果存储在数据库中
+                Date currentDate = new Date();
+                FittingFormulaDao fittingFormulaDao = new FittingFormulaDao(0, result[0], result[1], result[2], result[3], result[4], result[5], currentDate, "radar");
+                fittingFormulaDaoMapper.insert(fittingFormulaDao);
+            }
+
             return "success";
         } catch (Exception e) {
             e.printStackTrace();

@@ -189,19 +189,15 @@ public class OpticalUploadController {
         Integer cutId = cutAlgoService.selectByName(cutAlgo).getId();
         //获取影像id
         Integer imgId = opticalImgService.selectByPath(newFilePathRelative).getId();
-
-        //判断当前年份是否有面积数据，如果有，则可以拟合
-        //新建sql语句，从数据库中选出当前年份的数据
-        List<WaterAreaDao> currentYearArea = waterAreaDaoMapper.selectCurrentYear(0);
-
         //将水域面积存入数据库
         WaterAreaDao waterAreaDao = new WaterAreaDao(0, reservoir_id, waterArea, imgId, cutId, date, (byte) 0);
         waterAreaService.insert(waterAreaDao);
-
-        //如果当前年份面积数据个数大于0，则根据取出的数据进行拟合
+        //从数据库中选出当前年份的数据
+        List<WaterAreaDao> currentYearArea = waterAreaDaoMapper.selectCurrentYear(0);
+        //如果当前年份面积数据个数大于1，则根据取出的数据进行拟合
         Integer num = currentYearArea.size();
-        if(num > 0) {
-            CalculateByDate calculateByDate = new CalculateByDate();
+        if(num > 1) {
+            CalculateByDate calculateByDate = new CalculateByDate(fittingFormulaDaoMapper);
             //可以根据实测水位和遥测水位对面积进行拟合
             //获得每个水域面积对应的水位高度（日期）
             double[] x = new double[num];
