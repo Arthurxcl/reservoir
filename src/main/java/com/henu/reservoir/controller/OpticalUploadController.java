@@ -194,9 +194,11 @@ public class OpticalUploadController {
         waterAreaService.insert(waterAreaDao);
         //拟合
         CalculateByDate calculateByDate = new CalculateByDate(fittingFormulaDaoMapper);
+        //如果有实测水位和日期的拟合参数
         if(calculateByDate.judgeMeasured()) {
             getMeasuredFittingResult();
         }
+        //如果有遥测水位和日期的拟合参数
         if(calculateByDate.judgeRadar()) {
             getRadarFittingResult();
         }

@@ -148,4 +148,12 @@ public class MeasuredLevelUploadController {
         }
     }
 
+    @GetMapping(value = "/getCurrentMeasured")
+    @ResponseBody
+    public String getCurrentMeasured() {
+        List<MeasuredResultDao> allMeasured = measuredResultDaoMapper.selectCurrentYear();
+
+
+        return "";
+    }
 }
