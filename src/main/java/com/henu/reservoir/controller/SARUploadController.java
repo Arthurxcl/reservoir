@@ -1,8 +1,12 @@
 package com.henu.reservoir.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.henu.reservoir.dao.FittingFormulaDaoMapper;
+import com.henu.reservoir.dao.SarImgDaoMapper;
 import com.henu.reservoir.dao.WaterAreaDaoMapper;
 import com.henu.reservoir.domain.FittingFormulaDao;
+import com.henu.reservoir.domain.MeasuredResultDao;
 import com.henu.reservoir.domain.SarImgDao;
 import com.henu.reservoir.domain.WaterAreaDao;
 import com.henu.reservoir.service.CutAlgoService;
@@ -44,6 +48,7 @@ public class SARUploadController {
     WaterAreaDaoMapper waterAreaDaoMapper;
     @Autowired
     FittingFormulaDaoMapper fittingFormulaDaoMapper;
+    @Autowired
 
     @Value("${path.resource-path}")
     private String resourcePath;
@@ -267,6 +272,25 @@ public class SARUploadController {
                     fittingResult1[3], fittingResult1[4], fittingResult1[5], new Date(), "sar_radar");
             fittingFormulaDaoMapper.insert(fittingFormulaDao1);
         }
+    }
+
+    /**
+     * 前端请求当前年份的sar面积数据
+     * @return String
+     */
+    @GetMapping(value = "/getCurrentSarArea")
+    @ResponseBody
+    public String getCurrentSarArea() {
+        //获取今年的sar面积数据
+        List<WaterAreaDao> allSarArea = waterAreaDaoMapper.selectCurrentYear(1);
+        ObjectMapper mapper = new ObjectMapper();
+        //转换成json返回
+        try {
+            return mapper.writeValueAsString(allSarArea);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
     }
 }
 

@@ -1,5 +1,7 @@
 package com.henu.reservoir.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.henu.reservoir.dao.FittingFormulaDaoMapper;
 import com.henu.reservoir.dao.WaterAreaDaoMapper;
 import com.henu.reservoir.domain.FittingFormulaDao;
@@ -272,5 +274,24 @@ public class OpticalUploadController {
                     fittingResult1[3], fittingResult1[4], fittingResult1[5], new Date(), "optical_radar");
             fittingFormulaDaoMapper.insert(fittingFormulaDao1);
         }
+    }
+
+    /**
+     * 前端请求当前年份的光学面积数据
+     * @return String
+     */
+    @GetMapping(value = "/getCurrentOpticalArea")
+    @ResponseBody
+    public String getCurrentOpticalArea() {
+        //获取今年的光学面积数据
+        List<WaterAreaDao> allSarArea = waterAreaDaoMapper.selectCurrentYear(0);
+        ObjectMapper mapper = new ObjectMapper();
+        //转换成json返回
+        try {
+            return mapper.writeValueAsString(allSarArea);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
     }
 }

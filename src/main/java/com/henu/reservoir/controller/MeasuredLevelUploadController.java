@@ -1,5 +1,6 @@
 package com.henu.reservoir.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.henu.reservoir.dao.FittingFormulaDaoMapper;
 import com.henu.reservoir.dao.MeasuredResultDaoMapper;
@@ -148,12 +149,22 @@ public class MeasuredLevelUploadController {
         }
     }
 
+    /**
+     * 前端请求当前年份的实测水位和实测蓄水量数据
+     * @return String
+     */
     @GetMapping(value = "/getCurrentMeasured")
     @ResponseBody
     public String getCurrentMeasured() {
+        //获取今年的实测水位数据
         List<MeasuredResultDao> allMeasured = measuredResultDaoMapper.selectCurrentYear();
-
-
-        return "";
+        ObjectMapper mapper = new ObjectMapper();
+        //转换成json返回
+        try {
+            return mapper.writeValueAsString(allMeasured);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
     }
 }

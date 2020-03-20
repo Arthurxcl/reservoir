@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.henu.reservoir.dao.FittingFormulaDaoMapper;
 import com.henu.reservoir.dao.RadarResultDaoMapper;
-import com.henu.reservoir.domain.FittingFormulaDao;
-import com.henu.reservoir.domain.RadarLevelDao;
-import com.henu.reservoir.domain.RadarResultDao;
-import com.henu.reservoir.domain.ReservoirInfoDao;
+import com.henu.reservoir.domain.*;
 import com.henu.reservoir.service.RadarLevelService;
 import com.henu.reservoir.service.RadarResultService;
 import com.henu.reservoir.service.ReservoirInfoService;
@@ -325,6 +322,25 @@ public class RadarLevelUploadController {
             }
         }
         return false;
+    }
+
+    /**
+     * 前端请求当前年份的遥测水位数据
+     * @return String
+     */
+    @GetMapping(value = "/getCurrentRadar")
+    @ResponseBody
+    public String getCurrentRadar() {
+        //获取今年的实测水位数据
+        List<RadarResultDao> allRadar = radarResultDaoMapper.selectCurrentYear();
+        ObjectMapper mapper = new ObjectMapper();
+        //转换成json返回
+        try {
+            return mapper.writeValueAsString(allRadar);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
     }
 }
 
