@@ -55,4 +55,7 @@ public interface RadarResultDaoMapper {
 
     //通过水库id查找RadarResult
     List<RadarResultDao> selectByReservoirId(Integer id);
+
+    //选出当前年份所有的遥测水位数据
+    List<RadarResultDao> selectCurrentYear();
 }

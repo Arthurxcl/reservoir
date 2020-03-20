@@ -62,4 +62,7 @@ public interface WaterAreaDaoMapper {
 
     //通过水库id查找光学的WaterAreaDao
     List<WaterAreaDao> selectOpticalByReservoirId(Integer id);
+
+    //查找sar或光学影像今年的面积数据
+    List<WaterAreaDao> selectCurrentYear(Integer isSAR);
 }

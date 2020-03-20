@@ -164,4 +164,12 @@
     from radar_result
     where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
   </select>
+
+  <!-- 选出今年的遥测水位数据 -->
+  <select id="selectCurrentYear" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from radar_result
+    where YEAR(date)=YEAR(NOW())
+  </select>
 </mapper>

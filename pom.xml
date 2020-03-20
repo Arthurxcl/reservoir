@@ -107,6 +107,11 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/lib/Altitude_Sentinel3_A.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>
     </dependencies>
 
     <build>

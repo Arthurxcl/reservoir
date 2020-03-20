@@ -185,4 +185,13 @@
     and is_sar_area = false
     order by date DESC
   </select>
+
+  <!-- 选出sar或光学影像今年的面积数据 -->
+  <select id="selectCurrentYear" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from water_area
+    where is_sar_area = #{is_sar_area, jdbcType=INTEGER}
+    and YEAR(date)=YEAR(NOW())
+  </select>
 </mapper>
