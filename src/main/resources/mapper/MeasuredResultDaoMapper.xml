@@ -145,6 +145,7 @@
     <include refid="Base_Column_List" />
     from measured_result
     where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
+    order by date ASC
   </select>
 
   <!-- 选出今年的实测水位数据 -->

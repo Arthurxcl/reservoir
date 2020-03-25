@@ -57,77 +57,77 @@ public class ShowResultController {
         return "";
     }
 
-    @PostMapping(value = "/getMeasuredLevel")
-    @ResponseBody
-    public String getMeasuredLevel(@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) {
-        //根据起始日期和结束日期计算每天的实测水位
-        CalculateByDate calculateByDate = new CalculateByDate(startDate, endDate);
-        ChartData chartData = new ChartData(calculateByDate.getAllDate(), calculateByDate.calPeriodMeasuredLevel());
-        try {
-            return mapper.writeValueAsString(chartData);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return "error";
-    }
+//    @PostMapping(value = "/getMeasuredLevel")
+//    @ResponseBody
+//    public String getMeasuredLevel(@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) {
+//        //根据起始日期和结束日期计算每天的实测水位
+//        CalculateByDate calculateByDate = new CalculateByDate(startDate, endDate);
+//        ChartData chartData = new ChartData(calculateByDate.getAllDate(), calculateByDate.calPeriodMeasuredLevel());
+//        try {
+//            return mapper.writeValueAsString(chartData);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//        return "error";
+//    }
+//
+//    @PostMapping(value = "/getRadarLevel")
+//    @ResponseBody
+//    public String getRadarLevel(@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) {
+//        //根据起始日期和结束日期计算每天的遥测水位
+//        CalculateByDate calculateByDate = new CalculateByDate(startDate, endDate);
+//        ChartData chartData = new ChartData(calculateByDate.getAllDate(), calculateByDate.calPeriodRadarLevel());
+//        try {
+//            return mapper.writeValueAsString(chartData);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//        return "error";
+//    }
+//
+//    @PostMapping(value = "/getWaterLevel")
+//    @ResponseBody
+//    public String getWaterLevel(@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) {
+//        //根据起始日期和结束日期计算每天的两种水位
+//        CalculateByDate calculateByDate = new CalculateByDate(startDate, endDate);
+//        ChartData chartData = new ChartData(calculateByDate.getAllDate(), calculateByDate.calPeriodMeasuredLevel(), calculateByDate.calPeriodRadarLevel());
+//        try {
+//            return mapper.writeValueAsString(chartData);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//        return "error";
+//    }
 
-    @PostMapping(value = "/getRadarLevel")
-    @ResponseBody
-    public String getRadarLevel(@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) {
-        //根据起始日期和结束日期计算每天的遥测水位
-        CalculateByDate calculateByDate = new CalculateByDate(startDate, endDate);
-        ChartData chartData = new ChartData(calculateByDate.getAllDate(), calculateByDate.calPeriodRadarLevel());
-        try {
-            return mapper.writeValueAsString(chartData);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return "error";
-    }
-
-    @PostMapping(value = "/getWaterLevel")
-    @ResponseBody
-    public String getWaterLevel(@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) {
-        //根据起始日期和结束日期计算每天的两种水位
-        CalculateByDate calculateByDate = new CalculateByDate(startDate, endDate);
-        ChartData chartData = new ChartData(calculateByDate.getAllDate(), calculateByDate.calPeriodMeasuredLevel(), calculateByDate.calPeriodRadarLevel());
-        try {
-            return mapper.writeValueAsString(chartData);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return "error";
-    }
-
-    /**
-     * 根据公式四种计算蓄水量
-     * @param startDate
-     * @param endDate
-     * @return
-     */
-    @PostMapping(value = "/getWaterStorage")
-    @ResponseBody
-    public String getWaterStorage(@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) {
-        CalculateByDate calculateByDate = new CalculateByDate(startDate, endDate);
-        //根据遥测水位和SAR水域面积
-        ArrayList<Double> result1 = calculateByDate.calPeriodStorageByRadarAndSAR();
-        //根据遥测水位和光学水域面积
-        ArrayList<Double> result2 = calculateByDate.calPeriodStorageByRadarAndOptical();
-        //根据遥测水位、SAR水域面积和光学水域面积
-        ArrayList<Double> result3 = calculateByDate.calPeriodStorageByRadarSAROptical();
-        //根据实测水位、SAR水域面积和光学水域面积
-        ArrayList<Double> result4 = calculateByDate.calPeriodStorageByMeasuredSAROptical();
-
-        ArrayList<String> x = calculateByDate.getAllDate();
-        ChartData chartData = new ChartData(x, result1, result2, result3, result4);
-
-        try {
-            return mapper.writeValueAsString(chartData);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return "error";
-    }
+//    /**
+//     * 根据公式四种计算蓄水量
+//     * @param startDate
+//     * @param endDate
+//     * @return
+//     */
+//    @PostMapping(value = "/getWaterStorage")
+//    @ResponseBody
+//    public String getWaterStorage(@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) {
+//        CalculateByDate calculateByDate = new CalculateByDate(startDate, endDate);
+//        //根据遥测水位和SAR水域面积
+//        ArrayList<Double> result1 = calculateByDate.calPeriodStorageByRadarAndSAR();
+//        //根据遥测水位和光学水域面积
+//        ArrayList<Double> result2 = calculateByDate.calPeriodStorageByRadarAndOptical();
+//        //根据遥测水位、SAR水域面积和光学水域面积
+//        ArrayList<Double> result3 = calculateByDate.calPeriodStorageByRadarSAROptical();
+//        //根据实测水位、SAR水域面积和光学水域面积
+//        ArrayList<Double> result4 = calculateByDate.calPeriodStorageByMeasuredSAROptical();
+//
+//        ArrayList<String> x = calculateByDate.getAllDate();
+//        ChartData chartData = new ChartData(x, result1, result2, result3, result4);
+//
+//        try {
+//            return mapper.writeValueAsString(chartData);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//        return "error";
+//    }
 
     @GetMapping(value = "/getWaterArea")
     @ResponseBody
