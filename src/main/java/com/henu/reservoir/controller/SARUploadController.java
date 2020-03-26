@@ -9,10 +9,7 @@ import com.henu.reservoir.domain.FittingFormulaDao;
 import com.henu.reservoir.domain.MeasuredResultDao;
 import com.henu.reservoir.domain.SarImgDao;
 import com.henu.reservoir.domain.WaterAreaDao;
-import com.henu.reservoir.service.CutAlgoService;
-import com.henu.reservoir.service.ReservoirInfoService;
-import com.henu.reservoir.service.SarImgService;
-import com.henu.reservoir.service.WaterAreaService;
+import com.henu.reservoir.service.*;
 import com.henu.reservoir.util.CalculateByDate;
 import com.henu.reservoir.util.FittingFormula;
 import com.henu.reservoir.util.countWaterArea.Count;
@@ -47,7 +44,7 @@ public class SARUploadController {
     @Autowired
     WaterAreaDaoMapper waterAreaDaoMapper;
     @Autowired
-    FittingFormulaDaoMapper fittingFormulaDaoMapper;
+    FittingService fittingService;
     @Autowired
 
     @Value("${path.resource-path}")
@@ -189,16 +186,10 @@ public class SARUploadController {
         //将水域面积存入数据库
         WaterAreaDao waterAreaDao = new WaterAreaDao(0, reservoir_id, waterArea, imgId, cutId, date, (byte) 1);
         waterAreaService.insert(waterAreaDao);
-//        //拟合
-//        CalculateByDate calculateByDate = new CalculateByDate(fittingFormulaDaoMapper);
-//        //如果有实测水位和日期的拟合参数
-//        if(calculateByDate.judgeMeasured()) {
-//            getMeasuredFittingResult();
-//        }
-//        //如果有遥测水位和日期的拟合参数
-//        if(calculateByDate.judgeRadar()) {
-//            getRadarFittingResult();
-//        }
+
+        fittingService.fitRadarLevelSarArea(reservoir_id);
+        fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
+        fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
         return "success";
     }
 //

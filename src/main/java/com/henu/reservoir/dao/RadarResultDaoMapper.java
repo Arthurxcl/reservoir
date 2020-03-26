@@ -56,6 +56,12 @@ public interface RadarResultDaoMapper {
     //通过水库id查找RadarResult
     List<RadarResultDao> selectByReservoirId(Integer id);
 
+    //使用reservoir_id和date获取1
+    RadarResultDao selectByReservoirIdAndDate(RadarResultDao record);
+
+    //使用reservoir_id和date更新1
+    int updateByReservoirIdAndDate(RadarResultDao record);
+
     //选出当前年份所有的遥测水位数据
     List<RadarResultDao> selectCurrentYear();
 }

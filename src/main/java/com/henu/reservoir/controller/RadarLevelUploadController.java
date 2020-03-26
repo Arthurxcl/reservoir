@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.henu.reservoir.dao.FittingFormulaDaoMapper;
 import com.henu.reservoir.dao.RadarResultDaoMapper;
 import com.henu.reservoir.domain.*;
+import com.henu.reservoir.service.FittingService;
 import com.henu.reservoir.service.RadarLevelService;
 import com.henu.reservoir.service.RadarResultService;
 import com.henu.reservoir.service.ReservoirInfoService;
@@ -42,8 +43,7 @@ public class RadarLevelUploadController {
     private ReservoirInfoService reservoirInfoService;
     private RadarResultService radarResultService;
     private RadarLevelService radarLevelService;
-    private RadarResultDaoMapper radarResultDaoMapper;
-    private FittingFormulaDaoMapper fittingFormulaDaoMapper;
+    private FittingService fittingService;
 
     @Value("${path.resource-path}")
     private String resourcePath;
@@ -53,14 +53,12 @@ public class RadarLevelUploadController {
             ReservoirInfoService reservoirInfoService,
             RadarResultService radarResultService,
             RadarLevelService radarLevelService,
-            RadarResultDaoMapper radarResultDaoMapper,
-            FittingFormulaDaoMapper fittingFormulaDaoMapper
-    ){
+            FittingService fittingService
+    ) {
         this.reservoirInfoService = reservoirInfoService;
         this.radarResultService = radarResultService;
         this.radarLevelService = radarLevelService;
-        this.radarResultDaoMapper = radarResultDaoMapper;
-        this.fittingFormulaDaoMapper = fittingFormulaDaoMapper;
+        this.fittingService = fittingService;
     }
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -71,12 +69,12 @@ public class RadarLevelUploadController {
     @PostMapping(value = "/upload/radar")
     @ResponseBody
     public String upload_SAR(Model model, @RequestParam("radarFile") MultipartFile[] radarFile,
-                             @RequestParam("reservoirName") String reservoirName, @RequestParam("satelliteName")String satelliteName,
+                             @RequestParam("reservoirName") String reservoirName, @RequestParam("satelliteName") String satelliteName,
                              @RequestParam("cycle") Integer cycle, @RequestParam("date") Date date, @RequestParam("topLeft") String topLeft,
                              @RequestParam("lowerRight") String lowerLeft) throws MWException, IOException {
         //由水库名获得水库id
         ReservoirInfoDao reservoirInfoDao = reservoirInfoService.findReservoirInfoByName(reservoirName);
-        if (reservoirInfoDao == null){
+        if (reservoirInfoDao == null) {
             return "reservoir name error";
         }
         int reservoirId = reservoirInfoDao.getId();
@@ -119,7 +117,7 @@ public class RadarLevelUploadController {
         try {
             for (MultipartFile file : radarFile) {
                 String fileName = file.getOriginalFilename();
-                String name = fileName.substring(fileName.lastIndexOf("/")+1);
+                String name = fileName.substring(fileName.lastIndexOf("/") + 1);
                 file.transferTo(new File(uploadDirPath + "\\" + name));
             }
         } catch (Exception e) {
@@ -149,21 +147,21 @@ public class RadarLevelUploadController {
         InputStreamReader reader = new InputStreamReader(fin[0]);
         BufferedReader buffReader = new BufferedReader(reader);
         String strTmp = "";
-        while((strTmp = buffReader.readLine())!=null){
+        while ((strTmp = buffReader.readLine()) != null) {
             list01.add(strTmp);
         }
         //处理 20.txt, 将每行数据存入 list20
         ArrayList<String> list20 = new ArrayList<>();
         reader = new InputStreamReader(fin[1]);
         buffReader = new BufferedReader(reader);
-        while((strTmp = buffReader.readLine())!=null){
+        while ((strTmp = buffReader.readLine()) != null) {
             list20.add(strTmp);
         }
         buffReader.close();
 
         //从list01中任取一个减数
         double[] dlist = new double[list01.size()];
-        for (int i = 0; i<list01.size();i++){
+        for (int i = 0; i < list01.size(); i++) {
             String sitem = list01.get(i);
             String[] strings = sitem.split(",");
             dlist[i] = Double.parseDouble(strings[9]);
@@ -171,18 +169,17 @@ public class RadarLevelUploadController {
         double d = dlist[new Random().nextInt(dlist.length)];
 
 
-
         //将list20中的结果存入radarResultDaoList, 同时装入radarItemList20，以转成json发向前端
         List<RadarItem> radarItemList20 = new ArrayList<>();
-        for (int i = 0; i<list20.size(); i++) {
+        for (int i = 0; i < list20.size(); i++) {
             String sitem = list20.get(i);
             String[] strings = sitem.split(",");
             double level = Double.parseDouble(strings[7]) - d + 1.46;
             double lng = Double.parseDouble(strings[2]);
             double lat = Double.parseDouble(strings[3]);
-            radarItemList20.add(new RadarItem(i,lng,lat, level));
+            radarItemList20.add(new RadarItem(i, lng, lat, level));
             //-----------------改
-            radarResultDaoList.add(new RadarResultDao(0, date, level + "", radarLevelDao.getId(), lng + "", lat+"", reservoirId));
+            radarResultDaoList.add(new RadarResultDao(0, date, level + "", radarLevelDao.getId(), lng + "", lat + "", reservoirId));
         }
 
         //转换成json返回
@@ -196,13 +193,13 @@ public class RadarLevelUploadController {
 
     @GetMapping("upload/radar/choose")
     @ResponseBody
-    public String chooseRadarData(int index){
+    public String chooseRadarData(int index) {
         //使用date和satelliteName查找radarLevelId，如没有则新建一条radarLevel
         Date date = radarLevelDao.getDate();
         String satelliteName = radarLevelDao.getSatelliteName();
         int reservoirId = radarLevelDao.getReservoirId();
         RadarLevelDao dao = radarLevelService.findRadarLevelByDateAndNameAndReservoirId(date, satelliteName, reservoirId);
-        if (dao == null){
+        if (dao == null) {
             radarLevelService.addRadarLevel(radarLevelDao);
             dao = radarLevelService.findRadarLevelByDateAndNameAndReservoirId(date, satelliteName, reservoirId);
         }
@@ -212,9 +209,13 @@ public class RadarLevelUploadController {
         radarResultDao.setRadarLevelId(dao.getId());
         try {
             //将用户选择的数据插入数据库
-            radarResultService.addRadarResult(radarResultDao);
-            //根据今年已有的数据进行拟合
-            //getRadarFitting();
+            if (radarResultService.findRadarResultByReservoirIdAndDate(reservoirId, date)==null){
+                radarResultService.addRadarResult(radarResultDao);
+            }
+            else {
+                radarResultService.updateRadarResultByReservoirIdAndDate(radarResultDao);
+            }
+            fittingService.fitRadarLevel(reservoirId);
             return "success";
         } catch (Exception e) {
             e.printStackTrace();
@@ -222,34 +223,8 @@ public class RadarLevelUploadController {
         return "error";
     }
 
-    /**
-     * 选择今年的雷达高度计数据进行拟合
-   */
-//    public void getRadarFitting() {
-//        //获得当前年份的数据
-//        List<RadarResultDao> allCurrentRadar =  radarResultDaoMapper.selectCurrentYear();
-//        //设置拟合所需数组
-//        double[] x = new double[allCurrentRadar.size()];
-//        double[] y = new double[allCurrentRadar.size()];
-//        //如果数据个数大于1，则进行拟合
-//        if(allCurrentRadar.size() > 1) {
-//            for (int i = 0; i < allCurrentRadar.size(); i++) {
-//                //提取日期和水位
-//                x[i] = CalculateByDate.getDayByDate(allCurrentRadar.get(i).getDate());
-//                y[i] = Double.parseDouble(allCurrentRadar.get(i).getWaterLevel());
-//            }
-//            //开始拟合
-//            //double[] result = FittingFormula.waterlevelfit(x, y);
-//            //将拟合结果存储在数据库中
-//            Date currentDate = new Date();
-//            //FittingFormulaDao fittingFormulaDao = new FittingFormulaDao(0, result[0], result[1], result[2], result[3], result[4], result[5], currentDate, "radar");
-//            fittingFormulaDaoMapper.insert(fittingFormulaDao);
-//        }
-//
-//    }
-
     //转Json用的数据项
-    private class RadarItem{
+    private class RadarItem {
         private int index;
 
         public int getIndex() {
@@ -288,7 +263,7 @@ public class RadarLevelUploadController {
             this.level = level;
         }
 
-        public RadarItem(int index, double lng, double lat, double level){
+        public RadarItem(int index, double lng, double lat, double level) {
             this.index = index;
             this.lng = lng;
             this.lat = lat;
@@ -297,50 +272,31 @@ public class RadarLevelUploadController {
     }
 
     //批量删除相同后缀的文件
-    private boolean deleteFilesBySuffix(String path, String suffix, boolean reverse){
+    private boolean deleteFilesBySuffix(String path, String suffix, boolean reverse) {
         //        路径->path;
         //        后缀->suffix;
         //    是否反选->reverse;
-        if ("".equals(path) || "".equals(suffix)){
+        if ("".equals(path) || "".equals(suffix)) {
             return false;
         }
         FileFilter fileFilter = pathname -> {
-            if (pathname.isDirectory()){
+            if (pathname.isDirectory()) {
                 return false;
-            }
-            else {
-                if (pathname.getName().endsWith(suffix)){
+            } else {
+                if (pathname.getName().endsWith(suffix)) {
                     return !reverse;
                 }
             }
             return reverse;
         };
         File[] files = new File(path).listFiles(fileFilter);
-        if (files != null){
+        if (files != null) {
             for (File file : files) {
                 file.delete();
             }
         }
         return false;
     }
-
-    /**
-     * 前端请求当前年份的遥测水位数据
-     * @return String
-     */
-    @GetMapping(value = "/getCurrentRadar")
-    @ResponseBody
-    public String getCurrentRadar() {
-        //获取今年的实测水位数据
-        List<RadarResultDao> allRadar = radarResultDaoMapper.selectCurrentYear();
-        ObjectMapper mapper = new ObjectMapper();
-        //转换成json返回
-        try {
-            return mapper.writeValueAsString(allRadar);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return "error";
-    }
 }
+
 

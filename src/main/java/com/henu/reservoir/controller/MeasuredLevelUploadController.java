@@ -54,7 +54,7 @@ public class MeasuredLevelUploadController {
 
     @PostMapping(value = "/upload/measured")
     @ResponseBody
-    public String uploadMeasured(Model model, @RequestParam("measuredFile") MultipartFile fileUpload,
+    public String uploadMeasured(@RequestParam("measuredFile") MultipartFile fileUpload,
                                  @RequestParam("reservoirName") String reservoirName) throws IOException, ParseException {
         InputStream inputStream = fileUpload.getInputStream();
         FileInputStream fileInputStream = (FileInputStream) inputStream;
@@ -73,9 +73,18 @@ public class MeasuredLevelUploadController {
     public void saveMeasured() {
         //用户确认数据后再存入数据库
         for (int i = 0; i < allResult.size(); i++) {
-            measuredResultService.saveMeasuredResult(allResult.get(i));
+            MeasuredResultDao measuredResultDao = measuredResultService.findMeasuredResultByReservoirIdAndDate(
+                    reservoirId,
+                    allResult.get(i).getDate()
+            );
+            if (measuredResultDao == null) {
+                measuredResultService.saveMeasuredResult(allResult.get(i));
+            }
+            else {
+                measuredResultService.updateMeasuredResult(allResult.get(i));
+            }
         }
-        fittingService.FitMeasureLevel(reservoirId);
+        fittingService.fitMeasureLevel(reservoirId);
     }
 }
 
