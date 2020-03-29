@@ -39,7 +39,6 @@ public class AddReservoirController {
             dao.setLatitudeLeft(latitudeLeft);
             dao.setLongitudeRight(longitudeRight);
             dao.setLatitudeRight(latitudeRight);
-            System.out.println(reservoirInfoService.saveReservoirInfo(dao));
             return "success";
         }
         else {

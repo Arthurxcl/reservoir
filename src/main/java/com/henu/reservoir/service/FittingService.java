@@ -231,6 +231,13 @@ public class FittingService {
         return fittingFormulaDaoMapper.selectByNameAndReservoirId(dao);
     }
 
+    public List<FittingFormulaDao> findByTypeAndReservoirId(int rid, String type){
+        FittingFormulaDao dao = new FittingFormulaDao();
+        dao.setReservoirId(rid);
+        dao.setType(type);
+        return fittingFormulaDaoMapper.selectByTypeAndReservoirId(dao);
+    }
+
     private double[] getParamsByString(String str){
         //  "1, 2, 3" => [1.0, 2.0, 3.0]
         String[] strings = str.split(",");

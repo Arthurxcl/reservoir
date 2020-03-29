@@ -2,22 +2,20 @@ package com.henu.reservoir.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.henu.reservoir.dao.*;
 import com.henu.reservoir.domain.*;
+import com.henu.reservoir.service.FittingService;
+import com.henu.reservoir.service.MeasuredResultService;
+import com.henu.reservoir.service.RadarResultService;
 import com.henu.reservoir.service.WaterAreaService;
-import com.henu.reservoir.util.CalculateByDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -26,16 +24,23 @@ public class ShowResultController {
 
     private ObjectMapper mapper = new ObjectMapper();
 
+    private WaterAreaService waterAreaService;
+    private MeasuredResultService measuredResultService;
+    private RadarResultService radarResultService;
+    private FittingService fittingService;
+
     @Autowired
-    WaterAreaService waterAreaService;
-    @Autowired
-    MeasuredResultDaoMapper measuredResultDaoMapper;
-    @Autowired
-    RadarResultDaoMapper radarResultDaoMapper;
-    @Autowired
-    FittingFormulaDaoMapper fittingFormulaDaoMapper;
-    @Autowired
-    WaterAreaDaoMapper waterAreaDaoMapper;
+    private void setService(
+            WaterAreaService waterAreaService,
+            MeasuredResultService measuredResultService,
+            RadarResultService radarResultService,
+            FittingService fittingService
+    ){
+        this.waterAreaService = waterAreaService;
+        this.measuredResultService = measuredResultService;
+        this.radarResultService = radarResultService;
+        this.fittingService = fittingService;
+    }
 
     @GetMapping("/getResult")
     @ResponseBody
@@ -158,81 +163,112 @@ public class ShowResultController {
         return "error";
     }
 
+    @GetMapping("/api/getChartsData")
+    @ResponseBody
+    public String getChartsData(HttpSession session){
+        //String id = (session.getAttribute("reservoirId")).toString();
+        //Integer rid = Integer.parseInt(id);
+        Integer rid = 3;
+        ChartsData chartsData = new ChartsData();
+        chartsData.setMeasuredResult(measuredResultService.findMeasuredResultByReservoirId(rid));
+        chartsData.setRadarResult(radarResultService.findRadarResultByReservoirId(rid));
+        chartsData.setMeasuredModel(fittingService.findByNameAndReservoirId(rid, "实测水位模型"));
+        chartsData.setRadarModel(fittingService.findByNameAndReservoirId(rid, "遥测水位模型"));
+        chartsData.setLevelModel(fittingService.findByTypeAndReservoirId(rid, "level"));
+        chartsData.setAreaModel(fittingService.findByTypeAndReservoirId(rid, "area"));
+        chartsData.setStorageModel(fittingService.findByTypeAndReservoirId(rid, "storage"));
+        try {
+            return mapper.writeValueAsString(chartsData);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+
     //转换Json用的数据项
-    private class ChartData{
-        public ArrayList<String> getX() {
-            return x;
+    private class ChartsData{
+        public List<MeasuredResultDao> getMeasuredResult() {
+            return measuredResult;
         }
 
-        public void setX(ArrayList<String> x) {
-            this.x = x;
+        public void setMeasuredResult(List<MeasuredResultDao> measuredResult) {
+            this.measuredResult = measuredResult;
         }
 
-
-        private ArrayList<String> x;
-        private ArrayList<Double> y1;
-
-        public ArrayList<Double> getY1() {
-            return y1;
+        public List<RadarResultDao> getRadarResult() {
+            return radarResult;
         }
 
-        public void setY1(ArrayList<Double> y1) {
-            this.y1 = y1;
+        public void setRadarResult(List<RadarResultDao> radarResult) {
+            this.radarResult = radarResult;
         }
 
-        public ArrayList<Double> getY2() {
-            return y2;
+        public FittingFormulaDao getMeasuredModel() {
+            return measuredModel;
         }
 
-        public void setY2(ArrayList<Double> y2) {
-            this.y2 = y2;
+        public void setMeasuredModel(FittingFormulaDao measuredModel) {
+            this.measuredModel = measuredModel;
         }
 
-        public ArrayList<Double> getY3() {
-            return y3;
+        public FittingFormulaDao getRadarModel() {
+            return radarModel;
         }
 
-        public void setY3(ArrayList<Double> y3) {
-            this.y3 = y3;
+        public void setRadarModel(FittingFormulaDao radarModel) {
+            this.radarModel = radarModel;
         }
 
-        public ArrayList<Double> getY4() {
-            return y4;
+        public List<FittingFormulaDao> getLevelModel() {
+            return levelModel;
         }
 
-        public void setY4(ArrayList<Double> y4) {
-            this.y4 = y4;
+        public void setLevelModel(List<FittingFormulaDao> levelModel) {
+            this.levelModel = levelModel;
         }
 
-        private ArrayList<Double> y2;
-        private ArrayList<Double> y3;
-        private ArrayList<Double> y4;
-
-        public ChartData(ArrayList<String> x, ArrayList<Double> y){
-            this.x = x;
-            this.y1 = y;
+        public List<FittingFormulaDao> getAreaModel() {
+            return areaModel;
         }
 
-        public ChartData(ArrayList<String> x, ArrayList<Double> y1, ArrayList<Double> y2){
-            this.x = x;
-            this.y1 = y1;
-            this.y2 = y2;
+        public void setAreaModel(List<FittingFormulaDao> areaModel) {
+            this.areaModel = areaModel;
         }
 
-        public ChartData(ArrayList<String> x, ArrayList<Double> y1, ArrayList<Double> y2, ArrayList<Double> y3){
-            this.x = x;
-            this.y1 = y1;
-            this.y2 = y2;
-            this.y3 = y3;
+        public List<FittingFormulaDao> getStorageModel() {
+            return storageModel;
         }
 
-        public ChartData(ArrayList<String> x, ArrayList<Double> y1, ArrayList<Double> y2, ArrayList<Double> y3, ArrayList<Double> y4){
-            this.x = x;
-            this.y1 = y1;
-            this.y2 = y2;
-            this.y3 = y3;
-            this.y4 = y4;
+        public void setStorageModel(List<FittingFormulaDao> storageModel) {
+            this.storageModel = storageModel;
         }
+
+        private List<MeasuredResultDao> measuredResult;
+        private List<RadarResultDao> radarResult;
+        private FittingFormulaDao measuredModel;
+        private FittingFormulaDao radarModel;
+        private List<FittingFormulaDao> levelModel;
+        private List<FittingFormulaDao> areaModel;
+        private List<FittingFormulaDao> storageModel;
+
+        public ChartsData(
+                List<MeasuredResultDao> measuredResult,
+                List<RadarResultDao> radarResult,
+                FittingFormulaDao measuredModel,
+                FittingFormulaDao radarModel,
+                List<FittingFormulaDao> levelModel,
+                List<FittingFormulaDao> areaModel,
+                List<FittingFormulaDao> storageModel
+        ){
+            this.measuredResult = measuredResult;
+            this.radarResult = radarResult;
+            this.measuredModel = measuredModel;
+            this.radarModel = radarModel;
+            this.levelModel = levelModel;
+            this.areaModel = areaModel;
+            this.storageModel = storageModel;
+        }
+        public ChartsData(){}
     }
     private class AreaDataItem{
         public String getDate() {
@@ -263,64 +299,5 @@ public class ShowResultController {
         c.setTime(dao.getDate());
         String s = c.get(Calendar.YEAR) + "-" + (c.get(Calendar.MONTH) + 1) + "-" + c.get(Calendar.DATE);
         return new AreaDataItem(s, dao.getArea());
-    }
-
-    /*
-   获得当前年份所有的实测水位数据
-    */
-    @GetMapping(value = "/getAllMeasuredLevel")
-    @ResponseBody
-    public String getAllMeasuredLevel(HttpSession session) {
-        //获取最近一次拟合的实测水位参数
-        FittingFormulaDao fittingFormulaDao = fittingFormulaDaoMapper.selectRecentlyByType("measured");
-        //选出今年的实测水位数据
-        List<MeasuredResultDao> allMeasured = measuredResultDaoMapper.selectCurrentYear();
-
-        return "error";
-    }
-
-    /*
-    获得当前年份所有的遥测水位数据
-    */
-    @GetMapping(value = "/getAllRadarLevel")
-    @ResponseBody
-    public String getAllRadarLevel(HttpSession session) {
-        //获取最近一次拟合的遥测水位参数
-        FittingFormulaDao fittingFormulaDao = fittingFormulaDaoMapper.selectRecentlyByType("radar");
-        //选出今年的遥测水位数据
-        List<RadarResultDao> allRadar = radarResultDaoMapper.selectCurrentYear();
-
-        return "error";
-    }
-
-    /**
-     * 获得当前年份所有的sar水域面积数据
-     * @param session
-     * @return String
-     */
-    @GetMapping(value = "/getAllSARArea")
-    @ResponseBody
-    public String getAllSARArea(HttpSession session) {
-        //获取最近一次拟合的sar水域面积参数
-        FittingFormulaDao fittingFormulaDao = fittingFormulaDaoMapper.selectRecentlyByType("sar");
-        //选出今年的sar水域面积数据
-        List<WaterAreaDao> allSarArea = waterAreaDaoMapper.selectCurrentYear(1);
-
-        return "error";
-    }
-
-    /**
-     * 获得当前年份所有的光学水域面积
-     * @return String
-     */
-    @GetMapping(value = "/getAllOpticalArea")
-    @ResponseBody
-    public String getAllOpticalArea(HttpSession session) {
-        //获取最近一次拟合的光学水域面积参数
-        FittingFormulaDao fittingFormulaDao = fittingFormulaDaoMapper.selectRecentlyByType("optical");
-        //选出今年的光学水域面积数据
-        List<WaterAreaDao> allOpticalArea = waterAreaDaoMapper.selectCurrentYear(0);
-
-        return "error";
     }
 }

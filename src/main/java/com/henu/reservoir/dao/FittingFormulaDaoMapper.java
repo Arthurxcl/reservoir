@@ -20,4 +20,6 @@ public interface FittingFormulaDaoMapper {
     FittingFormulaDao selectRecentlyByType(String type);
 
     FittingFormulaDao selectByNameAndReservoirId(FittingFormulaDao record);
+
+    List<FittingFormulaDao> selectByTypeAndReservoirId(FittingFormulaDao record);
 }

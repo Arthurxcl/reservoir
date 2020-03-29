@@ -90,4 +90,13 @@
         where name = #{name,jdbcType=VARCHAR}
         and reservoirId = #{reservoirId, jdbcType=INTEGER}
     </select>
+
+    <!--使用type选择-->
+    <select id="selectByTypeAndReservoirId" parameterType="com.henu.reservoir.domain.FittingFormulaDao" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fitting_formula
+        where type = #{type,jdbcType=VARCHAR}
+        and reservoirId = #{reservoirId, jdbcType=INTEGER}
+    </select>
 </mapper>
