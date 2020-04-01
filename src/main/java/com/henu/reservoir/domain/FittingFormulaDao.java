@@ -3,28 +3,6 @@ package com.henu.reservoir.domain;
 import java.util.Date;
 
 public class FittingFormulaDao {
-    private Integer id;
-    private Double fiveOrder;
-    private Double fourOrder;
-    private Double threeOrder;
-    private Double twoOrder;
-    private Double oneOrder;
-    private Double zeroOrder;
-    private Date date;
-    private String type;
-
-    public FittingFormulaDao(Integer id, Double fiveOrder, Double fourOrder, Double threeOrder, Double twoOrder, Double oneOrder, Double zeroOrder, Date date, String type) {
-        this.id = id;
-        this.fiveOrder = fiveOrder;
-        this.fourOrder = fourOrder;
-        this.threeOrder = threeOrder;
-        this.twoOrder = twoOrder;
-        this.oneOrder = oneOrder;
-        this.zeroOrder = zeroOrder;
-        this.date = date;
-        this.type = type;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -33,52 +11,28 @@ public class FittingFormulaDao {
         this.id = id;
     }
 
-    public Double getFiveOrder() {
-        return fiveOrder;
+    public String getName() {
+        return name;
     }
 
-    public void setFiveOrder(Double fiveOrder) {
-        this.fiveOrder = fiveOrder;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Double getFourOrder() {
-        return fourOrder;
+    public String getOrders() {
+        return orders;
     }
 
-    public void setFourOrder(Double fourOrder) {
-        this.fourOrder = fourOrder;
+    public void setOrders(String orders) {
+        this.orders = orders;
     }
 
-    public Double getThreeOrder() {
-        return threeOrder;
+    public Date getFirstDate() {
+        return firstDate;
     }
 
-    public void setThreeOrder(Double threeOrder) {
-        this.threeOrder = threeOrder;
-    }
-
-    public Double getTwoOrder() {
-        return twoOrder;
-    }
-
-    public void setTwoOrder(Double twoOrder) {
-        this.twoOrder = twoOrder;
-    }
-
-    public Double getOneOrder() {
-        return oneOrder;
-    }
-
-    public void setOneOrder(Double oneOrder) {
-        this.oneOrder = oneOrder;
-    }
-
-    public Double getZeroOrder() {
-        return zeroOrder;
-    }
-
-    public void setZeroOrder(Double zeroOrder) {
-        this.zeroOrder = zeroOrder;
+    public void setFirstDate(Date firstDate) {
+        this.firstDate = firstDate;
     }
 
     public Date getDate() {
@@ -96,4 +50,42 @@ public class FittingFormulaDao {
     public void setType(String type) {
         this.type = type;
     }
+
+    public Integer getReservoirId() {
+        return reservoirId;
+    }
+
+    public void setReservoirId(Integer reservoirId) {
+        this.reservoirId = reservoirId;
+    }
+
+    private Integer id;
+    private String name;
+    private String orders;
+    private Date firstDate;
+    private Date date;
+    private String type;
+    private Integer reservoirId;
+
+    public FittingFormulaDao(String name, String orders,Date firstDate, Date date, String type, Integer reservoirId) {
+        this.id = 0;
+        this.name = name;
+        this.orders = orders;
+        this.firstDate = firstDate;
+        this.date = date;
+        this.type = type;
+        this.reservoirId = reservoirId;
+    }
+
+    public FittingFormulaDao(Integer id, String name, String orders,Date firstDate, Date date, String type, Integer reservoirId) {
+        this.id = id;
+        this.name = name;
+        this.orders = orders;
+        this.firstDate = firstDate;
+        this.date = date;
+        this.type = type;
+        this.reservoirId = reservoirId;
+    }
+
+    public FittingFormulaDao(){}
 }

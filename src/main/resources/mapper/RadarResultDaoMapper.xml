@@ -163,7 +163,28 @@
     <include refid="Base_Column_List" />
     from radar_result
     where reservoir_id = #{reservoir_id,jdbcType=INTEGER}
+    order by date ASC
   </select>
+
+  <!--使用reservoir_id和date获取1-->
+  <select id="selectByReservoirIdAndDate" parameterType="com.henu.reservoir.domain.RadarResultDao" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from radar_result
+    where reservoir_id = #{reservoirId,jdbcType=INTEGER}
+    and date  = #{date,jdbcType=TIMESTAMP}
+  </select>
+
+  <!--使用reservoir_id和date更新1-->
+  <update id="updateByReservoirIdAndDate" parameterType="com.henu.reservoir.domain.RadarResultDao">
+    update radar_result
+    set water_level = #{waterLevel,jdbcType=VARCHAR},
+      radar_level_id = #{radarLevelId,jdbcType=INTEGER},
+      site_longitude = #{siteLongitude,jdbcType=VARCHAR},
+      site_latitude = #{siteLatitude,jdbcType=VARCHAR}
+    where reservoir_id = #{reservoirId,jdbcType=INTEGER}
+    and date  = #{date,jdbcType=TIMESTAMP}
+  </update>
 
   <!-- 选出今年的遥测水位数据 -->
   <select id="selectCurrentYear" parameterType="java.lang.Integer" resultMap="BaseResultMap">

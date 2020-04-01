@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 @Service
 public class MeasuredResultService {
@@ -22,7 +23,7 @@ public class MeasuredResultService {
     }
 
     public Integer updateMeasuredResult(MeasuredResultDao measuredResultDao) {
-        return measuredResultDaoMapper.updateByPrimaryKey(measuredResultDao);
+        return measuredResultDaoMapper.updateByReservoirIdAndDate(measuredResultDao);
     }
 
     public Integer deleteMeasuredResult(Integer id) {
@@ -31,5 +32,12 @@ public class MeasuredResultService {
 
     public List<MeasuredResultDao> findMeasuredResultByReservoirId(Integer id){
         return measuredResultDaoMapper.selectByReservoirId(id);
+    }
+
+    public MeasuredResultDao findMeasuredResultByReservoirIdAndDate(Integer rid, Date date) {
+        MeasuredResultDao m = new MeasuredResultDao();
+        m.setReservoirId(rid);
+        m.setDate(date);
+        return measuredResultDaoMapper.selectByReservoirIdAndDate(m);
     }
 }
