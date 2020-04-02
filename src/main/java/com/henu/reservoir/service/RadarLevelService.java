@@ -12,7 +12,9 @@ public class RadarLevelService {
     private RadarLevelDaoMapper radarLevelDaoMapper;
 
     @Autowired
-    private void setRadarLevelDaoMapper(RadarLevelDaoMapper radarLevelDaoMapper){
+    private void setRadarLevelDaoMapper(
+            RadarLevelDaoMapper radarLevelDaoMapper
+    ){
         this.radarLevelDaoMapper = radarLevelDaoMapper;
     }
 
@@ -24,5 +26,11 @@ public class RadarLevelService {
     ////根据日期和卫星名查找雷达高度计
     public RadarLevelDao findRadarLevelByDateAndNameAndReservoirId(Date date, String satelliteName, int reservoirId){
         return radarLevelDaoMapper.selectByDateAndSatelliteNameAndReservoirId(date, satelliteName, reservoirId);
+    }
+
+    public RadarLevelDao findRadarLevelById(int id){
+
+        System.out.println(id);
+        return radarLevelDaoMapper.selectByPrimaryKey(id);
     }
 }

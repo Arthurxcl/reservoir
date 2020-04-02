@@ -64,6 +64,8 @@ public interface MeasuredResultDaoMapper {
     //选出今年的实测水位数据
     List<MeasuredResultDao> selectCurrentYear();
 
+    List<MeasuredResultDao> selectAll();
+
     //使用reservoir_id和date获取1
     MeasuredResultDao selectByReservoirIdAndDate(MeasuredResultDao record);
 

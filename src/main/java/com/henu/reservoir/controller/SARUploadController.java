@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -122,6 +123,7 @@ public class SARUploadController {
             Fcm.fcm3(in, out);
         } catch (Exception e) {
             e.printStackTrace();
+            copyFileUsingFileChannels(new File(in), new File(out));
         }
 
         originFilePath = in;
@@ -191,6 +193,22 @@ public class SARUploadController {
         fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
         fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
         return "success";
+    }
+
+
+    private static void copyFileUsingFileChannels(File source, File dest) throws IOException {
+        FileChannel inputChannel = null;
+        FileChannel outputChannel = null;
+        try {
+            inputChannel = new FileInputStream(source).getChannel();
+            outputChannel = new FileOutputStream(dest).getChannel();
+            outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
+        } finally {
+            assert inputChannel != null;
+            inputChannel.close();
+            assert outputChannel != null;
+            outputChannel.close();
+        }
     }
 //
 //    /**

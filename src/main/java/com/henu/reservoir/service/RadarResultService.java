@@ -21,6 +21,10 @@ public class RadarResultService {
         return radarResultDaoMapper.selectByReservoirId(id);
     }
 
+    public List<RadarResultDao> findAllRadarResult(){
+        return radarResultDaoMapper.selectAll();
+    }
+
     public Integer updateRadarResultByReservoirIdAndDate(RadarResultDao radarResultDao){
         return radarResultDaoMapper.updateByReservoirIdAndDate(radarResultDao);
     }

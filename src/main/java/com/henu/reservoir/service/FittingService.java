@@ -135,6 +135,10 @@ public class FittingService {
         fitLevel(rid, waterAreaDaoList, "实测水位模型", "area", "实测+SAR+光学");
     }
 
+    public int update(FittingFormulaDao fittingFormulaDao){
+        return fittingFormulaDaoMapper.updateByPrimaryKey(fittingFormulaDao);
+    }
+
     private void fitLevel(
             int rid,
             List<WaterAreaDao> waterAreaDaoList,
@@ -236,6 +240,14 @@ public class FittingService {
         dao.setReservoirId(rid);
         dao.setType(type);
         return fittingFormulaDaoMapper.selectByTypeAndReservoirId(dao);
+    }
+
+    public int add(FittingFormulaDao dao){
+        return fittingFormulaDaoMapper.insert(dao);
+    }
+
+    public int deleteById(int id){
+        return fittingFormulaDaoMapper.deleteByPrimaryKey(id);
     }
 
     private double[] getParamsByString(String str){

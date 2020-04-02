@@ -148,6 +148,14 @@
     order by date ASC
   </select>
 
+  <!--获取*-->
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from measured_result
+    order by date ASC
+  </select>
+
   <!--使用reservoir_id和date获取1-->
   <select id="selectByReservoirIdAndDate" parameterType="com.henu.reservoir.domain.MeasuredResultDao" resultMap="BaseResultMap">
     select
