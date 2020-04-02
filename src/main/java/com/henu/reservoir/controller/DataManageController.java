@@ -2,12 +2,8 @@ package com.henu.reservoir.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.henu.reservoir.domain.OpticalImgDao;
-import com.henu.reservoir.domain.ReservoirInfoDao;
-import com.henu.reservoir.domain.SarImgDao;
-import com.henu.reservoir.service.OpticalImgService;
-import com.henu.reservoir.service.ReservoirInfoService;
-import com.henu.reservoir.service.SarImgService;
+import com.henu.reservoir.domain.*;
+import com.henu.reservoir.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,16 +20,29 @@ public class DataManageController {
     private SarImgService sarImgService;
     private OpticalImgService opticalImgService;
     private ReservoirInfoService reservoirInfoService;
+    private MeasuredResultService measuredResultService;
+    private RadarResultService radarResultService;
+    private RadarLevelService radarLevelService;
+    private WaterAreaService waterAreaService;
 
     @Autowired
     private void setService(
             SarImgService sarImgService,
             OpticalImgService opticalImgService,
-            ReservoirInfoService reservoirInfoService
+            ReservoirInfoService reservoirInfoService,
+            MeasuredResultService measuredResultService,
+            RadarResultService radarResultService,
+            WaterAreaService waterAreaService,
+            RadarLevelService radarLevelService
     ){
         this.sarImgService = sarImgService;
         this.opticalImgService = opticalImgService;
         this.reservoirInfoService = reservoirInfoService;
+        this.measuredResultService = measuredResultService;
+        this.radarResultService = radarResultService;
+        this.waterAreaService = waterAreaService;
+        this.radarLevelService = radarLevelService;
+        buildReservoirInfoDaoHashMap();
     }
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -47,10 +57,71 @@ public class DataManageController {
         }
     }
 
+    @GetMapping("api/data/measured")
+    @ResponseBody
+    public String getMeasuredList(){
+        List<MeasuredResultDao> list1 = measuredResultService.findAllMeasuredResult();
+        try {
+            return mapper.writeValueAsString(list1);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+
+    @GetMapping("api/data/radar")
+    @ResponseBody
+    public String getRadarList(){
+        List<RadarResultDao> list1 = radarResultService.findAllRadarResult();
+        List<RadarItem> list = new ArrayList<>();
+        for (RadarResultDao item : list1){
+            RadarItem i = new RadarItem();
+            System.out.println(item.getRadarLevelId());
+            RadarLevelDao levelDao = radarLevelService.findRadarLevelById(item.getRadarLevelId());
+            i.setId(item.getId());
+            i.setDate(item.getDate());
+            i.setReservoirName(reservoirInfoDaoHashMap.get(item.getReservoirId()).getName());
+            i.setLevel(item.getWaterLevel());
+            i.setSatelliteName(levelDao.getSatelliteName());
+            i.setLng(item.getSiteLongitude());
+            i.setLat(item.getSiteLatitude());
+            list.add(i);
+        }
+        try {
+            return mapper.writeValueAsString(list);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+
+    @GetMapping("api/data/area")
+    @ResponseBody
+    public String getAreaList(){
+        List<WaterAreaDao> list1 = waterAreaService.findAllWaterArea();
+        try {
+            return mapper.writeValueAsString(list1);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+
+    @GetMapping("api/data/reservoir")
+    @ResponseBody
+    public String getReservoirList(){
+        List<ReservoirInfoDao> list1 = reservoirInfoService.findAllReservoirInfo();
+        try {
+            return mapper.writeValueAsString(list1);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+
     @GetMapping("api/data/image")
     @ResponseBody
     public String getImageList(){
-        buildReservoirInfoDaoHashMap();
         List<SarImgDao> list1 = sarImgService.findAllSarImg();
         List<OpticalImgDao> list2 = opticalImgService.findAllOpticalImg();
         List<DownloadItem> dlist = new ArrayList<>();
@@ -61,6 +132,7 @@ public class DataManageController {
                     dao.getPath(),
                     new SimpleDateFormat("yyyy-MM-dd").format(dao.getDate()),
                     "sar",
+                    dao.getSatelliteName(),
                     dao.getId()
             ));
         }
@@ -71,6 +143,7 @@ public class DataManageController {
                     dao.getPath(),
                     new SimpleDateFormat("yyyy-MM-dd").format(dao.getDate()),
                     "optical",
+                    dao.getSatelliteName(),
                     dao.getId()
             ));
         }
@@ -129,17 +202,105 @@ public class DataManageController {
         private String path;
         private String date;
         private String type;
+
+        public String getSatelliteName() {
+            return satelliteName;
+        }
+
+        public void setSatelliteName(String satelliteName) {
+            this.satelliteName = satelliteName;
+        }
+
+        private String satelliteName;
         private int id;
 
-        public DownloadItem(String rname, String path, String date, String type, int id) {
+        public DownloadItem(String rname, String path, String date, String type, String satelliteName, int id) {
             this.rname = rname;
             this.path = path;
             this.date = date;
             this.type = type;
+            this.satelliteName = satelliteName;
             this.id = id;
         }
 
         public DownloadItem() {
+        }
+    }
+    private class RadarItem{
+        Date date;
+        String reservoirName;
+        int id;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public Date getDate() {
+            return date;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
+
+        public String getReservoirName() {
+            return reservoirName;
+        }
+
+        public void setReservoirName(String reservoirName) {
+            this.reservoirName = reservoirName;
+        }
+
+        public String  getLevel() {
+            return level;
+        }
+
+        public void setLevel(String level) {
+            this.level = level;
+        }
+
+        public String getSatelliteName() {
+            return satelliteName;
+        }
+
+        public void setSatelliteName(String satelliteName) {
+            this.satelliteName = satelliteName;
+        }
+
+        public String getLng() {
+            return lng;
+        }
+
+        public void setLng(String lng) {
+            this.lng = lng;
+        }
+
+        public String getLat() {
+            return lat;
+        }
+
+        public void setLat(String lat) {
+            this.lat = lat;
+        }
+
+        String  level;
+        String satelliteName;
+        String lng;
+        String lat;
+
+        public RadarItem(){};
+        public RadarItem(int id, Date date,String reservoirName,String  level,String satelliteName,String lng,String lat){
+            this.id = id;
+            this.date = date;
+            this.reservoirName = reservoirName;
+            this.level = level;
+            this.satelliteName = satelliteName;
+            this.lng = lng;
+            this.lat = lat;
         }
     }
 }

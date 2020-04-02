@@ -26,7 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -125,6 +127,7 @@ public class OpticalUploadController {
             Sblty.ltycl(in, out);
         } catch (Exception e) {
             e.printStackTrace();
+            copyFileUsingFileChannels(new File(in), new File(out));
         }
 
         originFilePath = in;
@@ -196,7 +199,20 @@ public class OpticalUploadController {
        fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
         return "success";
     }
-
+    private static void copyFileUsingFileChannels(File source, File dest) throws IOException {
+        FileChannel inputChannel = null;
+        FileChannel outputChannel = null;
+        try {
+            inputChannel = new FileInputStream(source).getChannel();
+            outputChannel = new FileOutputStream(dest).getChannel();
+            outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
+        } finally {
+            assert inputChannel != null;
+            inputChannel.close();
+            assert outputChannel != null;
+            outputChannel.close();
+        }
+    }
 //    /**
 //     * 光学影像面积和实测水位拟合
 //     * 每次保存光学面积时调用

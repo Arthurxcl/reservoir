@@ -63,7 +63,8 @@ public class MeasuredLevelUploadController {
         //处理文件, 获得文件中所有数据
         ExtractMeasuredLevel extractMeasuredLevel = new ExtractMeasuredLevel(fileInputStream, reservoirId);
         allResult = extractMeasuredLevel.ReadDataFromExcel();
-
+        inputStream.close();
+        fileInputStream.close();
         //返回Json结果
         return mapper.writeValueAsString(allResult);
     }

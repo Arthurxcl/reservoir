@@ -57,6 +57,8 @@ public interface WaterAreaDaoMapper {
     //通过水库id查找所有WaterAreaDao
     List<WaterAreaDao> selectByReservoirId(Integer id);
 
+    List<WaterAreaDao> selectAll();
+
     //通过水库id查找Sar的WaterAreaDao
     List<WaterAreaDao> selectSarByReservoirId(Integer id);
 

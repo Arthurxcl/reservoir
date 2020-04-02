@@ -56,6 +56,8 @@ public interface RadarResultDaoMapper {
     //通过水库id查找RadarResult
     List<RadarResultDao> selectByReservoirId(Integer id);
 
+    List<RadarResultDao> selectAll();
+
     //使用reservoir_id和date获取1
     RadarResultDao selectByReservoirIdAndDate(RadarResultDao record);
 

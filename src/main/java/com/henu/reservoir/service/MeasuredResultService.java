@@ -34,6 +34,10 @@ public class MeasuredResultService {
         return measuredResultDaoMapper.selectByReservoirId(id);
     }
 
+    public List<MeasuredResultDao> findAllMeasuredResult(){
+        return measuredResultDaoMapper.selectAll();
+    }
+
     public MeasuredResultDao findMeasuredResultByReservoirIdAndDate(Integer rid, Date date) {
         MeasuredResultDao m = new MeasuredResultDao();
         m.setReservoirId(rid);

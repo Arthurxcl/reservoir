@@ -27,6 +27,10 @@ public class WaterAreaService {
         }
     }
 
+    public List<WaterAreaDao> findAllWaterArea(){
+        return waterAreaDaoMapper.selectAll();
+    }
+
     public Integer insert(WaterAreaDao waterAreaDao) {
         return waterAreaDaoMapper.insert(waterAreaDao);
     }
