@@ -57,7 +57,7 @@ public class FittingService {
         //拟合，保存结果
         double[] result = FittingFormula.fit(x, y, 5);
         setFittingFormula(result, "实测水位模型", "measured", firstDate, rid);
-        fitMeasuresLevelSarAndOpticalArea(rid);
+
     }
 
     public void fitRadarLevel(int rid){
@@ -80,9 +80,7 @@ public class FittingService {
         //拟合，保存结果
         double[] result = FittingFormula.fit(x, y, 5);
         setFittingFormula(result, "遥测水位模型", "radar", firstDate, rid);
-        fitRadarLevelSarArea(rid);
-        fitRadarLevelOpticalArea(rid);
-        fitRadarLevelSarAndOpticalArea(rid);
+
     }
 
     public void fitRadarLevelSarArea(int rid){

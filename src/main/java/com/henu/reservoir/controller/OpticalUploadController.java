@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -184,7 +185,7 @@ public class OpticalUploadController {
 
     @PostMapping("/upload/optical/saveArea")
     @ResponseBody
-    public String save(@RequestParam("reservoirName") String reservoirName,
+    public String save(HttpSession session, @RequestParam("reservoirName") String reservoirName,
                        @RequestParam("date") Date date, @RequestParam("cutAlgo") String cutAlgo){
         Integer reservoir_id = reservoirInfoService.findReservoirInfoByName(reservoirName).getId();
         //根据分割算法名称获取id
@@ -194,9 +195,12 @@ public class OpticalUploadController {
         //将水域面积存入数据库
         WaterAreaDao waterAreaDao = new WaterAreaDao(0, reservoir_id, waterArea, imgId, cutId, date, (byte) 0);
         waterAreaService.insert(waterAreaDao);
-       fittingService.fitRadarLevelOpticalArea(reservoir_id);
-       fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
-       fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+        if (session.getAttribute("pauseFitting") == null){
+            fittingService.fitRadarLevelOpticalArea(reservoir_id);
+            fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
+            fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+        }
+
         return "success";
     }
     private static void copyFileUsingFileChannels(File source, File dest) throws IOException {

@@ -51,6 +51,12 @@ public class FittingModelManageController {
     public String setModel(int rid, String name, String newName, String sDate, String params) {
         FittingFormulaDao dao = fittingService.findByNameAndReservoirId(rid, name);
         dao.setName(newName);
+        FittingFormulaDao fittingFormulaDao = fittingService.findByNameAndReservoirId(rid, newName);
+        if(fittingFormulaDao!=null){
+            if (!fittingFormulaDao.getId().equals(dao.getId())){
+                return "name";
+            }
+        }
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Long time = Long.parseLong(sDate);
         String d = format.format(time);
@@ -74,6 +80,9 @@ public class FittingModelManageController {
     public String addModel(int rid, String name, String type, String sDate, String params) {
         FittingFormulaDao dao = new FittingFormulaDao();
         dao.setReservoirId(rid);
+        if(fittingService.findByNameAndReservoirId(rid, name)!=null){
+            return "name";
+        }
         dao.setName(name);
         dao.setType(type);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -125,12 +134,5 @@ public class FittingModelManageController {
         fittingService.deleteById(id);
     }
 
-    @GetMapping("/api/model/fitAreaNow")
-    @ResponseBody
-    public void fitNow(int rid){
-        fittingService.fitMeasuresLevelSarAndOpticalArea(rid);
-        fittingService.fitRadarLevelSarAndOpticalArea(rid);
-        fittingService.fitRadarLevelOpticalArea(rid);
-        fittingService.fitRadarLevelSarArea(rid);
-    }
+
 }
