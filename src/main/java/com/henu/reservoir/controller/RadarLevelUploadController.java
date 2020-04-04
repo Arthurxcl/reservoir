@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Random;
 import Altitude_Sentinel3_A.Radar;
 
+import javax.servlet.http.HttpSession;
+
 /**
  * 雷达高度计文件夹上传
  */
@@ -193,7 +195,7 @@ public class RadarLevelUploadController {
 
     @GetMapping("upload/radar/choose")
     @ResponseBody
-    public String chooseRadarData(int index) {
+    public String chooseRadarData(HttpSession session,int index) {
         //使用date和satelliteName查找radarLevelId，如没有则新建一条radarLevel
         Date date = radarLevelDao.getDate();
         String satelliteName = radarLevelDao.getSatelliteName();
@@ -215,7 +217,13 @@ public class RadarLevelUploadController {
             else {
                 radarResultService.updateRadarResultByReservoirIdAndDate(radarResultDao);
             }
-            fittingService.fitRadarLevel(reservoirId);
+
+            if (session.getAttribute("pauseFitting") == null) {
+                fittingService.fitRadarLevel(reservoirId);
+                fittingService.fitRadarLevelSarArea(reservoirId);
+                fittingService.fitRadarLevelOpticalArea(reservoirId);
+                fittingService.fitRadarLevelSarAndOpticalArea(reservoirId);
+            }
             return "success";
         } catch (Exception e) {
             e.printStackTrace();

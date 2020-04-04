@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +72,7 @@ public class MeasuredLevelUploadController {
 
     @GetMapping("/upload/measured/save")
     @ResponseBody
-    public void saveMeasured() {
+    public void saveMeasured(HttpSession session) {
         //用户确认数据后再存入数据库
         for (int i = 0; i < allResult.size(); i++) {
             MeasuredResultDao measuredResultDao = measuredResultService.findMeasuredResultByReservoirIdAndDate(
@@ -85,7 +86,11 @@ public class MeasuredLevelUploadController {
                 measuredResultService.updateMeasuredResult(allResult.get(i));
             }
         }
-        fittingService.fitMeasureLevel(reservoirId);
+
+        if (session.getAttribute("pauseFitting") == null) {
+            fittingService.fitMeasureLevel(reservoirId);
+            fittingService.fitMeasuresLevelSarAndOpticalArea(reservoirId);
+        }
     }
 }
 

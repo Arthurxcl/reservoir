@@ -23,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
@@ -179,8 +180,8 @@ public class SARUploadController {
 
     @PostMapping("/upload/sar/saveArea")
     @ResponseBody
-    public String save(@RequestParam("reservoirName") String reservoirName,
-                             @RequestParam("date") Date date, @RequestParam("cutAlgo") String cutAlgo){
+    public String save(HttpSession session, @RequestParam("reservoirName") String reservoirName,
+                       @RequestParam("date") Date date, @RequestParam("cutAlgo") String cutAlgo){
         Integer reservoir_id = reservoirInfoService.findReservoirInfoByName(reservoirName).getId();
         Integer cutId = cutAlgoService.selectByName(cutAlgo).getId();
         //获取影像id
@@ -189,9 +190,11 @@ public class SARUploadController {
         WaterAreaDao waterAreaDao = new WaterAreaDao(0, reservoir_id, waterArea, imgId, cutId, date, (byte) 1);
         waterAreaService.insert(waterAreaDao);
 
-        fittingService.fitRadarLevelSarArea(reservoir_id);
-        fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
-        fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+        if (session.getAttribute("pauseFitting") == null) {
+            fittingService.fitRadarLevelSarArea(reservoir_id);
+            fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
+            fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+        }
         return "success";
     }
 

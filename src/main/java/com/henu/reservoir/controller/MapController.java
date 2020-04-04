@@ -85,12 +85,29 @@ public class MapController {
     @GetMapping("api/setReservoirId")
     @ResponseBody
     public String setReservoir(String rname, HttpSession session){
+        if (rname.equals("")){
+            session.setAttribute("reservoirId", null);
+            return "success";
+        }
         ReservoirInfoDao dao = reservoirInfoService.findReservoirInfoByName(rname);
         if(dao!=null){
             session.setAttribute("reservoirId", dao.getId());
             return "success";
         }
         return "error";
+    }
+
+    @GetMapping("api/getReservoirName")
+    @ResponseBody
+    public String  getReservoir(HttpSession session){
+        if(session.getAttribute("reservoirId") != null){
+            int rid = (Integer)session.getAttribute("reservoirId");
+            ReservoirInfoDao dao = reservoirInfoService.findReservoirInfoById(rid);
+            return dao.getName();
+        }
+        else {
+            return "";
+        }
     }
 
     private static byte[] readInputStream(InputStream inStream) throws Exception{

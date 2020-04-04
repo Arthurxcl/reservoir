@@ -42,7 +42,6 @@ public class DataManageController {
         this.radarResultService = radarResultService;
         this.waterAreaService = waterAreaService;
         this.radarLevelService = radarLevelService;
-        buildReservoirInfoDaoHashMap();
     }
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -72,6 +71,7 @@ public class DataManageController {
     @GetMapping("api/data/radar")
     @ResponseBody
     public String getRadarList(){
+        buildReservoirInfoDaoHashMap();
         List<RadarResultDao> list1 = radarResultService.findAllRadarResult();
         List<RadarItem> list = new ArrayList<>();
         for (RadarResultDao item : list1){
@@ -98,9 +98,25 @@ public class DataManageController {
     @GetMapping("api/data/area")
     @ResponseBody
     public String getAreaList(){
+        buildReservoirInfoDaoHashMap();
         List<WaterAreaDao> list1 = waterAreaService.findAllWaterArea();
+        List<AreaItem> list = new ArrayList<>();
+        for (WaterAreaDao dao : list1){
+            AreaItem item = new AreaItem();
+            item.setId(dao.getId());
+            item.setDate(dao.getDate());
+            item.setReservoirName(reservoirInfoDaoHashMap.get(dao.getReservoirId()).getName());
+            item.setArea(dao.getArea());
+            if(dao.getIsSarArea() == 1){
+                item.setType("SAR");
+            }
+            else {
+                item.setType("光学");
+            }
+            list.add(item);
+        }
         try {
-            return mapper.writeValueAsString(list1);
+            return mapper.writeValueAsString(list);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -119,9 +135,38 @@ public class DataManageController {
         return "error";
     }
 
+    @GetMapping("api/data/reservoir-edit")
+    @ResponseBody
+    public void editReservoir(
+            int id,
+            String name,
+            String location,
+            String longitudeLeft,
+            String longitudeRight,
+            String latitudeLeft,
+            String latitudeRight
+    ){
+        ReservoirInfoDao dao = new ReservoirInfoDao();
+        dao.setId(id);
+        dao.setName(name);
+        dao.setLocation(location);
+        dao.setLongitudeRight(longitudeRight);
+        dao.setLatitudeRight(latitudeRight);
+        dao.setLongitudeLeft(longitudeLeft);
+        dao.setLatitudeLeft(latitudeLeft);
+        reservoirInfoService.updateReservoirInfo(dao);
+    }
+
+    @GetMapping("api/data/reservoir-delete")
+    @ResponseBody
+    public void deleteReservoir(int id){
+        reservoirInfoService.deleteReservoirInfo(id);
+    }
+
     @GetMapping("api/data/image")
     @ResponseBody
     public String getImageList(){
+        buildReservoirInfoDaoHashMap();
         List<SarImgDao> list1 = sarImgService.findAllSarImg();
         List<OpticalImgDao> list2 = opticalImgService.findAllOpticalImg();
         List<DownloadItem> dlist = new ArrayList<>();
@@ -301,6 +346,65 @@ public class DataManageController {
             this.satelliteName = satelliteName;
             this.lng = lng;
             this.lat = lat;
+        }
+    }
+    private class AreaItem{
+        private int id;
+        private String reservoirName;
+
+        public AreaItem(int id, String reservoirName, Date date, String area, String type) {
+            this.id = id;
+            this.reservoirName = reservoirName;
+            this.date = date;
+            this.area = area;
+            this.type = type;
+        }
+
+        private Date date;
+        private String area;
+        private String type;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getReservoirName() {
+            return reservoirName;
+        }
+
+        public void setReservoirName(String reservoirName) {
+            this.reservoirName = reservoirName;
+        }
+
+        public Date getDate() {
+            return date;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
+
+        public String getArea() {
+            return area;
+        }
+
+        public void setArea(String area) {
+            this.area = area;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public AreaItem() {
         }
     }
 }

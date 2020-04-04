@@ -166,9 +166,8 @@ public class ShowResultController {
     @GetMapping("/api/getChartsData")
     @ResponseBody
     public String getChartsData(HttpSession session){
-        //String id = (session.getAttribute("reservoirId")).toString();
-        //Integer rid = Integer.parseInt(id);
-        Integer rid = 3;
+        String id = (session.getAttribute("reservoirId")).toString();
+        Integer rid = Integer.parseInt(id);
         ChartsData chartsData = new ChartsData();
         chartsData.setMeasuredResult(measuredResultService.findMeasuredResultByReservoirId(rid));
         chartsData.setRadarResult(radarResultService.findRadarResultByReservoirId(rid));
