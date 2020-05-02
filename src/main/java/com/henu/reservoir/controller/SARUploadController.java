@@ -57,7 +57,7 @@ public class SARUploadController {
     private String newFilePathRelative;
     private String waterArea;
 
-    @PostMapping(value = "/upload/sar/sarFile")
+    @PostMapping(value = "/api/upload/sar/sarFile")
     @ResponseBody
     public String upload_SAR(@RequestParam("sarFile") MultipartFile sarFile) throws IOException, InterruptedException {
         //获取文件名
@@ -67,7 +67,7 @@ public class SARUploadController {
         //获取文件前缀
         String prefixName = fileName.substring(0, fileName.lastIndexOf("."));
         //获取项目名称
-        String projectPath = System.getProperty("user.dir");
+        //String projectPath = System.getProperty("user.dir");
         // 获得当前时间
         DateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         // 转换为字符串
@@ -77,13 +77,13 @@ public class SARUploadController {
         //生成不重复的文件夹名称
         String uploadDirName = formatDate + Integer.toString(random);
         //完整文件名
-        String filePathUpload = projectPath + resourcePath + "static\\upload\\";
+        String filePathUpload = resourcePath + "reservoir-data\\";
         //判断Upload文件夹是否存在，不存在则创建
         File fileDirUpload = new File(filePathUpload);
         if (!fileDirUpload.exists()) {
             fileDirUpload.mkdir();
         }
-        String filePath = projectPath + resourcePath + "static\\upload\\SARImg\\";
+        String filePath = resourcePath + "reservoir-data\\SARImg\\";
         //判断SARImg文件夹是否存在，不存在则创建
         File fileDir = new File(filePath);
         if (!fileDir.exists()) {
@@ -102,16 +102,16 @@ public class SARUploadController {
         String fileNameAfterCut = prefixName + ".png";
         //调用算法处理SAR图像
         String in = filePath + uploadDirName + File.separator + fileName;
-        String out = projectPath + resourcePath + "static\\upload\\SARAfterCut\\" + uploadDirName + File.separator + fileNameAfterCut;
+        String out = resourcePath + "reservoir-data\\SARAfterCut\\" + uploadDirName + File.separator + fileNameAfterCut;
 
 
         //判断SARAfterCut文件夹是否存在，不存在则创建
-        File fileDirAfter = new File(projectPath + resourcePath + "static\\upload\\SARAfterCut\\");
+        File fileDirAfter = new File(resourcePath + "reservoir-data\\SARAfterCut\\");
         if (!fileDirAfter.exists()) {
             fileDirAfter.mkdir();
         }
         //创建不重复的输出目录
-        File fileDirOut = new File(projectPath + resourcePath + "static\\upload\\SARAfterCut\\" + uploadDirName);
+        File fileDirOut = new File(resourcePath + "reservoir-data\\SARAfterCut\\" + uploadDirName);
         fileDirOut.mkdir();
         /*FCM fcm = null;
         try {
@@ -129,12 +129,12 @@ public class SARUploadController {
 
         originFilePath = in;
         newFilePath = out;
-        newFilePathRelative = "static\\upload\\SARAfterCut\\" + uploadDirName + File.separator + fileNameAfterCut;
+        newFilePathRelative = "reservoir-data\\SARAfterCut\\" + uploadDirName + File.separator + fileNameAfterCut;
 
         return "success";
     }
 
-    @GetMapping(value = "/upload/sar/getImageData", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/api/upload/sar/getImageData", produces = MediaType.IMAGE_JPEG_VALUE)
     @ResponseBody
     public byte[] getOriginImageData(String type) throws IOException {
         String path = "";
@@ -155,7 +155,7 @@ public class SARUploadController {
     }
 
     //--------------------------------分割---------------------------------------------
-    @PostMapping("/upload/sar/getArea")
+    @PostMapping("/api/upload/sar/getArea")
     @ResponseBody
     public String getArea(Model model, @RequestParam("reservoirName") String reservoirName,
                              @RequestParam("satelliteName") String satelliteName, @RequestParam("cycle") String cycle,
@@ -178,7 +178,7 @@ public class SARUploadController {
         return waterArea;
     }
 
-    @PostMapping("/upload/sar/saveArea")
+    @PostMapping("/api/upload/sar/saveArea")
     @ResponseBody
     public String save(HttpSession session, @RequestParam("reservoirName") String reservoirName,
                        @RequestParam("date") Date date, @RequestParam("cutAlgo") String cutAlgo){

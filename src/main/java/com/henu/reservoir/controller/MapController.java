@@ -57,24 +57,15 @@ public class MapController {
             int height = bufferedImage.getHeight()-1;
             int minX = bufferedImage.getMinX();
             int minY = bufferedImage.getMinY();
-            if(isWaterAreaRGB(getRGB(bufferedImage.getRGB(minX, minY)))){
-                return "true";
-            }
-            else if(isWaterAreaRGB(getRGB(bufferedImage.getRGB(width, minY)))){
-                return "true";
-            }
-            else if(isWaterAreaRGB(getRGB(bufferedImage.getRGB((width-minX)/2, (height-minY)/2)))){
-                return "true";
-            }
-            else if(isWaterAreaRGB(getRGB(bufferedImage.getRGB(minX, height)))){
-                return "true";
-            }
-            else if(isWaterAreaRGB(getRGB(bufferedImage.getRGB(width, height)))){
-                return "true";
-            }
+            boolean isWater = isWaterAreaRGB(getRGB(bufferedImage.getRGB(minX, minY)))
+                    || isWaterAreaRGB(getRGB(bufferedImage.getRGB(width, minY)))
+                    || isWaterAreaRGB(getRGB(bufferedImage.getRGB((width-minX)/2, (height-minY)/2)))
+                    || isWaterAreaRGB(getRGB(bufferedImage.getRGB(minX, height)))
+                    || isWaterAreaRGB(getRGB(bufferedImage.getRGB(width, height)));
 
             //删除临时文件
             file.delete();
+            return isWater + "";
 
         } catch (Exception e) {
             e.printStackTrace();

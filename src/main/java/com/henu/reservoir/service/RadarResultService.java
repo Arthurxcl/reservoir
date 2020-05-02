@@ -33,11 +33,17 @@ public class RadarResultService {
     public void addRadarResult(RadarResultDao dao){
         radarResultDaoMapper.insert(dao);
     }
+    //删除RadarResult
+    public int deleteByPrimaryKey(int id){return radarResultDaoMapper.deleteByPrimaryKey(id);}
 
     public RadarResultDao findRadarResultByReservoirIdAndDate(Integer rid, Date date) {
         RadarResultDao r = new RadarResultDao();
         r.setReservoirId(rid);
         r.setDate(date);
         return radarResultDaoMapper.selectByReservoirIdAndDate(r);
+    }
+
+    public RadarResultDao findRadarResultById(Integer id){
+        return radarResultDaoMapper.selectByPrimaryKey(id);
     }
 }

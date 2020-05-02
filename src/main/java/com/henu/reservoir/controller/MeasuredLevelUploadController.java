@@ -53,7 +53,7 @@ public class MeasuredLevelUploadController {
     private ObjectMapper mapper = new ObjectMapper();
     private ArrayList<MeasuredResultDao> allResult = new ArrayList<>();
 
-    @PostMapping(value = "/upload/measured")
+    @PostMapping(value = "/api/upload/measured")
     @ResponseBody
     public String uploadMeasured(@RequestParam("measuredFile") MultipartFile fileUpload,
                                  @RequestParam("reservoirName") String reservoirName) throws IOException, ParseException {
@@ -70,7 +70,7 @@ public class MeasuredLevelUploadController {
         return mapper.writeValueAsString(allResult);
     }
 
-    @GetMapping("/upload/measured/save")
+    @GetMapping("/api/upload/measured/save")
     @ResponseBody
     public void saveMeasured(HttpSession session) {
         //用户确认数据后再存入数据库

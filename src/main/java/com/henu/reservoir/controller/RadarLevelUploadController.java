@@ -39,7 +39,6 @@ import javax.servlet.http.HttpSession;
  */
 
 @Controller
-@EnableAutoConfiguration
 public class RadarLevelUploadController {
 
     private ReservoirInfoService reservoirInfoService;
@@ -68,7 +67,7 @@ public class RadarLevelUploadController {
     private RadarLevelDao radarLevelDao = new RadarLevelDao();
 
 
-    @PostMapping(value = "/upload/radar")
+    @PostMapping(value = "/api/upload/radar")
     @ResponseBody
     public String upload_SAR(Model model, @RequestParam("radarFile") MultipartFile[] radarFile,
                              @RequestParam("reservoirName") String reservoirName, @RequestParam("satelliteName") String satelliteName,
@@ -99,14 +98,14 @@ public class RadarLevelUploadController {
         int random = new Random().nextInt(10000);
         //生成不重复的文件夹名称
         String uploadDirName = formatDate + Integer.toString(random);
-        String filePathUpload = System.getProperty("user.dir") + resourcePath + "static\\upload\\";
+        String filePathUpload = resourcePath + "reservoir-data\\";
         //判断Upload文件夹是否存在，不存在则创建
         File fileDirUpload = new File(filePathUpload);
         if (!fileDirUpload.exists()) {
             fileDirUpload.mkdir();
         }
         //判断文件夹是否存在
-        String radarFilePath = System.getProperty("user.dir") + resourcePath + "static\\upload\\radarData\\";
+        String radarFilePath = resourcePath + "reservoir-data\\radarData\\";
         File radarDataDir = new File(radarFilePath);
         if (!radarDataDir.exists()) {
             radarDataDir.mkdir();
@@ -193,7 +192,7 @@ public class RadarLevelUploadController {
         return "error";
     }
 
-    @GetMapping("upload/radar/choose")
+    @GetMapping("/api/upload/radar/choose")
     @ResponseBody
     public String chooseRadarData(HttpSession session,int index) {
         //使用date和satelliteName查找radarLevelId，如没有则新建一条radarLevel

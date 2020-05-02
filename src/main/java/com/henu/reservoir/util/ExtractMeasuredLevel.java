@@ -50,7 +50,7 @@ public class ExtractMeasuredLevel {
             /*DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date date = dateFormat.parse(dateStr);*/
 
-            allResult.add(new MeasuredResultDao(Double.toString(waterLevel), Double.toString(measuredStorage), name, dateStr, reservoirId));
+            allResult.add(new MeasuredResultDao(0, Double.toString(waterLevel), Double.toString(measuredStorage), name, dateStr, reservoirId));
         }
         return allResult;
     }
