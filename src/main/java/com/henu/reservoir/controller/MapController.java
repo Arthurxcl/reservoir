@@ -57,24 +57,15 @@ public class MapController {
             int height = bufferedImage.getHeight()-1;
             int minX = bufferedImage.getMinX();
             int minY = bufferedImage.getMinY();
-            if(isWaterAreaRGB(getRGB(bufferedImage.getRGB(minX, minY)))){
-                return "true";
-            }
-            else if(isWaterAreaRGB(getRGB(bufferedImage.getRGB(width, minY)))){
-                return "true";
-            }
-            else if(isWaterAreaRGB(getRGB(bufferedImage.getRGB((width-minX)/2, (height-minY)/2)))){
-                return "true";
-            }
-            else if(isWaterAreaRGB(getRGB(bufferedImage.getRGB(minX, height)))){
-                return "true";
-            }
-            else if(isWaterAreaRGB(getRGB(bufferedImage.getRGB(width, height)))){
-                return "true";
-            }
+            boolean isWater = isWaterAreaRGB(getRGB(bufferedImage.getRGB(minX, minY)))
+                    || isWaterAreaRGB(getRGB(bufferedImage.getRGB(width, minY)))
+                    || isWaterAreaRGB(getRGB(bufferedImage.getRGB((width-minX)/2, (height-minY)/2)))
+                    || isWaterAreaRGB(getRGB(bufferedImage.getRGB(minX, height)))
+                    || isWaterAreaRGB(getRGB(bufferedImage.getRGB(width, height)));
 
             //删除临时文件
             file.delete();
+            return isWater + "";
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,12 +76,29 @@ public class MapController {
     @GetMapping("api/setReservoirId")
     @ResponseBody
     public String setReservoir(String rname, HttpSession session){
+        if (rname.equals("")){
+            session.setAttribute("reservoirId", null);
+            return "success";
+        }
         ReservoirInfoDao dao = reservoirInfoService.findReservoirInfoByName(rname);
         if(dao!=null){
             session.setAttribute("reservoirId", dao.getId());
             return "success";
         }
         return "error";
+    }
+
+    @GetMapping("api/getReservoirName")
+    @ResponseBody
+    public String  getReservoir(HttpSession session){
+        if(session.getAttribute("reservoirId") != null){
+            int rid = (Integer)session.getAttribute("reservoirId");
+            ReservoirInfoDao dao = reservoirInfoService.findReservoirInfoById(rid);
+            return dao.getName();
+        }
+        else {
+            return "";
+        }
     }
 
     private static byte[] readInputStream(InputStream inStream) throws Exception{

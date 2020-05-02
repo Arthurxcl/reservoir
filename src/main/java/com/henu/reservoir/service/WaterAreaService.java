@@ -31,7 +31,13 @@ public class WaterAreaService {
         return waterAreaDaoMapper.selectAll();
     }
 
+    public WaterAreaDao findWaterAreaById(int id){
+        return waterAreaDaoMapper.selectByPrimaryKey(id);
+    }
+
     public Integer insert(WaterAreaDao waterAreaDao) {
         return waterAreaDaoMapper.insert(waterAreaDao);
     }
+
+    public Integer deleteByPrimaryKey(int id){return waterAreaDaoMapper.deleteByPrimaryKey(id);}
 }

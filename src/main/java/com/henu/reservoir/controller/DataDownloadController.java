@@ -54,8 +54,7 @@ public class DataDownloadController {
     }
 
     private void downloadFile(HttpServletResponse response, String path){
-        String projectPath = System.getProperty("user.dir");
-        File file = new File(projectPath + this.resourcePath + path);
+        File file = new File(resourcePath + path);
         String filename = path.substring(path.lastIndexOf(File.separator) + 1);
         if (file.exists()){
             try {

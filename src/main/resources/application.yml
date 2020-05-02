@@ -45,5 +45,5 @@ mybatis:
 
 #自定义资源路径，部署时需要更改
 path:
-  resource-path: "\\src\\main\\resources\\"
+  resource-path: "D:\\"
 

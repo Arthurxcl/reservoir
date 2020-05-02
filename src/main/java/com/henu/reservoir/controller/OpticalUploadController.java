@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -59,7 +60,7 @@ public class OpticalUploadController {
     private String newFilePathRelative;
     private String waterArea;
 
-    @PostMapping(value = "/upload/optical/opticalfile")
+    @PostMapping(value = "/api/upload/optical/opticalfile")
     @ResponseBody
     public String upload_Optical(@RequestParam("opticalFile") MultipartFile opticalFile) throws IOException, InterruptedException {
         //获取文件名
@@ -79,14 +80,14 @@ public class OpticalUploadController {
         int random = new Random().nextInt(10000);
         //生成不重复的文件夹名称
         String uploadDirName = formatDate + Integer.toString(random);
-        String filePathUpload = projectPath + resourcePath + "static\\upload\\";
+        String filePathUpload = resourcePath + "reservoir-data\\";
         //判断Upload文件夹是否存在，不存在则创建
         File fileDirUpload = new File(filePathUpload);
         if (!fileDirUpload.exists()) {
             fileDirUpload.mkdir();
         }
         //完整文件名
-        String filePath = projectPath + resourcePath + "static\\upload\\opticalImg\\";
+        String filePath = resourcePath + "reservoir-data\\opticalImg\\";
         //判断opticalImg文件夹是否存在，不存在则创建
         File fileDir = new File(filePath);
         if (!fileDir.exists()) {
@@ -105,15 +106,15 @@ public class OpticalUploadController {
         String fileNameAfterCut = prefixName + ".png";
         //调用算法处理Optiocal图像
         String in = filePath + uploadDirName + File.separator + fileName;
-        String out = projectPath + resourcePath + "static\\upload\\opticalAfterCut\\" + uploadDirName + File.separator + fileNameAfterCut;
+        String out = resourcePath + "reservoir-data\\opticalAfterCut\\" + uploadDirName + File.separator + fileNameAfterCut;
 
         //判断opticalAfterCut文件夹是否存在，不存在则创建
-        File fileDirAfter = new File(projectPath + resourcePath + "static\\upload\\opticalAfterCut\\");
+        File fileDirAfter = new File(resourcePath + "reservoir-data\\opticalAfterCut\\");
         if (!fileDirAfter.exists()) {
             fileDirAfter.mkdir();
         }
         //创建不重复的输出目录
-        File fileDirOut = new File(projectPath + resourcePath + "static\\upload\\opticalAfterCut\\" + uploadDirName);
+        File fileDirOut = new File(resourcePath + "reservoir-data\\opticalAfterCut\\" + uploadDirName);
         fileDirOut.mkdir();
 
         /*FCM fcm = null;
@@ -132,12 +133,12 @@ public class OpticalUploadController {
 
         originFilePath = in;
         newFilePath = out;
-        newFilePathRelative = "static\\upload\\opticalAfterCut\\" + uploadDirName + File.separator + fileNameAfterCut;
+        newFilePathRelative = "reservoir-data\\opticalAfterCut\\" + uploadDirName + File.separator + fileNameAfterCut;
 
         return "success";
     }
 
-    @GetMapping(value = "/upload/optical/getImageData", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/api/upload/optical/getImageData", produces = MediaType.IMAGE_JPEG_VALUE)
     @ResponseBody
     public byte[] getOriginImageData(String type) throws IOException {
         String path = "";
@@ -157,7 +158,7 @@ public class OpticalUploadController {
         return bytes;
     }
 
-    @PostMapping("/upload/optical/getArea")
+    @PostMapping("/api/upload/optical/getArea")
     @ResponseBody
     public String getArea(Model model, @RequestParam("reservoirName") String reservoirName,
                              @RequestParam("satelliteName") String satelliteName, @RequestParam("cycle") String cycle,
@@ -182,9 +183,9 @@ public class OpticalUploadController {
         return waterArea;
     }
 
-    @PostMapping("/upload/optical/saveArea")
+    @PostMapping("/api/upload/optical/saveArea")
     @ResponseBody
-    public String save(@RequestParam("reservoirName") String reservoirName,
+    public String save(HttpSession session, @RequestParam("reservoirName") String reservoirName,
                        @RequestParam("date") Date date, @RequestParam("cutAlgo") String cutAlgo){
         Integer reservoir_id = reservoirInfoService.findReservoirInfoByName(reservoirName).getId();
         //根据分割算法名称获取id
@@ -194,9 +195,12 @@ public class OpticalUploadController {
         //将水域面积存入数据库
         WaterAreaDao waterAreaDao = new WaterAreaDao(0, reservoir_id, waterArea, imgId, cutId, date, (byte) 0);
         waterAreaService.insert(waterAreaDao);
-       fittingService.fitRadarLevelOpticalArea(reservoir_id);
-       fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
-       fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+        if (session.getAttribute("pauseFitting") == null){
+            fittingService.fitRadarLevelOpticalArea(reservoir_id);
+            fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
+            fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+        }
+
         return "success";
     }
     private static void copyFileUsingFileChannels(File source, File dest) throws IOException {

@@ -5,10 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.henu.reservoir.domain.*;
 import com.henu.reservoir.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +30,10 @@ public class DataManageController {
     private RadarResultService radarResultService;
     private RadarLevelService radarLevelService;
     private WaterAreaService waterAreaService;
+    private FittingService fittingService;
+
+    @Value("${path.resource-path}")
+    private String resourcePath;
 
     @Autowired
     private void setService(
@@ -33,7 +43,8 @@ public class DataManageController {
             MeasuredResultService measuredResultService,
             RadarResultService radarResultService,
             WaterAreaService waterAreaService,
-            RadarLevelService radarLevelService
+            RadarLevelService radarLevelService,
+            FittingService fittingService
     ){
         this.sarImgService = sarImgService;
         this.opticalImgService = opticalImgService;
@@ -42,7 +53,7 @@ public class DataManageController {
         this.radarResultService = radarResultService;
         this.waterAreaService = waterAreaService;
         this.radarLevelService = radarLevelService;
-        buildReservoirInfoDaoHashMap();
+        this.fittingService = fittingService;
     }
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -69,14 +80,33 @@ public class DataManageController {
         return "error";
     }
 
+    @GetMapping("api/data/measured/delete")
+    @ResponseBody
+    public void deleteMeasuredResult(HttpSession session, String sList){
+        String[] strings = sList.split(",");
+        List<Integer> reservoirIds = new ArrayList<>();
+        for (String s : strings){
+            int id = Integer.parseInt(s);
+            int rid = measuredResultService.findMeasuredResultById(id).getReservoirId();
+            if(!reservoirIds.contains(rid)) reservoirIds.add(rid);
+            measuredResultService.deleteMeasuredResult(id);
+        }
+        if (session.getAttribute("pauseFitting") == null) {
+            for (int reservoirId : reservoirIds){
+                fittingService.fitMeasureLevel(reservoirId);
+                fittingService.fitMeasuresLevelSarAndOpticalArea(reservoirId);
+            }
+        }
+    }
+
     @GetMapping("api/data/radar")
     @ResponseBody
     public String getRadarList(){
+        buildReservoirInfoDaoHashMap();
         List<RadarResultDao> list1 = radarResultService.findAllRadarResult();
         List<RadarItem> list = new ArrayList<>();
         for (RadarResultDao item : list1){
             RadarItem i = new RadarItem();
-            System.out.println(item.getRadarLevelId());
             RadarLevelDao levelDao = radarLevelService.findRadarLevelById(item.getRadarLevelId());
             i.setId(item.getId());
             i.setDate(item.getDate());
@@ -95,16 +125,89 @@ public class DataManageController {
         return "error";
     }
 
+    @GetMapping("api/data/radar/delete")
+    @ResponseBody
+    public void deleteRadarResult(HttpSession session, String sList){
+        String[] strings = sList.split(",");
+        List<Integer> reservoirIds = new ArrayList<>();
+        for (String s : strings){
+            int id = Integer.parseInt(s);
+            int rid = radarResultService.findRadarResultById(id).getReservoirId();
+            if(!reservoirIds.contains(rid)) reservoirIds.add(rid);
+            radarResultService.deleteByPrimaryKey(id);
+        }
+        if (session.getAttribute("pauseFitting") == null) {
+            for (int reservoirId : reservoirIds){
+                fittingService.fitRadarLevel(reservoirId);
+                fittingService.fitRadarLevelSarArea(reservoirId);
+                fittingService.fitRadarLevelOpticalArea(reservoirId);
+                fittingService.fitRadarLevelSarAndOpticalArea(reservoirId);
+            }
+        }
+    }
+
     @GetMapping("api/data/area")
     @ResponseBody
     public String getAreaList(){
+        buildReservoirInfoDaoHashMap();
         List<WaterAreaDao> list1 = waterAreaService.findAllWaterArea();
+        List<AreaItem> list = new ArrayList<>();
+        for (WaterAreaDao dao : list1){
+            AreaItem item = new AreaItem();
+            item.setId(dao.getId());
+            item.setDate(dao.getDate());
+            item.setReservoirName(reservoirInfoDaoHashMap.get(dao.getReservoirId()).getName());
+            item.setArea(dao.getArea());
+            if(dao.getIsSarArea() == 1){
+                item.setType("SAR");
+            }
+            else {
+                item.setType("光学");
+            }
+            list.add(item);
+        }
         try {
-            return mapper.writeValueAsString(list1);
+            return mapper.writeValueAsString(list);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return "error";
+    }
+
+    @GetMapping("api/data/area/delete")
+    @ResponseBody
+    public void deleteWaterArea(HttpSession session, String sList){
+        String[] strings = sList.split(",");
+        List<Integer> reservoirIds = new ArrayList<>();
+        boolean deletedSar = false;
+        boolean deletedOpt = false;
+        for (String s : strings){
+            int id = Integer.parseInt(s);
+            WaterAreaDao dao = waterAreaService.findWaterAreaById(id);
+            int rid = dao.getReservoirId();
+            if(dao.getIsSarArea() == 1){
+                deletedSar = true;
+            }
+            else {
+                deletedOpt = true;
+            }
+            if(!reservoirIds.contains(rid)) reservoirIds.add(rid);
+            waterAreaService.deleteByPrimaryKey(id);
+        }
+        if (session.getAttribute("pauseFitting") == null) {
+            for (int reservoir_id : reservoirIds){
+                if (deletedSar){
+                    fittingService.fitRadarLevelSarArea(reservoir_id);
+                    fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
+                    fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+                }
+                if (deletedOpt){
+                    fittingService.fitRadarLevelOpticalArea(reservoir_id);
+                    fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
+                    fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+                }
+            }
+        }
     }
 
     @GetMapping("api/data/reservoir")
@@ -119,9 +222,38 @@ public class DataManageController {
         return "error";
     }
 
+    @GetMapping("api/data/reservoir-edit")
+    @ResponseBody
+    public void editReservoir(
+            int id,
+            String name,
+            String location,
+            String longitudeLeft,
+            String longitudeRight,
+            String latitudeLeft,
+            String latitudeRight
+    ){
+        ReservoirInfoDao dao = new ReservoirInfoDao();
+        dao.setId(id);
+        dao.setName(name);
+        dao.setLocation(location);
+        dao.setLongitudeRight(longitudeRight);
+        dao.setLatitudeRight(latitudeRight);
+        dao.setLongitudeLeft(longitudeLeft);
+        dao.setLatitudeLeft(latitudeLeft);
+        reservoirInfoService.updateReservoirInfo(dao);
+    }
+
+    @GetMapping("api/data/reservoir-delete")
+    @ResponseBody
+    public void deleteReservoir(int id){
+        reservoirInfoService.deleteReservoirInfo(id);
+    }
+
     @GetMapping("api/data/image")
     @ResponseBody
     public String getImageList(){
+        buildReservoirInfoDaoHashMap();
         List<SarImgDao> list1 = sarImgService.findAllSarImg();
         List<OpticalImgDao> list2 = opticalImgService.findAllOpticalImg();
         List<DownloadItem> dlist = new ArrayList<>();
@@ -153,6 +285,28 @@ public class DataManageController {
             e.printStackTrace();
         }
         return "error";
+    }
+
+    @GetMapping(value = "api/data/getImageData", produces = MediaType.IMAGE_JPEG_VALUE)
+    @ResponseBody
+    public byte[] getOriginImageData(String type, int id) throws IOException {
+        String path = "";
+        if ("sar".equals(type)){
+            //get sar file
+            SarImgDao dao = sarImgService.findSarImgById(id);
+            path = dao.getPath();
+        }
+        else if ("optical".equals(type)){
+            //get optical file
+            OpticalImgDao dao = opticalImgService.findOpticalImgById(id);
+            path = dao.getPath();
+        }
+        File file = new File(resourcePath + path);
+        FileInputStream inputStream = new FileInputStream(file);
+        byte[] bytes = new byte[inputStream.available()];
+        inputStream.read(bytes, 0, inputStream.available());
+        inputStream.close();
+        return bytes;
     }
 
     private class DownloadItem {
@@ -301,6 +455,65 @@ public class DataManageController {
             this.satelliteName = satelliteName;
             this.lng = lng;
             this.lat = lat;
+        }
+    }
+    private class AreaItem{
+        private int id;
+        private String reservoirName;
+
+        public AreaItem(int id, String reservoirName, Date date, String area, String type) {
+            this.id = id;
+            this.reservoirName = reservoirName;
+            this.date = date;
+            this.area = area;
+            this.type = type;
+        }
+
+        private Date date;
+        private String area;
+        private String type;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getReservoirName() {
+            return reservoirName;
+        }
+
+        public void setReservoirName(String reservoirName) {
+            this.reservoirName = reservoirName;
+        }
+
+        public Date getDate() {
+            return date;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
+
+        public String getArea() {
+            return area;
+        }
+
+        public void setArea(String area) {
+            this.area = area;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public AreaItem() {
         }
     }
 }
