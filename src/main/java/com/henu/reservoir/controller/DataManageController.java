@@ -35,6 +35,9 @@ public class DataManageController {
     @Value("${path.resource-path}")
     private String resourcePath;
 
+    @Value("${path.python-executer}")
+    private String pythonExecuter;
+
     @Autowired
     private void setService(
             SarImgService sarImgService,
@@ -66,6 +69,18 @@ public class DataManageController {
              reservoirInfoDaoList) {
             reservoirInfoDaoHashMap.put(dao.getId(), dao);
         }
+    }
+
+    //调用python文件，获取实测水位并存入数据库
+    @GetMapping("api/data/getwaterlevel")
+    @ResponseBody
+    public String getWaterLevel() throws IOException, InterruptedException {
+        String projectPath = System.getProperty("user.dir");
+        String file_path = projectPath + "\\src\\main\\java\\com\\henu\\reservoir\\util\\getWaterLevel.py";
+        String[] command_line = new String[]{pythonExecuter, file_path};
+        Process process = Runtime.getRuntime().exec(command_line);
+        process.waitFor();
+        return "success";
     }
 
     @GetMapping("api/data/measured")

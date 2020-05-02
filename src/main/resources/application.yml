@@ -46,4 +46,5 @@ mybatis:
 #自定义资源路径，部署时需要更改
 path:
   resource-path: "D:\\"
+  python-executer: "D:\\ProgramData\\Miniconda3\\envs\\p37\\python.exe"
 
