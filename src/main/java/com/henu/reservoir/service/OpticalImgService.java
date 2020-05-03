@@ -51,4 +51,6 @@ public class OpticalImgService {
     public OpticalImgDao selectByPath(String path) {
         return opticalImgDaoMapper.selectByPath(path);
     }
+
+    public Integer deleteById(int id) { return opticalImgDaoMapper.deleteByPrimaryKey(id); }
 }

@@ -50,4 +50,6 @@ public class SarImgService {
     public SarImgDao selectByPath(String path) {
         return sarImgDaoMapper.selectByPath(path);
     }
+
+    public Integer deleteById(int id){ return sarImgDaoMapper.deleteByPrimaryKey(id); }
 }

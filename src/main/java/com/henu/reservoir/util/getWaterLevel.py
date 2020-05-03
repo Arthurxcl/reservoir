@@ -3,16 +3,17 @@ from selenium.webdriver.chrome.options import Options
 import pymysql
 import time
 import datetime
+import sys
 
 
-def get_data():
+def get_data(rname):
     # 无界面设置
-    # chrome_options = Options()
-    # chrome_options.add_argument('--headless')
-    driver_path = r'D:\ProgramData\bin\chromedriver.exe'
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    driver_path = r'C:\Program Files (x86)\Google\Chrome Dev\Application\chromedriver.exe'
     url = "http://xxfb.mwr.cn/ssIndex.html"
     # 使用chrome驱动打开网站
-    driver = webdriver.Chrome(executable_path=driver_path)
+    driver = webdriver.Chrome(executable_path=driver_path, chrome_options = chrome_options)
     driver.get(url=url)
     # 强制等待页面加载
     time.sleep(2)
@@ -29,8 +30,11 @@ def get_data():
     # 找到丹江口所在列
     Danjiangkou = list()
     for sk in all_sk:
-        if '丹江口' in sk:
+        if rname in sk:
             Danjiangkou = sk
+    if len(Danjiangkou) == 0:
+        print('error')
+        return False
     # 获取待插入的参数
     helper = DbHelper()
     param = Danjiangkou.split()
@@ -40,7 +44,6 @@ def get_data():
     date = datetime.date.today()
     reservoir_id = helper.get_reservoir_id(site_name)
     data = [water_level, measured_storage, site_name, date, reservoir_id]
-    print(data)
     return data
 
 
@@ -60,7 +63,6 @@ class DbHelper:
             self.conn.commit()
         except Exception:
             # 错误回滚
-            print("Fail to insert data!")
             self.conn.rollback()
 
     # 根据水库名称获得水库id
@@ -72,12 +74,13 @@ class DbHelper:
             for row in result:
                 return row[0]
         except Exception:
-            print("Fail to get reservoir id!")
             self.conn.rollback()
 
 
 if __name__ == "__main__":
-    data = get_data()
-    db = DbHelper()
-    db.insert(data)
+    # 读取传入的参数
+    data = get_data(sys.argv[1])
+    if data:
+        db = DbHelper()
+        db.insert(data)
 

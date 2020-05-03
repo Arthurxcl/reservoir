@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,7 +46,7 @@ public class DataManageController {
             WaterAreaService waterAreaService,
             RadarLevelService radarLevelService,
             FittingService fittingService
-    ){
+    ) {
         this.sarImgService = sarImgService;
         this.opticalImgService = opticalImgService;
         this.reservoirInfoService = reservoirInfoService;
@@ -62,11 +60,11 @@ public class DataManageController {
     private ObjectMapper mapper = new ObjectMapper();
     private HashMap<Integer, ReservoirInfoDao> reservoirInfoDaoHashMap;
 
-    private void buildReservoirInfoDaoHashMap(){
+    private void buildReservoirInfoDaoHashMap() {
         List<ReservoirInfoDao> reservoirInfoDaoList = reservoirInfoService.findAllReservoirInfo();
         reservoirInfoDaoHashMap = new HashMap<>();
-        for (ReservoirInfoDao dao:
-             reservoirInfoDaoList) {
+        for (ReservoirInfoDao dao :
+                reservoirInfoDaoList) {
             reservoirInfoDaoHashMap.put(dao.getId(), dao);
         }
     }
@@ -74,18 +72,48 @@ public class DataManageController {
     //调用python文件，获取实测水位并存入数据库
     @GetMapping("api/data/getwaterlevel")
     @ResponseBody
-    public String getWaterLevel() throws IOException, InterruptedException {
+    public String getWaterLevel(HttpSession session, String rname) throws IOException, InterruptedException {
+        int rid = reservoirInfoService.findReservoirInfoByName(rname).getId();
+        if (measuredResultService.findTodayMeasuredResultByRid(rid).size() > 0) {
+            return "duplicate";
+        }
         String projectPath = System.getProperty("user.dir");
         String file_path = projectPath + "\\src\\main\\java\\com\\henu\\reservoir\\util\\getWaterLevel.py";
-        String[] command_line = new String[]{pythonExecuter, file_path};
+        String[] command_line = new String[]{pythonExecuter, file_path, rname};
         Process process = Runtime.getRuntime().exec(command_line);
+        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line = null;
+        while ((line = in.readLine()) != null) {
+            if("error".equals(line)) {
+                in.close();
+                process.waitFor();
+                return "notFound";
+            }
+        }
+        in.close();
         process.waitFor();
+        if (session.getAttribute("pauseFitting") == null) {
+            fittingService.fitMeasureLevel(rid);
+            //fittingService.fitMeasuresLevelSarAndOpticalArea(rid);
+        }
         return "success";
+    }
+
+    @GetMapping("api/data/getTodayWaterLevel")
+    @ResponseBody
+    public String getTodaysWaterLevel(String rname){
+        int rid = reservoirInfoService.findReservoirInfoByName(rname).getId();
+        try {
+            return mapper.writeValueAsString(measuredResultService.findTodayMeasuredResultByRid(rid));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "error";
     }
 
     @GetMapping("api/data/measured")
     @ResponseBody
-    public String getMeasuredList(){
+    public String getMeasuredList() {
         List<MeasuredResultDao> list1 = measuredResultService.findAllMeasuredResult();
         try {
             return mapper.writeValueAsString(list1);
@@ -97,30 +125,30 @@ public class DataManageController {
 
     @GetMapping("api/data/measured/delete")
     @ResponseBody
-    public void deleteMeasuredResult(HttpSession session, String sList){
+    public void deleteMeasuredResult(HttpSession session, String sList) {
         String[] strings = sList.split(",");
         List<Integer> reservoirIds = new ArrayList<>();
-        for (String s : strings){
+        for (String s : strings) {
             int id = Integer.parseInt(s);
             int rid = measuredResultService.findMeasuredResultById(id).getReservoirId();
-            if(!reservoirIds.contains(rid)) reservoirIds.add(rid);
+            if (!reservoirIds.contains(rid)) reservoirIds.add(rid);
             measuredResultService.deleteMeasuredResult(id);
         }
         if (session.getAttribute("pauseFitting") == null) {
-            for (int reservoirId : reservoirIds){
+            for (int reservoirId : reservoirIds) {
                 fittingService.fitMeasureLevel(reservoirId);
-                fittingService.fitMeasuresLevelSarAndOpticalArea(reservoirId);
+                //fittingService.fitMeasuresLevelSarAndOpticalArea(reservoirId);
             }
         }
     }
 
     @GetMapping("api/data/radar")
     @ResponseBody
-    public String getRadarList(){
+    public String getRadarList() {
         buildReservoirInfoDaoHashMap();
         List<RadarResultDao> list1 = radarResultService.findAllRadarResult();
         List<RadarItem> list = new ArrayList<>();
-        for (RadarResultDao item : list1){
+        for (RadarResultDao item : list1) {
             RadarItem i = new RadarItem();
             RadarLevelDao levelDao = radarLevelService.findRadarLevelById(item.getRadarLevelId());
             i.setId(item.getId());
@@ -142,17 +170,17 @@ public class DataManageController {
 
     @GetMapping("api/data/radar/delete")
     @ResponseBody
-    public void deleteRadarResult(HttpSession session, String sList){
+    public void deleteRadarResult(HttpSession session, String sList) {
         String[] strings = sList.split(",");
         List<Integer> reservoirIds = new ArrayList<>();
-        for (String s : strings){
+        for (String s : strings) {
             int id = Integer.parseInt(s);
             int rid = radarResultService.findRadarResultById(id).getReservoirId();
-            if(!reservoirIds.contains(rid)) reservoirIds.add(rid);
+            if (!reservoirIds.contains(rid)) reservoirIds.add(rid);
             radarResultService.deleteByPrimaryKey(id);
         }
         if (session.getAttribute("pauseFitting") == null) {
-            for (int reservoirId : reservoirIds){
+            for (int reservoirId : reservoirIds) {
                 fittingService.fitRadarLevel(reservoirId);
                 fittingService.fitRadarLevelSarArea(reservoirId);
                 fittingService.fitRadarLevelOpticalArea(reservoirId);
@@ -163,20 +191,19 @@ public class DataManageController {
 
     @GetMapping("api/data/area")
     @ResponseBody
-    public String getAreaList(){
+    public String getAreaList() {
         buildReservoirInfoDaoHashMap();
         List<WaterAreaDao> list1 = waterAreaService.findAllWaterArea();
         List<AreaItem> list = new ArrayList<>();
-        for (WaterAreaDao dao : list1){
+        for (WaterAreaDao dao : list1) {
             AreaItem item = new AreaItem();
             item.setId(dao.getId());
             item.setDate(dao.getDate());
             item.setReservoirName(reservoirInfoDaoHashMap.get(dao.getReservoirId()).getName());
             item.setArea(dao.getArea());
-            if(dao.getIsSarArea() == 1){
+            if (dao.getIsSarArea() == 1) {
                 item.setType("SAR");
-            }
-            else {
+            } else {
                 item.setType("光学");
             }
             list.add(item);
@@ -191,35 +218,34 @@ public class DataManageController {
 
     @GetMapping("api/data/area/delete")
     @ResponseBody
-    public void deleteWaterArea(HttpSession session, String sList){
+    public void deleteWaterArea(HttpSession session, String sList) {
         String[] strings = sList.split(",");
         List<Integer> reservoirIds = new ArrayList<>();
         boolean deletedSar = false;
         boolean deletedOpt = false;
-        for (String s : strings){
+        for (String s : strings) {
             int id = Integer.parseInt(s);
             WaterAreaDao dao = waterAreaService.findWaterAreaById(id);
             int rid = dao.getReservoirId();
-            if(dao.getIsSarArea() == 1){
+            if (dao.getIsSarArea() == 1) {
                 deletedSar = true;
-            }
-            else {
+            } else {
                 deletedOpt = true;
             }
-            if(!reservoirIds.contains(rid)) reservoirIds.add(rid);
+            if (!reservoirIds.contains(rid)) reservoirIds.add(rid);
             waterAreaService.deleteByPrimaryKey(id);
         }
         if (session.getAttribute("pauseFitting") == null) {
-            for (int reservoir_id : reservoirIds){
-                if (deletedSar){
+            for (int reservoir_id : reservoirIds) {
+                if (deletedSar) {
                     fittingService.fitRadarLevelSarArea(reservoir_id);
                     fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
-                    fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+                    //fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
                 }
-                if (deletedOpt){
+                if (deletedOpt) {
                     fittingService.fitRadarLevelOpticalArea(reservoir_id);
                     fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
-                    fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+                    //fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
                 }
             }
         }
@@ -227,7 +253,7 @@ public class DataManageController {
 
     @GetMapping("api/data/reservoir")
     @ResponseBody
-    public String getReservoirList(){
+    public String getReservoirList() {
         List<ReservoirInfoDao> list1 = reservoirInfoService.findAllReservoirInfo();
         try {
             return mapper.writeValueAsString(list1);
@@ -247,7 +273,7 @@ public class DataManageController {
             String longitudeRight,
             String latitudeLeft,
             String latitudeRight
-    ){
+    ) {
         ReservoirInfoDao dao = new ReservoirInfoDao();
         dao.setId(id);
         dao.setName(name);
@@ -261,18 +287,18 @@ public class DataManageController {
 
     @GetMapping("api/data/reservoir-delete")
     @ResponseBody
-    public void deleteReservoir(int id){
+    public void deleteReservoir(int id) {
         reservoirInfoService.deleteReservoirInfo(id);
     }
 
     @GetMapping("api/data/image")
     @ResponseBody
-    public String getImageList(){
+    public String getImageList() {
         buildReservoirInfoDaoHashMap();
         List<SarImgDao> list1 = sarImgService.findAllSarImg();
         List<OpticalImgDao> list2 = opticalImgService.findAllOpticalImg();
         List<DownloadItem> dlist = new ArrayList<>();
-        for (SarImgDao dao:
+        for (SarImgDao dao :
                 list1) {
             dlist.add(new DownloadItem(
                     reservoirInfoDaoHashMap.get(dao.getreservoir_id()).getName(),
@@ -283,7 +309,7 @@ public class DataManageController {
                     dao.getId()
             ));
         }
-        for (OpticalImgDao dao:
+        for (OpticalImgDao dao :
                 list2) {
             dlist.add(new DownloadItem(
                     reservoirInfoDaoHashMap.get(dao.getreservoir_id()).getName(),
@@ -302,16 +328,26 @@ public class DataManageController {
         return "error";
     }
 
+    @GetMapping("api/data/image/delete")
+    @ResponseBody
+    public void deleteImage(int id, String type) {
+        if ("sar".equals(type)){
+            sarImgService.deleteById(id);
+        }
+        else if ("optical".equals(type)){
+            opticalImgService.deleteById(id);
+        }
+    }
+
     @GetMapping(value = "api/data/getImageData", produces = MediaType.IMAGE_JPEG_VALUE)
     @ResponseBody
     public byte[] getOriginImageData(String type, int id) throws IOException {
         String path = "";
-        if ("sar".equals(type)){
+        if ("sar".equals(type)) {
             //get sar file
             SarImgDao dao = sarImgService.findSarImgById(id);
             path = dao.getPath();
-        }
-        else if ("optical".equals(type)){
+        } else if ("optical".equals(type)) {
             //get optical file
             OpticalImgDao dao = opticalImgService.findOpticalImgById(id);
             path = dao.getPath();
@@ -395,7 +431,8 @@ public class DataManageController {
         public DownloadItem() {
         }
     }
-    private class RadarItem{
+
+    private class RadarItem {
         Date date;
         String reservoirName;
         int id;
@@ -424,7 +461,7 @@ public class DataManageController {
             this.reservoirName = reservoirName;
         }
 
-        public String  getLevel() {
+        public String getLevel() {
             return level;
         }
 
@@ -456,13 +493,17 @@ public class DataManageController {
             this.lat = lat;
         }
 
-        String  level;
+        String level;
         String satelliteName;
         String lng;
         String lat;
 
-        public RadarItem(){};
-        public RadarItem(int id, Date date,String reservoirName,String  level,String satelliteName,String lng,String lat){
+        public RadarItem() {
+        }
+
+        ;
+
+        public RadarItem(int id, Date date, String reservoirName, String level, String satelliteName, String lng, String lat) {
             this.id = id;
             this.date = date;
             this.reservoirName = reservoirName;
@@ -472,7 +513,8 @@ public class DataManageController {
             this.lat = lat;
         }
     }
-    private class AreaItem{
+
+    private class AreaItem {
         private int id;
         private String reservoirName;
 

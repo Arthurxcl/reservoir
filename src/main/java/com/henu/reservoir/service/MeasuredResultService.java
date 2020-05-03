@@ -38,6 +38,10 @@ public class MeasuredResultService {
         return measuredResultDaoMapper.selectAll();
     }
 
+    public List<MeasuredResultDao> findTodayMeasuredResultByRid(int rid){
+        return measuredResultDaoMapper.selectToday(rid);
+    }
+
     public MeasuredResultDao findMeasuredResultByReservoirIdAndDate(Integer rid, Date date) {
         MeasuredResultDao m = new MeasuredResultDao();
         m.setReservoirId(rid);

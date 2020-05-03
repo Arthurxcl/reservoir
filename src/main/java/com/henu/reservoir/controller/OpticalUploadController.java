@@ -198,7 +198,7 @@ public class OpticalUploadController {
         if (session.getAttribute("pauseFitting") == null){
             fittingService.fitRadarLevelOpticalArea(reservoir_id);
             fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
-            fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+            //fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
         }
 
         return "success";

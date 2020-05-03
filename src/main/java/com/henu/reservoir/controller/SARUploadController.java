@@ -193,7 +193,7 @@ public class SARUploadController {
         if (session.getAttribute("pauseFitting") == null) {
             fittingService.fitRadarLevelSarArea(reservoir_id);
             fittingService.fitRadarLevelSarAndOpticalArea(reservoir_id);
-            fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
+            //fittingService.fitMeasuresLevelSarAndOpticalArea(reservoir_id);
         }
         return "success";
     }

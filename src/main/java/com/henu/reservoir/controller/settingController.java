@@ -56,7 +56,7 @@ public class settingController {
     public void fitAreaNow(HttpSession session) {
         if (session.getAttribute("reservoirId") != null) {
             int rid = (Integer) session.getAttribute("reservoirId");
-            fittingService.fitMeasuresLevelSarAndOpticalArea(rid);
+            //fittingService.fitMeasuresLevelSarAndOpticalArea(rid);
             fittingService.fitRadarLevelSarAndOpticalArea(rid);
             fittingService.fitRadarLevelOpticalArea(rid);
             fittingService.fitRadarLevelSarArea(rid);
@@ -70,7 +70,7 @@ public class settingController {
             int rid = (Integer) session.getAttribute("reservoirId");
             fittingService.fitMeasureLevel(rid);
             fittingService.fitRadarLevel(rid);
-            fittingService.fitMeasuresLevelSarAndOpticalArea(rid);
+            //fittingService.fitMeasuresLevelSarAndOpticalArea(rid);
             fittingService.fitRadarLevelSarAndOpticalArea(rid);
             fittingService.fitRadarLevelOpticalArea(rid);
             fittingService.fitRadarLevelSarArea(rid);

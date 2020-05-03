@@ -175,7 +175,8 @@ public class RadarLevelUploadController {
         for (int i = 0; i < list20.size(); i++) {
             String sitem = list20.get(i);
             String[] strings = sitem.split(",");
-            double level = Double.parseDouble(strings[7]) - d + 1.46;
+            //double level = Double.parseDouble(strings[7]) - d + 1.46;
+            double level = Double.parseDouble(strings[7]) - d + 1.565;
             double lng = Double.parseDouble(strings[2]);
             double lat = Double.parseDouble(strings[3]);
             radarItemList20.add(new RadarItem(i, lng, lat, level));

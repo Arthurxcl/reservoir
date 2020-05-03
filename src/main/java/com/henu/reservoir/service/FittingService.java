@@ -91,7 +91,7 @@ public class FittingService {
         if (waterAreaDaoList.size() < 2) {
             return;
         }
-        fitLevel(rid, waterAreaDaoList, "遥测水位模型", "area", "遥测+SAR");
+        fitLevel(rid, waterAreaDaoList, "遥测水位模型", "area", "遥测水位+SAR面积");
     }
 
     public void fitRadarLevelOpticalArea(int rid) {
@@ -102,7 +102,7 @@ public class FittingService {
         if (waterAreaDaoList.size() < 2) {
             return;
         }
-        fitLevel(rid, waterAreaDaoList, "遥测水位模型", "area", "遥测+光学");
+        fitLevel(rid, currectOpticalArea(waterAreaDaoList), "遥测水位模型", "area", "遥测水位+光学面积");
     }
 
     public void fitRadarLevelSarAndOpticalArea(int rid) {
@@ -116,9 +116,11 @@ public class FittingService {
         if (waterAreaDaoList.get(0).getDate() == waterAreaDaoList.get(1).getDate() && waterAreaDaoList.size() == 2) {
             return;
         }
-        fitLevel(rid, waterAreaDaoList, "遥测水位模型", "area", "遥测+SAR+光学");
+        fitLevel(rid, currectOpticalArea(waterAreaDaoList), "遥测水位模型", "area", "遥测水位+异源面积");
     }
 
+    /*  不要了 */
+    /*
     public void fitMeasuresLevelSarAndOpticalArea(int rid) {
         //实测水位+SAR+光学面积拟合
         //获取该水库的所有面积数据
@@ -132,9 +134,21 @@ public class FittingService {
         }
         fitLevel(rid, waterAreaDaoList, "实测水位模型", "area", "实测+SAR+光学");
     }
+     */
 
     public int update(FittingFormulaDao fittingFormulaDao) {
         return fittingFormulaDaoMapper.updateByPrimaryKey(fittingFormulaDao);
+    }
+
+    private List<WaterAreaDao> currectOpticalArea(List<WaterAreaDao> list){
+        //修正光学面积值，17.5
+        for (WaterAreaDao dao : list){
+            if (dao.getIsSarArea()==0){
+                double area = Double.parseDouble(dao.getArea())+17.5;
+                dao.setArea(area + "");
+            }
+        }
+        return list;
     }
 
     private void fitLevel(

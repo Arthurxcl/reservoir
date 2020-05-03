@@ -183,4 +183,15 @@
     from measured_result
     where YEAR(date)=YEAR(NOW())
   </select>
+
+  <!-- 选出今天的实测水位数据 -->
+  <select id="selectToday" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from measured_result
+    where reservoir_id = #{reservoirId,jdbcType=INTEGER}
+    and YEAR(date)=YEAR(NOW())
+    and Month (date)=Month(NOW())
+    and DAY(date)=Day(NOW())
+  </select>
 </mapper>

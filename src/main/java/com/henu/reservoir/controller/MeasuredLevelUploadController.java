@@ -89,7 +89,7 @@ public class MeasuredLevelUploadController {
 
         if (session.getAttribute("pauseFitting") == null) {
             fittingService.fitMeasureLevel(reservoirId);
-            fittingService.fitMeasuresLevelSarAndOpticalArea(reservoirId);
+            //fittingService.fitMeasuresLevelSarAndOpticalArea(reservoirId);
         }
     }
 }
