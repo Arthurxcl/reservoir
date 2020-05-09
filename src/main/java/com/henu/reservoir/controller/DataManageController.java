@@ -78,7 +78,8 @@ public class DataManageController {
             return "duplicate";
         }
         String projectPath = System.getProperty("user.dir");
-        String file_path = projectPath + "\\src\\main\\java\\com\\henu\\reservoir\\util\\getWaterLevel.py";
+        //String file_path = projectPath + "\\src\\main\\java\\com\\henu\\reservoir\\util\\getWaterLevel.py";
+        String file_path = resourcePath + "\\reservoir-data\\getWaterLevel.py";
         String[] command_line = new String[]{pythonExecuter, file_path, rname};
         Process process = Runtime.getRuntime().exec(command_line);
         BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
